@@ -1,0 +1,32 @@
+.side-bar-container {
+    display: flex;
+    box-shadow: var(--box-shadow);
+    width: 15vw;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+.side-bar-container ul {
+    padding: 0;   
+}
+
+.side-bar-container ul li {
+    list-style-type: none;
+    padding: 1rem 0;
+}
+
+.side-bar-container ul li a {
+    display: flex;
+    align-items: center;
+    color: #495392;
+    text-decoration: none;
+}
+
+.side-bar-container ul li a:hover {
+    color: #525F7F;
+}
+
+.side-bar-container ul li svg {
+    margin-right: .7rem;
+}

@@ -1,0 +1,61 @@
+.form-page-center {
+    display: flex;
+    justify-content: center;
+}
+
+.login-form-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+    border-radius: .25rem;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    width: 30rem;
+    background-color: #FFF;
+    padding: 1rem 2rem;
+}
+
+.login-form-header-container h3 {
+    font-size: 1.5rem;
+    color: #3C4257;
+    text-align: center;
+    font-weight: 600;
+}
+
+.login-form-container div label {
+    color: #3C4257;
+    font-weight: 500;
+}
+
+.password-and-forgot-password-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.password-and-forgot-password-container span {
+    font-weight: 500;
+}
+
+.password-and-forgot-password-container span:hover {
+    cursor: pointer;
+    opacity: .9;
+}
+
+.submit-btn-container {
+    padding: 1rem 0;
+}
+
+.submit-btn-container input {
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    padding: .7rem 0;
+    border-radius: .25rem;
+    font-weight: 500;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    font-size: 1rem;
+}
+
+.submit-btn-container input:hover {
+    cursor: pointer;
+    opacity: .9;
+}

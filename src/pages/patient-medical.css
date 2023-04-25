@@ -1,0 +1,163 @@
+.patient-medical-navigation-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: #FFF;
+    padding: 1rem 0 0 0;
+    box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.1);
+}
+
+.patient-medical-navigation-container div {
+    padding: .5rem 0;
+    color: #7C82A1;
+    font-weight: bold;
+}
+
+.active-tab {
+    border-bottom: 2px solid #2193B0;
+}
+
+.patient-profile-header-container {
+    text-align: center;
+    background-color: #FFF;
+    box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.1);
+    padding: 2rem 0 .5rem 0;
+}
+
+.patient-profile-header-container div img {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+}
+
+.patient-profile-header-container div h6 {
+    font-size: 1.3rem;
+}
+
+.patient-profile-header-container div h6, .patient-profile-header-container div h2 {
+    margin: 0 !important;
+}
+
+.patient-profile-header-container div h6 {
+    color: #2193B0;
+    font-weight: bold !important;
+}
+
+.patient-profile-header-container div h6 {
+    font-size: 1.2rem;
+    font-weight: normal;
+}
+
+.patient-profile-info-container ul, .emergency-contact ul {
+    padding: 0;
+    margin: 0;
+}
+
+.patient-profile-info-container ul li, .emergency-contact ul li {
+    list-style-type: none;
+    padding: .7rem 0;
+    border-bottom: 1px solid #F3F4F0;
+}
+
+.patient-profile-info-container ul li div {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.encounters-search-input-container {
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.encounters-search-input-container input {
+    padding: .5rem 1rem;
+    border-radius: .25rem;
+    border: none;
+    box-shadow: var(--box-shadow);
+    width: 90%;
+    text-align: right;
+    font-family: 'Cairo', sans-serif !important;
+    background-color: #FFF;
+}
+
+.encounters-search-input-container input:focus {
+    border: 1px solid var(--blue);
+    outline: none;
+}
+
+.encounters-search-input-container svg {
+    position: absolute;
+    margin-top: .5rem;
+    margin-left: .5rem;
+}
+
+.page-mini-navigation-container {
+    background-color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: var(--box-shadow);
+}
+
+.page-mini-navigation-container div {
+    padding: 1rem;
+}
+
+.active-mini-tab {
+    color: var(--blue);
+    font-weight: bold;
+}
+
+.patient-profile-container {
+    display: grid;
+    grid-template-columns: 25% auto;
+    gap: 1rem;
+}
+
+.patient-profile-navigation-header h6 {
+    margin: 0;
+}
+
+.patient-profile-side-navigation-container ul li {
+    list-style-type: none;
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: .5rem;
+    border: 1px solid #E7EAF0;
+    display: flex;
+    align-items: center;
+}
+
+.patient-profile-side-navigation-container ul li:hover {
+    border: 1px solid rgba(92,96,245);
+    cursor: pointer;
+}
+
+.patient-profile-side-navigation-container ul li span {
+    margin-left: 1rem;
+}
+
+.medical-profile-search-container {
+    display: grid;
+    grid-template-columns: 88% 10%;
+    gap: 1rem;
+}
+
+.medical-profile-search-container input {
+    background-color: #FFF;
+    padding: .7rem .8rem;
+    border-radius: .25rem;
+    box-shadow: var(--box-shadow);
+    border: none;
+    width: 100%;
+}
+
+.medical-profile-search-container button {
+    background-color: #FF8C00;
+    color: #FFF;
+    border: none;
+    border-radius: .25rem;
+    padding: .7rem 1rem;
+}
+

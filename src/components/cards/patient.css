@@ -1,0 +1,46 @@
+.patient-card-container {
+    display: flex;
+    text-align: right;
+    flex-direction: row-reverse;
+    background-color: #FFF;
+    padding: .5rem;
+    margin: .5rem 0;
+    transition: .3s;
+    box-shadow: var(--box-shadow);
+}
+
+.patient-card-container:hover {
+    cursor: pointer;
+}
+
+.patient-card-info-container {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.name-and-phone-container {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.patient-card-container div img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    margin-left: .8rem;
+}
+
+.patient-card-info-container {
+    display: flex;
+    flex-direction: row-reverse;
+    padding-bottom: .5rem;
+}
+
+.patient-card-name-container {
+    display: flex;
+    flex-direction: column;
+    padding-right: .5rem;
+}

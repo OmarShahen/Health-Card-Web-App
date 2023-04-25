@@ -1,0 +1,271 @@
+.table-functionality-feature {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.category-filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #FFF;
+    padding: 0rem 0rem;
+    border-radius: .25rem;
+    box-shadow: var(--box-shadow);
+}
+
+.table-functionality-feature div {
+    margin-right: 0rem;
+    display: flex;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.table-functionality-feature div span {
+    background-color: #F5F9FC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+    box-shadow: var(--box-shadow);
+    padding: 0 .4rem;
+}
+
+.category-search-container input, .table-functionality-feature div select {
+    background-color: #FFF;
+    padding: .2rem .8rem;
+    border-radius: .25rem;
+    box-shadow: var(--box-shadow);
+    border: none;
+    width: 17rem;
+    height: 2.3rem;
+    border-top-left-radius: 0rem;
+    border-bottom-left-radius: 0rem;
+}
+
+.category-filter-container div {
+    display: flex;
+    align-items: center;
+    padding: .5rem 1rem;
+    border-right: 1px solid var(--border-color);
+}
+
+.reload-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFF !important;
+    border-radius: .25rem;
+    box-shadow: var(--box-shadow);
+    height: 2rem;
+    padding: 0 .3rem;
+}
+
+.reload-icon-container:hover {
+    cursor: pointer;
+    color: var(--blue);
+}
+
+.category-filter-container div:last-child {
+    border-right: none;
+}
+
+.table-container {
+    background-color: #FFF;
+}
+
+.table-container h3 {
+    padding: 1rem;
+}
+
+.table-footer {
+    padding: .5rem 0;
+}
+
+.table-container table {
+    width: 100%;
+    text-align: left;
+}
+
+.drugs-table-container table {
+    width: 100%;
+}
+
+.table-container table tr td {
+    border-bottom: 1px solid var(--border-color);
+    color: #414552;
+}
+
+.table-container table tr th {
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 500;
+    color: #1A1B25;
+}
+
+th, td {
+    padding: 8px 0 !important;
+}
+
+.image-and-name-container {
+    display: flex;
+    align-items: center;
+}
+
+.image-and-name-container span {
+    display: block;
+}
+
+.image-and-name-container img {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    margin-right: .7rem;
+}
+
+.status-container {
+    display: block;
+}
+
+.table-icon-container {
+    width: 2rem;
+    height: 2rem;
+}
+
+.view-btn {
+    padding: .4rem 1rem;
+    border: none;
+    background-color: var(--blue);
+    color: #FFF;
+    border-radius: .25rem;
+}
+
+.view-btn:hover {
+    cursor: pointer;
+}
+
+.actions-container {
+    position: relative;
+    display: block;
+}
+
+.actions-container svg {
+    color: #414552;
+}
+
+.actions-dropdown-container {
+    position: absolute;
+    display: none;
+    z-index: 1;
+    background-color: #FFF;
+    border-radius: .25rem;
+    box-shadow: var(--box-shadow);
+}
+
+.actions-dropdown-container ul li {
+    list-style-type: none;
+    padding: .5rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.actions-dropdown-container ul .width {
+    width: 7rem;
+}
+
+.actions-dropdown-container ul li:hover {
+    background-color: var(--light-grey);
+    cursor: pointer;
+}
+
+
+.actions-container:hover .actions-dropdown-container {
+    display: block;
+}
+
+.table-columns-filters-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: .5rem;
+}
+
+.table-columns-filters-container span {
+    color: #5c60f5;
+    font-size: .9rem;
+    font-weight: 500;
+}
+
+.table-columns-filters-container div {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.table-columns-filters-container div span {
+    margin-right: 1rem;
+    border: 1px dashed #c0c8d2;
+    font-size: 12px;
+    border-radius: 1rem;
+    padding: .1rem .6rem;
+    color: #687385;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.table-columns-filters-container div span:hover {
+    cursor: pointer;
+    opacity: .8;
+}
+
+.table-columns-filters-container div span svg {
+    margin-right: .3rem;
+    font-size: 1rem;
+}
+
+.table-columns-categories-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto;
+    gap: 1rem;
+    padding-bottom: 1rem;
+}
+
+.table-columns-categories-container div {
+    border: 1px solid #c0c8d2;
+    padding: 11px;
+    border-radius: 8px;
+    color: #414552;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.table-columns-categories-container div span {
+    font-size: .8rem;
+}
+
+.table-columns-categories-container div:hover {
+    cursor: pointer;
+    border: 2px solid #5c60f5;
+    color: #5c60f5;
+}
+
+.table-view-button {
+    color: #5c60f5;
+    font-weight: 500;
+}
+
+.table-view-button:hover {
+    cursor: pointer;
+    opacity: .8;
+}
+
+.table-appointment-status {
+    display: flex;
+    align-items: center;
+}
+
+.table-appointment-status svg {
+    font-size: .7rem;
+    margin-right: .5rem;
+}

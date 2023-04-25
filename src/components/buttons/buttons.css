@@ -1,0 +1,30 @@
+.floating-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFF;
+    background-color: var(--blue);
+    position: fixed;
+    bottom: 5rem;
+    right: 2rem;
+    padding: 1rem;
+    border-radius: 50%;
+}
+
+.floating-button-container:hover, .floating-scan-button-container:hover {
+    cursor: pointer;
+}
+
+.floating-scan-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFF;
+    background-color: var(--blue);
+    position: fixed;
+    bottom: 5rem;
+    right: 1rem;
+    padding: 1rem;
+    border-radius: 50%;
+
+}

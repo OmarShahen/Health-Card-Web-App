@@ -1,0 +1,63 @@
+.navigation-bar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .5rem 7rem;
+    background-color: rgba(246, 248, 250);
+    box-shadow: var(--box-shadow);
+}
+
+.navigation-bar-search-container {
+    position: relative;
+}
+
+.navigation-bar-search-container i {
+    position: absolute;
+}
+
+.navigation-bar-search-container input {
+    border-radius: 1rem;
+    border: none;
+    width: 25rem;
+    padding: .3rem .5rem;
+    box-shadow: var(--box-shadow);
+}
+
+.navigation-bar-options-container .create-btn {
+    background-color: transparent;
+    border: 1px solid #5c60f5;
+    color: #5c60f5;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 5rem;
+}
+
+.navigation-bar-options-container .create-btn:hover {
+    background-color: #5c60f5;
+    color: #FFF;
+    cursor: pointer;
+}
+
+.navigation-bar-options-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navigation-bar-options-container div {
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    font-size: .9rem;
+}
+
+.navigation-bar-options-container div svg {
+    color: var(--dark-grey);
+    font-size: 1.3rem;
+}
+
+.navigation-bar-options-container div svg:hover {
+    cursor: pointer;
+}

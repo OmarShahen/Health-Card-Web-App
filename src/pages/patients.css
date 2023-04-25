@@ -1,0 +1,67 @@
+
+.tags-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around !important;
+    flex-wrap: wrap;
+    padding: 1.5rem 0 1rem 0;
+}
+
+.tags-container span span {
+    padding-left: .2rem;
+}
+
+.info-list-icon-container {
+    padding: .3rem;
+    margin-left: .5rem;
+    background-color: #F3F4F0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-list-info {
+    padding: .3rem 3rem;
+}
+
+.patient-profile-emergency-container, .patient-profile-diseases-container {
+    background-color: #FFF;
+    padding: .5rem;
+    text-align: right;
+    /*box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.1);*/
+    margin: 1rem 0;
+}
+
+.patient-profile-emergency-header, .patient-profile-diseases-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: .5rem ;
+}
+
+.emergency-phone {
+    font-weight: bold;
+    color: #2193B0;
+}
+
+.emergency-contact ul {
+    padding-right: .5rem;
+}
+
+.diseases-container p {
+    display: block !important;   
+}
+
+.patient-profile-diseases-list p {
+    padding-right: .4rem;
+}
+
+.patient-form-container {
+    background-color: #FFF;
+    min-height: 100vh;
+}
+
+.patients-list-container {
+    padding: 1rem;
+}
