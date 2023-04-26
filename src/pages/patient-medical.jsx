@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import './patient-medical.css'
 import { useNavigate } from "react-router-dom"
-import EncounterCard from "../components/cards/encounter"
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
 import { serverRequest } from '../components/API/request'
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined'
@@ -20,6 +19,13 @@ import EncountersTable from '../components/tables/encounters'
 import PatientProfile from '../components/sections/profile'
 import PatientProfileSection from '../components/sections/patient-profile'
 import EmergencyContactsTable from '../components/tables/emergency-contacts'
+import Card from '../components/cards/card'
+import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined'
+import VaccinesOutlinedIcon from '@mui/icons-material/VaccinesOutlined'
+import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined'
+import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined'
+import TaskOutlinedIcon from '@mui/icons-material/TaskOutlined'
+
 
 const PatientMedicalPage = () => {
 
@@ -167,12 +173,91 @@ const PatientMedicalPage = () => {
             </div>
             <br />
             <div>
-                { tab === 'PRESCRIPTIONS' ? <PrescriptionsTable prescriptions={prescriptions} /> : null }
-                { tab === 'DRUGS' ? <DrugsTable drugs={drugs} isShowFilters={true} /> : null }
-                { tab === 'DOCTORS' ? <DoctorsTable doctors={doctors} /> : null }
-                { tab === 'SYMPTOMS' ? <SymptomsTable symptoms={symptoms} /> : null }
-                { tab === 'DIAGNOSIS' ? <DiagnosisTable diagnosis={diagnosis} /> : null }
-                { tab === 'ENCOUNTERS' ? <EncountersTable encounters={encounters} /> : null }
+                { 
+                tab === 'PRESCRIPTIONS' ? 
+                <div>
+                    <div className="cards-list-wrapper">
+                        <Card 
+                        cardHeader={"Prescriptions"} 
+                        number={prescriptions.length} 
+                        icon={<MedicationOutlinedIcon />}
+                        /> 
+                    </div>
+                    <PrescriptionsTable prescriptions={prescriptions} />
+                </div> 
+                : 
+                null 
+                }
+                { tab === 'DRUGS' ? 
+                <div>
+                    <div className="cards-list-wrapper">
+                        <Card 
+                        cardHeader={"Drugs"} 
+                        number={drugs.length} 
+                        icon={<VaccinesOutlinedIcon />}
+                        /> 
+                    </div>
+                    <DrugsTable drugs={drugs} isShowFilters={true} /> 
+                </div>
+                : 
+                null 
+                }
+                { tab === 'DOCTORS' ? 
+                <div>
+                    <div className="cards-list-wrapper">
+                        <Card 
+                        cardHeader={"Doctors"} 
+                        number={doctors.length} 
+                        icon={<MedicalInformationOutlinedIcon />}
+                        /> 
+                    </div>
+                    <DoctorsTable doctors={doctors} />
+                </div>
+                 : 
+                 null 
+                 }
+                { tab === 'SYMPTOMS' ? 
+                <div>
+                    <div className="cards-list-wrapper">
+                        <Card
+                        cardHeader={"Symptoms"} 
+                        number={symptoms.length} 
+                        icon={<CoronavirusOutlinedIcon />}
+                        /> 
+                    </div>
+                    <SymptomsTable symptoms={symptoms} /> 
+                </div>
+                : 
+                null 
+                }
+                { tab === 'DIAGNOSIS' ? 
+                <div>
+                    <div className="cards-list-wrapper">
+                        <Card
+                        cardHeader={"Diagnosis"} 
+                        number={diagnosis.length} 
+                        icon={<TaskOutlinedIcon />}
+                        /> 
+                    </div>
+                    <DiagnosisTable diagnosis={diagnosis} /> 
+                </div>
+                : 
+                null 
+                }
+                { tab === 'ENCOUNTERS' ?
+                <div>
+                    <div className="cards-list-wrapper">
+                        <Card 
+                        cardHeader={"Encounters"} 
+                        number={encounters.length} 
+                        icon={<AssignmentOutlinedIcon />}
+                        /> 
+                    </div>
+                    <EncountersTable encounters={encounters} />
+                </div>
+                 : 
+                 null 
+                 }
                 { tab === 'PROFILE' ? <PatientProfileSection patient={patient}/> : null }
                 { tab === 'EMERGENCY-CONTACT' ? <EmergencyContactsTable contacts={emergencyContacts} /> : null }
             </div>

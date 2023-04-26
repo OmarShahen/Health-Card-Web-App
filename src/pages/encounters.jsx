@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import './prescriptions.css'
 import { useNavigate } from "react-router-dom"
-import DoctorsBottomBar from "../components/navigation/doctors-bottom-bar"
 import { serverRequest } from "../components/API/request"
 import { useSelector } from 'react-redux'
 import EncountersTable from '../components/tables/encounters'
+import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined'
+import Card from '../components/cards/card'
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
 
 
 const EncountersPage = () => {
@@ -37,6 +39,17 @@ const EncountersPage = () => {
                         Encounters
                     </h1>
                 </div>
+                <div 
+                className="btns-container subheader-text">
+                    <button><AddOutlinedIcon /><strong>Add Encounter</strong></button>
+                </div>
+            </div>
+            <div className="cards-list-wrapper">
+                <Card 
+                cardHeader={"Encounters"} 
+                number={encounters.length} 
+                icon={<FeedOutlinedIcon />}
+                />
             </div>
             <EncountersTable 
             encounters={encounters}

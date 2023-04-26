@@ -1,19 +1,12 @@
 import { useState, useEffect } from 'react'
 import './prescriptions.css'
-import { useNavigate } from "react-router-dom"
-import { useSelector } from 'react-redux'
 import PageHeader from '../components/sections/page-header'
 import Card from '../components/cards/card'
-import PrescriptionCard from '../components/cards/patient-prescriptions';
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined'
-import { AssignmentOutlined } from '@mui/icons-material'
-import CachedOutlinedIcon from '@mui/icons-material/CachedOutlined'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
-import ClassOutlinedIcon from '@mui/icons-material/ClassOutlined'
 import { serverRequest } from '../components/API/request'
 import toast from 'react-hot-toast'
 import PrescriptionsTable from '../components/tables/prescriptions'
+
 
 const PrescriptionsPage = () => {
 
@@ -68,6 +61,13 @@ const PrescriptionsPage = () => {
                
         <div className="padded-container">
             <PageHeader pageName="Prescriptions" addBtnText={"Add Prescription"} /> 
+            <div className="cards-list-wrapper">
+                <Card 
+                cardHeader={"Prescriptions"} 
+                number={prescriptions.length} 
+                icon={<MedicationOutlinedIcon />}
+                />
+            </div>
             <PrescriptionsTable 
             prescriptions={prescriptions} 
             reload={reload} 

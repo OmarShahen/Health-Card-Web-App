@@ -20,15 +20,19 @@ import NavigationBar from './components/navigation/navigation-bar'
 import NavigationTabs from './components/navigation/navigation-tabs'
 import SideBar from './components/navigation/side-bar'
 import { BrowserRouter as Router, Routes, Route  } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+
 
 function App() {
+
+  const user = useSelector(state => state.user.user)
 
   return (
     <div className="App">
       <Router>
         <Toaster />
-        {/*<NavigationBar />
-        <NavigationTabs />*/}
+        { user.isLogged ? <NavigationBar /> : null }
+        { user.isLogged ? <NavigationTabs /> : null }
         <Routes>
           {/*<Route path="/patients" element={<PatientsFormPage />} />*/}
           <Route path="/encounters" element={<EncountersPage />} />

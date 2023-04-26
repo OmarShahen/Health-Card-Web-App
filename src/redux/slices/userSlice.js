@@ -11,7 +11,7 @@ const initialState = {
         role: user ? user.role : '',
         isLogged: user ? true : false
     }*/
-    user: userSession ? JSON.parse(userSession) : { isLogged: false },
+    user: userSession ? JSON.parse(userSession) : { isLogged: true },
 }
 
 export const userSlice = createSlice({

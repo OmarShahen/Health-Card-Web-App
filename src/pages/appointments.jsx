@@ -17,7 +17,10 @@ import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlin
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import UpcomingOutlinedIcon from '@mui/icons-material/UpcomingOutlined'
-import AppointmentFormModal from '../components/modals/appointment-form';
+import AppointmentFormModal from '../components/modals/appointment-form'
+import TimerOffOutlinedIcon from '@mui/icons-material/TimerOffOutlined'
+import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined'
+
 
 const AppointmentsPage = () => {
 
@@ -58,13 +61,13 @@ const AppointmentsPage = () => {
             <PageHeader 
             pageName="Appointments" 
             setShowModalForm={setShowModalForm} 
-            addBtnText={'Create Appointment'} 
+            addBtnText={'Add Appointment'} 
             /> 
-            {/*<div className="cards-list-wrapper">
+            <div className="cards-list-wrapper">
                 <Card 
-                icon={<HourglassEmptyOutlinedIcon />}
-                cardHeader={'Waiting'}
-                number={appointments.filter(appointment => appointment.status === 'WAITING').length}
+                icon={<CalendarMonthOutlinedIcon />}
+                cardHeader={'All'}
+                number={appointments.length}
                 iconColor={'#5C60F5'}
                 />
                 <Card 
@@ -72,6 +75,18 @@ const AppointmentsPage = () => {
                 cardHeader={'Upcoming'}
                 number={appointments.filter(appointment => appointment.status === 'UPCOMING').length}
                 iconColor={'#FF8C00'}
+                />
+                <Card 
+                icon={<HourglassEmptyOutlinedIcon />}
+                cardHeader={'Waiting'}
+                number={appointments.filter(appointment => appointment.status === 'WAITING').length}
+                iconColor={'#5C60F5'}
+                />
+                <Card 
+                icon={<MeetingRoomOutlinedIcon />}
+                cardHeader={'Active'}
+                number={appointments.filter(appointment => appointment.status === 'ACTIVE').length}
+                iconColor={'#5C60F5'}
                 />
                 <Card 
                 icon={<CheckCircleOutlineOutlinedIcon />}
@@ -85,7 +100,13 @@ const AppointmentsPage = () => {
                 number={appointments.filter(appointment => appointment.status === 'CANCELLED').length}
                 iconColor={'#FF579A'}
                 />
-</div>*/}
+                <Card 
+                icon={<TimerOffOutlinedIcon />}
+                cardHeader={'Expired'}
+                number={appointments.filter(appointment => appointment.status === 'EXPIRED').length}
+                iconColor={'#FF8C00'}
+                />
+            </div>
             <AppointmentsTable 
             appointments={appointments} 
             setAppointments={setAppointments}

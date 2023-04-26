@@ -104,16 +104,27 @@ a {
   display: block;
 }
 
-.form-input, select {
+.form-input {
   background-color: #F3F4F0;
   box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.1);
   border-radius: .25rem;
   outline: none;
   border: none;
-  min-width: 98%;
+  width: 98%;
   padding-left: 2% !important;
-  padding: .5rem 0rem;
+  padding: .4rem 0rem;
   font-size: 1rem;
+}
+
+select {
+  background-color: #F3F4F0;
+  box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.1);
+  border-radius: .25rem;
+  outline: none;
+  border: none;
+  min-width: 100%;
+  padding: .4rem 0rem;
+  font-size: 1rem; 
 }
 
 
@@ -133,11 +144,16 @@ a {
 }
 
 .form-input::placeholder {
-  padding-right: .5rem;
 }
 
 .center {
   text-align: center;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .left {
@@ -370,7 +386,6 @@ button:hover {
   background-color: #FFF;
 }
 
-
 .black {
   color: #000;
 }
@@ -522,7 +537,6 @@ button:hover {
   align-items: flex-start !important;
 }
 
-
 .nested-list p {
   display: flex;
   flex-direction: row;
@@ -598,7 +612,6 @@ button:hover {
   border-bottom: 1px solid var(--border-color);
 }
 
-
 .patients-list-wrapper {
   background-color: #FFF;
   margin: 1rem;
@@ -654,8 +667,7 @@ button:hover {
 .cards-2-list-wrapper {
   display: grid;
   grid-template-columns: 50% 50%;
-  gap: 1rem;
-  padding: 0 0 0rem 0;
+  padding: 0 0 0 0;
 }
 
 .large-cards-container {

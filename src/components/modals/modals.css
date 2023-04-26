@@ -28,16 +28,17 @@
     border-bottom: 2px solid var(--border-color);
 }
 
-.modal-body-container {
+.modal-body-container-temp {
     overflow-y: scroll;
     max-height: 25rem;
-
+    padding: 0rem 0rem !important;
 }
 
 .modal-form-container {
     display: grid;
     grid-template-columns: 50% 50%;
-    overflow-y: auto;
+    overflow-y: scroll;
+    column-gap: .5rem;
 }
 
 .modal-form-container div {
@@ -45,9 +46,9 @@
 }
 
 .modal-form-container div input {
-    display: block;
+    /*display: block;
     width: 90%;
-    margin-top: 0rem;
+    margin-top: 0rem;*/
 }
 
 .modal-form-container div select {

@@ -138,7 +138,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                                 color="dodgerblue"
                                 />
                                 :
-                                <button className="normal-button white-text blue-bg">Add Appointment </button>
+                                <button className="normal-button white-text purple-bg">Add Appointment </button>
                             } 
                         </div>
                         <div>

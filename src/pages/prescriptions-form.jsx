@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import './prescriptions.css'
-import './encounters-form.css'
 import PageHeader from "../components/sections/page-header";
 import { useSelector } from 'react-redux';
 import { serverRequest } from '../components/API/request';

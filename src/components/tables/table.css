@@ -177,9 +177,10 @@ th, td {
     cursor: pointer;
 }
 
-
 .actions-container:hover .actions-dropdown-container {
     display: block;
+    cursor: pointer;
+    opacity: .8;
 }
 
 .table-columns-filters-container {

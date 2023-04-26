@@ -4,14 +4,12 @@ const Card = ({ cardHeader, icon, iconColor, number }) => {
 
     return <div className="card-container body-text">
         <div className="card-header-container">
-            <div>
-                <strong>
-                    {cardHeader}
-                </strong>
-            </div>
-            <div className="stat-card-icon-container" style={{ backgroundColor: iconColor }}>
+            <span>
+                {cardHeader}
+            </span>
+            <span>
                 {icon}
-            </div>
+            </span>
         </div>
         <div className="card-number-container">
             {number}

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './modals.css'
 import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
+import { getBirthYearByAge } from '../../utils/age-calculator'
 
 const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
 
@@ -10,6 +11,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
     const [countryCode, setCountryCode] = useState(20)
     const [phone, setPhone] = useState()
     const [gender, setGender] = useState("MALE")
+    const [age, setAge] = useState()
     const [cardId, setCardId] = useState()
 
     const [firstNameError, setFirstNameError] = useState()
@@ -17,6 +19,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
     const [countryCodeError, setCountryCodeError] = useState()
     const [phoneError, setPhoneError] = useState()
     const [genderError, setGenderError] = useState()
+    const [ageError, setAgeError] = useState()
     const [cardIdError, setCardIdError] = useState()
 
     const handleSubmit = (e) => {
@@ -33,7 +36,6 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
         if(!gender) return setGenderError('Gender is required')
 
         if(!cardId) return setCardIdError('Card Id is required')
-        
 
         const patient = {
             doctorId: '63efbbe147537b9ccb47e9d6',
@@ -43,6 +45,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
             countryCode: Number.parseInt(countryCode),
             phone: Number.parseInt(phone),
             gender,
+            dateOfBirth: String(getBirthYearByAge(age))
         }
 
         serverRequest.post(`/v1/patients`, patient)
@@ -56,7 +59,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
         .catch(error => {
             console.error(error)
             toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })        
+        })
 
     }
 
@@ -67,6 +70,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
         setCountryCode(20)
         setPhone(0)
         setGender("MALE")
+        setAge(0)
         setCardId('')
 
         setFirstNameError()
@@ -74,6 +78,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
         setCountryCodeError()
         setPhoneError()
         setGenderError()
+        setAgeError()
         setCardIdError()
     }
 
@@ -83,9 +88,9 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                 <h2>Add Patient</h2>
             </div>
             <div className="modal-body-container">
-                <form className="modal-form-container body-text" onSubmit={handleSubmit}>
+                <form id="patient-form" className="modal-form-container body-text" onSubmit={handleSubmit}>
                     <div>
-                        <label>First Name</label>
+                        <label>First Name*</label>
                         <input 
                         type="text" 
                         className="form-input" 
@@ -97,7 +102,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         <span className="red">{firstNameError}</span>
                     </div>
                     <div>
-                        <label>Last Name</label>
+                        <label>Last Name*</label>
                         <input 
                         type="text" 
                         className="form-input" 
@@ -109,7 +114,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         <span className="red">{lastNameError}</span>
                     </div>
                     <div>
-                        <label>Country Code</label>
+                        <label>Country Code*</label>
                         <input 
                         type="number"
                         min="0"
@@ -122,7 +127,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         <span className="red">{countryCodeError}</span>
                     </div>
                     <div>
-                        <label>Phone</label>
+                        <label>Phone*</label>
                         <input 
                         type="tel"
                         className="form-input" 
@@ -134,7 +139,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         <span className="red">{phoneError}</span>
                     </div>
                     <div>
-                        <label>Gender</label>
+                        <label>Gender*</label>
                         <select 
                         name="gender" 
                         id="gender"
@@ -146,7 +151,20 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         <span className="red">{genderError}</span>
                     </div>
                     <div>
-                        <label>Card ID</label>
+                        <label>Age</label>
+                        <input 
+                        type="number"
+                        min="1"
+                        className="form-input" 
+                        placeholder=""
+                        value={age} 
+                        onChange={e => setAge(e.target.value)}
+                        onClick={e => setAgeError()}
+                        />
+                        <span className="red">{ageError}</span>
+                    </div>
+                    <div>
+                        <label>Card ID*</label>
                         <input 
                         type="text"
                         className="form-input" 
@@ -157,21 +175,24 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         />
                         <span className="red">{cardIdError}</span>
                     </div>
-                    <div className="modal-form-btn-container">
-                        <div>
-                            <button className="normal-button white-text purple-bg">Add Patient</button>
-                        </div>
-                        <div>
-                            <button 
-                            className="normal-button cancel-button"
-                            onClick={e => {
-                                e.preventDefault()
-                                setShowModalForm(false)
-                            }}
-                            >Close</button>
-                        </div>
-                    </div>
+                    <div></div>
                 </form>
+            </div>
+            <div className="modal-form-btn-container">
+                <div>
+                    <button 
+                    form="patient-form"
+                    className="normal-button white-text purple-bg"
+                    >Add Patient</button>
+                </div>
+                <div>
+                    <button 
+                    className="normal-button cancel-button"
+                    onClick={e => {
+                        setShowModalForm(false)
+                    }}
+                    >Close</button>
+                </div>
             </div>
         </div>
     </div>
