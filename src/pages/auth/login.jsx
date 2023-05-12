@@ -31,6 +31,7 @@ const LoginPage = () => {
         .then(response => {
             setIsSubmit(false)
             const data = response.data
+            sessionStorage.setItem('user', JSON.stringify({ ...data.user, isLogged: true }))
             dispatch(setUser({ ...data.user, isLogged: true }))
             navigate('/patients')
         })
@@ -71,7 +72,7 @@ const LoginPage = () => {
                     <div className="form-input-container">
                         <div className="password-and-forgot-password-container">
                             <label>Password</label>
-                            <span className="purple">Forgot your password?</span>
+                            <span className="action-color-text">Forgot your password?</span>
                         </div>
                         <input 
                         type="password" 
@@ -85,10 +86,10 @@ const LoginPage = () => {
                         {
                             isSubmit ?
                             <div className="flex-center">
-                                <TailSpin width="40" height="40" color="#5c60f5" />
+                                <TailSpin width="40" height="40" color="#4c83ee" />
                             </div>
                             :
-                            <input type="submit" className="purple-bg white-text" value="Continue" />
+                            <input type="submit" className="action-color-bg white-text" value="Continue" />
                         }
                     </div>
                 </div>

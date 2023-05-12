@@ -1,56 +1,55 @@
-import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined'
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
-import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import { format } from 'date-fns'
+import { getTime } from '../../utils/time'
 
-const shortName = (name) => {
 
-    let newName = ''
+const AppointmentCard = ({ appointment }) => {
 
-    for(let i=0;i<name.length;i++) {
-        if(i > 30) {
-            return newName + '...'
+    const renderAppointmentStatus = (status) => {
+
+        if(status === 'DONE') {
+            return <span className="tag-green-text">{status}</span>
+        } else if(status === 'CANCELLED') {
+            return <span className="tag-red-text">{status}</span>         
+        } else if(status === 'UPCOMING') {
+            return <span className="tag-purple-text">{status}</span>      
+        } else if(status === 'WAITING') {
+            return <span className="tag-orange-text">{status}</span>      
+        } else if(status === 'ACTIVE') {
+            return <span className="tag-light-blue-text">{status}</span>    
+        } else {
+            return <span className="tag-grey-text">{status}</span>
         }
-        newName += name[i]
     }
 
-    return newName
-}
-
-
-const AppointmentCard = () => {
-
-    return <div className="appointment-card-container body-text">
-        <div className="appointment-card-header">
-            <div>
-                <span className="grey-text body-text">تاريخ الحجز</span>
-                <div className="date-container">
-                    <AccessTimeOutlinedIcon />
-                    <div className="body-text">
-                        <span>12 Feb 2023</span>
-                        <span className="grey-text"><FiberManualRecordIcon /></span>
-                        <span>80:00 AM</span>
-                    </div>
+    return <div className="patient-card-container">
+        <div className="patient-card-header">
+            <div className="patient-image-info-container">
+                <img src={`https://avatars.dicebear.com/api/initials/${'Omar Reda'}.svg`} alt="patient-image" />
+                <div>
+                    <strong>{appointment.patientName}</strong>
+                    <span className="grey-text">{`+${appointment.patientCountryCode}${appointment.patientPhone}`}</span>
                 </div>
             </div>
-            <div className="grey-text">
-                <MoreVertOutlinedIcon />
+            <div>
+                <MoreHorizIcon />
             </div>
         </div>
-        <div className="appointment-card-body body-text">
-            <div className="person-info-container">
-                <div>
-                    <img src={`https://avatars.dicebear.com/api/initials/${'Omar Reda'}.svg`} />
-                </div>
-                <div>
-                    <strong>عمر رضا السيد</strong>
-                    <span className="grey-text">+201065630331</span>
-                </div>
-            </div>
-            <div>
-                <span className="status-btn pending">Waiting</span>
-            </div>
+        <div className="patient-card-body">
+            <ul>
+                <li>
+                    <strong>Date</strong>
+                    <span>{format(new Date(appointment.reservationTime), 'dd MMM yyyy')}</span>
+                </li>
+                <li>
+                    <strong>Time</strong>
+                    <span>{getTime(new Date(appointment.reservationTime))}</span>
+                </li>
+                <li>
+                    <strong>Status</strong>
+                    <span className="patient-card-status">{renderAppointmentStatus(appointment.status)}</span>
+                </li>
+            </ul>
         </div>
     </div>
 }

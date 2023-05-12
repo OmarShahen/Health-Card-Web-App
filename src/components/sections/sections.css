@@ -1,8 +1,12 @@
+.page-header-wrapper {
+    padding: 1rem 0 1rem 0;
+}
+
 .page-header-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0rem 0 0 0;
+    padding: 0 0 0 0;
 }
 
 .page-header-container div svg {
@@ -11,23 +15,38 @@
 
 .page-header-container div h1 {
     color: #303130;
-    margin: 1rem 0;
+    margin: 0 !important;
 }
 
 .page-header-container .btns-container  button {
     display: flex;
     align-items: center;
     border-radius: .3rem;
-    background-color: #5c60f5;
+    background-color: #4c83ee;
     color: #FFF;
     border: none;
-    font-weight: 500;
     font-size: .9rem;
     padding: .4rem .7rem;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
-.page-header-container .btns-container button svg {
+.action-button {
+    display: flex;
+    align-items: center;
+    border-radius: .3rem;
+    background-color: #4c83ee;
+    color: #FFF;
+    border: none;
+    font-size: .9rem;
+    padding: .4rem .7rem;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.page-header-container .btns-container button span, .action-button span {
+    font-weight: 700;
+}
+
+.page-header-container .btns-container button svg, .action-button svg {
     margin-right: .5rem;
     font-size: 1.2rem;
 }
@@ -38,5 +57,63 @@
     justify-content: space-between;
 }
 
-.profile-demographic-section ul li strong {
+.back-navigation-container {
+    padding: .5rem 0 0rem 1rem;
 }
+
+.header-mobile-icons-container {
+    display: flex;
+    align-items: center;
+    display: none;
+}
+
+.header-mobile-icons-container div {
+    margin-left: .7rem;
+    padding: .4rem;
+    border-radius: 50%;
+    background: var(--light-grey);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4c83ee;
+}
+
+.header-mobile-icons-container div svg {
+    font-size: 1.7rem;
+}
+
+.back-button-container {
+    display: flex;
+    align-items: center;
+    color: #4c83ee;
+}
+
+.back-button-container span:hover {
+    cursor: pointer;
+    opacity: .8;
+    text-decoration: underline;
+}
+
+.back-button-container span {
+    font-size: .9rem;
+}
+
+.back-button-container svg {
+    margin-right: .2rem;
+    font-size: .9rem;
+}
+
+@media only screen and (max-width: 600px) {
+    .btns-container {
+        display: none !important;
+    }
+
+    .header-mobile-icons-container {
+        display: block;
+    }
+
+    .page-header-container div h1 {
+        font-size: 1.6rem;
+    }
+    
+  }

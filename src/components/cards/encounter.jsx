@@ -1,61 +1,96 @@
 import './cards.css'
-import { format } from 'date-fns'
-import translations from '../../i18n'
-import { NoteAlt } from '@mui/icons-material'
-import EmojiObjectsOutlinedIcon from '@mui/icons-material/EmojiObjectsOutlined'
-import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined'
 import { toast } from 'react-hot-toast'
-
-const EncounterCard = ({ encounter, entity, deleteEncounter }) => {
-
-    const entityName = entity !== 'DOCTOR' ?
-     `${encounter.patient.firstName} ${encounter.patient.lastName}`
-     :
-     `${encounter.doctor.firstName} ${encounter.doctor.lastName}`
-
-     const entityPhone = entity !== 'DOCTOR' ? 
-     `${encounter.patient.countryCode}${encounter.patient.phone}`
-     :
-     `${encounter.doctor.countryCode}${encounter.doctor.phone}`
+import CardDate from './components/date'
+import { useNavigate } from 'react-router-dom'
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
+import HotelOutlinedIcon from '@mui/icons-material/HotelOutlined'
+import CardActions from './components/actions'
+import { serverRequest } from '../API/request'
 
 
+const EncounterCard = ({ encounter, setReload, reload }) => {
 
-    const formatDrugInstructions = (instructions) => {
-        let text = ``
-        for(let i=0;i<instructions.length;i++) {
-            text += ` ${translations['ar'][instructions[i]]} و`
-        }
+     const patientName = `${encounter.patient.firstName} ${encounter.patient.lastName}`
+     const doctorName = `${encounter.doctor.firstName} ${encounter.doctor.lastName}`
+     const patientCardId = encounter.patient.cardId
 
-        return text
+     const navigate = useNavigate()
+
+     const deleteEncounter = (encounterId) => {
+        serverRequest.delete(`/v1/encounters/${encounterId}`)
+        .then(response => {
+            const data = response.data
+            setReload(reload+1)
+            toast.success(data.message, { position: 'top-right', duration: 3000 })
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+        })
     }
 
-    return <div className="card-container body-text">
-        <div className="card-header">
+     const cardActionsList = [
+        {
+            name: 'Delete Encounter',
+            icon: <DeleteOutlineOutlinedIcon />,
+            onAction: (e) => {
+                e.stopPropagation()
+                deleteEncounter(encounter._id)
+            }
+        },
+        {
+            name: 'Update Encounter',
+            icon: <CreateOutlinedIcon />,
+            onAction: (e) => {
+                e.stopPropagation()
+                navigate(`/encounters/${encounter._id}/update`)
+            }
+        },
+        {
+            name: 'View Patient',
+            icon: <HotelOutlinedIcon />,
+            onAction: (e) => {
+                e.stopPropagation()
+                navigate(`/patients/${encounter.patient._id}/medical-profile`)
+            }
+        },
+     ]
+
+
+    return <div onClick={e => navigate(`/encounters/${encounter._id}/view`)} className="card-container body-text">
+        <div className="card-header-container">
             <div className="card-header-person-info">
                 <div>
-                    <img src={`https://avatars.dicebear.com/api/initials/${entityName}.svg`} />
+                    <img src={`https://avatars.dicebear.com/api/initials/${doctorName}.svg`} />
                 </div>
-                <div>
-                    <strong>{entityName}</strong>
-                    <span className="grey-text">{format(new Date(encounter.createdAt), 'dd MMM yyyy')}</span>
-                </div>
-            </div>
-            <div className="small-description-text actions-container">
-                <MoreVertOutlinedIcon />
-                <div className="actions-dropdown-container">
-                    <ul>
-                        <li className="width" onClick={e => deleteEncounter(encounter._id)}>Delete Encounter</li>
-                        <li className="width">Update Encounter</li>
-                        <li className="width">View Patient Profile</li>
-                    </ul>
+                <div className="card-image-description-container">
+                    <strong>{doctorName}</strong>
+                    <span className="grey-text span-text">{encounter.doctor.speciality[0]}</span>
                 </div>
             </div>
+            <CardActions actions={cardActionsList} />
         </div>
         <div className="card-body">
+            <div className="card-contact-section-container">
+                <div>
+                    <strong>Patient</strong><br />
+                    <span className="grey-text">{patientName} { patientCardId ? `- ${patientCardId}` : null }</span>
+                </div>
+            </div>
             <ul>
                 <li>
-                    <div>
-                        
+                    <div className="card-list-header body-text">
+                        <strong>Symptoms</strong>
+                    </div>
+                    <div className="codes-container">
+                        { encounter.symptoms.map(symptom => <span className="status-btn grey-bg">
+                            {symptom}                  
+                        </span>) }
+                    </div>
+                </li>
+                <li>
+                    <div className="card-list-header body-text">                     
                         <strong>Diagnosis</strong>
                     </div>
                     <div className="codes-container">
@@ -64,28 +99,24 @@ const EncounterCard = ({ encounter, entity, deleteEncounter }) => {
                         </span>) }
                     </div>
                 </li>
-                <li>
-                    <div>
-                        <strong>Symptoms</strong>
-                    </div>
-                    <div className="codes-container">
-                        { encounter.symptoms.map(symptom => <span className="status-btn pending">
-                            {symptom}                  
-                        </span>) }
-                    </div>
-                </li>
-                <li>
-                    <div>
-                        <strong>Notes</strong>
-                    </div>
-                    <div className="codes-container">
-                        { encounter.notes.map(note => <span className="status-btn pending">
-                            {note}                        
-                        </span>) }
-                    </div>
-                </li>                    
+                {
+                    encounter?.notes.length !== 0 ?
+                    <li>
+                        <div className="card-list-header body-text">
+                            <strong>Notes</strong>
+                        </div>
+                        <div className="codes-container">
+                            { encounter.notes.map(note => <span className="status-btn grey-bg">
+                                {note}                        
+                            </span>) }
+                        </div>
+                    </li>
+                    :
+                    null
+                }
             </ul>
         </div>
+        <CardDate date={encounter.createdAt} />
     </div>
 }
 

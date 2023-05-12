@@ -1,78 +1,93 @@
 import { useState, useEffect } from 'react'
 import './prescriptions.css'
 import PageHeader from '../components/sections/page-header'
-import Card from '../components/cards/card'
-import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined'
 import { serverRequest } from '../components/API/request'
-import toast from 'react-hot-toast'
 import PrescriptionsTable from '../components/tables/prescriptions'
+import NavigationBar from '../components/navigation/navigation-bar'
+import CircularLoading from '../components/loadings/circular'
+import { useSelector } from 'react-redux'
+import FiltersSection from '../components/sections/filters/filters'
+import PrescriptionCard from '../components/cards/prescription'
+import EmptySection from '../components/sections/empty/empty'
+import SearchInput from '../components/inputs/search'
+import { searchPrescriptions } from '../utils/searches/search-prescriptions'
+import DocumentsSizes from '../components/sections/sizes/documents-size'
 
 
 const PrescriptionsPage = () => {
 
-    const [reload, setReload] = useState(0)
+    const [isLoading, setIsLoading] = useState(true)
+    const [reload, setReload] = useState(1)
     const [prescriptions, setPrescriptions] = useState([])
     const [searchedPrescriptions, setSearchedPrescriptions] = useState([])
 
+    const todayDate = new Date()
+    const weekDate = new Date()
+
+    todayDate.setDate(todayDate.getDate())
+    weekDate.setDate(weekDate.getDate() - 7)
+
+    const [statsQuery, setStatsQuery] = useState({ from: weekDate, to: todayDate })
+
+    const user = useSelector(state => state.user.user)
+
+    useEffect(() => scroll(0,0), [])
+
     useEffect(() => {
-        serverRequest.get(`/v1/prescriptions/doctors/63efbbe147537b9ccb47e9d6`)
+        setIsLoading(true)
+        serverRequest.get(`/v1/prescriptions/doctors/${user._id}`, { params: statsQuery })
         .then(response => {
+            setIsLoading(false)
             setPrescriptions(response.data.prescriptions)
             setSearchedPrescriptions(response.data.prescriptions)
         })
         .catch(error => {
+            setIsLoading(false)
             console.error(error)
         })
-    }, [reload])
+    }, [reload, statsQuery])
 
-    
-
-    const getTotalMedicines = (prescriptions) => {
-        let total = 0
-        for(let i=0;i<prescriptions.length;i++) {
-            total += prescriptions[i].medicines.length
-        }
-
-        return total
-    }
-
-    const searchPrescriptions = (prescription, target) => {
-
-        const name = `${prescription.patient.firstName} ${prescription.patient.lastName}`.toLowerCase()
-        const phone = `${prescription.patient.countryCode}${prescription.patient.phone}`
-
-        if(name.includes(target.toLowerCase())) {
-            return true
-        } else if(phone.includes(target.toLowerCase())) {
-            return true
-        }
-
-        for(let i=0;i<prescription.medicines.length;i++) {
-            let drug = prescription.medicines[i]
-            if(drug.name.toLowerCase().includes(target.toLowerCase())) {
-                return true
-            }
-        }
-
-        return false
-    }
 
     return <div className="page-container">
-               
+        <NavigationBar pageName={'Prescriptions'} />
         <div className="padded-container">
-            <PageHeader pageName="Prescriptions" addBtnText={"Add Prescription"} /> 
-            <div className="cards-list-wrapper">
-                <Card 
-                cardHeader={"Prescriptions"} 
-                number={prescriptions.length} 
-                icon={<MedicationOutlinedIcon />}
+            <PageHeader 
+            pageName="Prescriptions" 
+            addBtnText={"Add Prescription"}
+            formURL={"/prescriptions/form"}
+            reload={reload}
+            setReload={setReload}
+            />
+            <FiltersSection 
+            setStatsQuery={setStatsQuery} 
+            statsQuery={statsQuery}
+            defaultValue={'-7'}
+            />
+
+            <div className="search-input-container">
+                <SearchInput 
+                rows={prescriptions} 
+                setRows={setSearchedPrescriptions}
+                searchRows={searchPrescriptions}
                 />
             </div>
-            <PrescriptionsTable 
-            prescriptions={prescriptions} 
-            reload={reload} 
-            setReload={setReload} 
-            />
+            <DocumentsSizes size={searchedPrescriptions.length} />
+            {
+                isLoading ?
+                <CircularLoading />
+                :
+                searchedPrescriptions.length !== 0 ?
+                <div className="cards-grey-container cards-3-list-wrapper">
+                    {searchedPrescriptions.map(prescription =><PrescriptionCard 
+                    prescription={prescription} 
+                    setReload={setReload} 
+                    reload={reload} 
+                    />)}
+                </div>
+                    
+                :
+                <EmptySection url={'/prescriptions/form'} />
+            }
         </div>
         
     </div>

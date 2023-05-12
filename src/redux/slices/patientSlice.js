@@ -1,21 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
-    patientUUID: ''
+    patient: {}
 }
 
 export const patientSlice = createSlice({
     name: 'patient',
     initialState,
     reducers: {
-        setPatientUUID: (state, action) => {
-            state.patientUUID = action.payload.patientUUID
+        setPatient: (state, action) => {
+            state.patient = action.payload
         }
     }
 })
 
 const { actions, reducer } = patientSlice
 
-export const { setPatientUUID } = actions
+export const { setPatient } = actions
 
 export default reducer

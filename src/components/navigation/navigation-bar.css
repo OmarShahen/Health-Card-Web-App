@@ -2,9 +2,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: .5rem 7rem;
-    background-color: rgba(246, 248, 250);
-    box-shadow: var(--box-shadow);
+    padding: .5rem 1rem .5rem 1rem;
+    border-bottom: 1px solid #eee;    
 }
 
 .navigation-bar-search-container {
@@ -25,8 +24,8 @@
 
 .navigation-bar-options-container .create-btn {
     background-color: transparent;
-    border: 1px solid #5c60f5;
-    color: #5c60f5;
+    border: 1px solid #4c83ee;
+    color: #4c83ee;
     border-radius: 1rem;
     display: flex;
     align-items: center;
@@ -34,8 +33,33 @@
     width: 5rem;
 }
 
+.navigation-map-container {
+    display: flex;
+    align-items: center !important;
+}
+
+.navigation-map-container span {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.navigation-map-container span svg {
+    margin-right: .3rem;
+}
+
+.navigation-map-container span svg:hover {
+    cursor: pointer;
+    color: #4c83ee;
+}
+
+.navigation-map-container span {
+    font-weight: 700;
+    font-size: .8rem;
+}
+
 .navigation-bar-options-container .create-btn:hover {
-    background-color: #5c60f5;
+    background-color: #4c83ee;
     color: #FFF;
     cursor: pointer;
 }
@@ -48,8 +72,6 @@
 
 .navigation-bar-options-container div {
     margin-left: 1rem;
-    display: flex;
-    align-items: center;
     font-size: .9rem;
 }
 
@@ -60,4 +82,12 @@
 
 .navigation-bar-options-container div svg:hover {
     cursor: pointer;
+}
+
+.user-profile-container {
+    position: relative;
+}
+
+.quick-form-container {
+    position: relative;
 }

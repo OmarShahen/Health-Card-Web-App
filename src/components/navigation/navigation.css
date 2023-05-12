@@ -63,12 +63,6 @@
     font-size: 2rem;
 }
 
-
-
-.active {
-    color: #2193B0 !important;
-}
-
 .mobile-nav-menu {
     text-align: left;
     width: 100%;
@@ -118,42 +112,74 @@
     color: var(--dark-grey);
 }
 
-.side-bar-container {
+.mini-page-navigator-container {
+    padding-bottom: .5rem;
+  }
+  
+  .mini-page-navigator-container ul {
     display: flex;
-    text-align: left;
-    justify-content: center;
-    width: 15vw;
-    background-color: #FFF;
-    min-height: 100vh;
-    position: fixed;
-}
+    color: #687385;
+    padding: .5rem 0 !important;
+    border-bottom: 1px solid #D5DBE1;
+  }
 
-.side-bar-container div ul {
-    padding: 0;
-    padding-top: 1rem;
-}
-
-.side-bar-container div ul li {
+  .mini-page-navigator-container ul:hover {
+  }
+  
+  .mini-page-navigator-container ul li {
     list-style-type: none;
-    padding: 1rem 0;
-}
+  }
 
-.side-bar-container div ul li a {
-    display: flex;
-    align-items: center;
-    color: #68676C !important;
-    text-decoration: none;
-    transition: .2s;
-}
+  .mini-page-navigator-container ul li a {
+    margin-right: 1.7rem;
+    padding: .5rem 0;
+    color: #687385;
+    font-weight: 500;
+  }
 
-.side-bar-container div ul li a:hover {
-    color: var(--blue) !important;
-}
+  .mini-page-navigator-container ul li .active {
+    color: #2a7ade;
+    cursor: pointer;
+    border-bottom: 2px solid #2a7ade;
+  }
+  
+  .mini-page-navigator-container ul li a:hover {
+    color: #2a7ade;
+    cursor: pointer;
+    border-bottom: 2px solid #2a7ade;
+  }
 
-.side-bar-container div ul li a .active {
-    color: var(--blue) !important;
-}
+  @media only screen and (max-width: 600px) {
+    .mini-page-navigator-container ul li a {
+        color: #000;
+        background-color: var(--light-grey);
+        border-radius: 2rem;
+        padding: .3rem .5rem;
+        font-weight: 500;
+        margin-right: .5rem;
+      }
 
-.side-bar-container div ul li a svg {
-    margin-right: .6rem;
-}
+    .mini-page-navigator-container ul {
+        padding-bottom: 0rem;
+        border-bottom: none;
+        margin: 0;
+        overflow-x: scroll;
+    }
+
+    .mini-page-navigator-container ul li .active {
+        color: #FFF !important;
+        cursor: pointer;
+        background-color: #2a7ade;
+      }
+
+    .mini-page-navigator-container ul li a:hover {
+        color: #FFF !important;
+        cursor: pointer;
+        background-color: #2a7ade;
+    }
+
+  }
+    
+  
+
+

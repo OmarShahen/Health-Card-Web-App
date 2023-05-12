@@ -1,46 +1,82 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './navigation-bar.css'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined'
-import HelpOutlinedIcon from '@mui/icons-material/HelpOutlined'
-import NotificationsIcon from '@mui/icons-material/Notifications'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import SettingsIcon from '@mui/icons-material/Settings'
+import MenuOpenIcon from '@mui/icons-material/MenuOpen'
+import UserProfileMenu from '../menus/profile/profile'
+import QuickFormMenu from '../menus/quick-forms/quick-forms'
 import PatientFormModal from '../modals/patient-form'
+import AppointmentFormModal from '../modals/appointment-form'
+import PatientCardJoinFormModal from '../modals/patient-card-join-form'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { setIsShowSidebar } from '../../redux/slices/sidebarSlice'
 
-const NavigationBar = () => {
+const NavigationBar = ({ pageName }) => {
 
-    const [isShowPatientForm, setIsShowPatientForm] = useState(false)
+    const navigate = useNavigate()
+    const user = useSelector(state => state.user.user)
+    const sidebar = useSelector(state => state.sidebar)
+    const dispatch = useDispatch()
 
-    return <div className="navigation-bar-container">
-        { isShowPatientForm ? 
-        <PatientFormModal setShowModalForm={setIsShowPatientForm} /> 
-        : 
-        null 
+    const [showUserProfileMenu, setShowUserProfileMenu] = useState(false)
+    const [showQuickFormsMenu, setShowQuickFormsMenu] = useState(false)
+
+    const [showPatientForm, setShowPatientForm] = useState(false)
+    const [showPatientCardForm, setShowPatientCardForm] = useState(false)
+    const [showAppointmentForm, setShowAppointmentForm] = useState(false)
+
+    useEffect(() => {
+        if(!user.isLogged) {
+            navigate('/login')
         }
-        <div>
-            Logo
-        </div>
-        <div className="navigation-bar-search-container">
-            <input type="search" className="input-field" placeholder="Search..." />
-        </div>
-        <div className="navigation-bar-options-container">
-            <button className="create-btn" onClick={e => setIsShowPatientForm(true)}>
-                Create
-                <KeyboardArrowDownOutlinedIcon />
-            </button>
-            <div>
-                <HelpOutlinedIcon />
-                <span>Help</span>
+
+        const windowWidth = window.innerWidth
+
+        if(windowWidth <= 600) {
+            dispatch(setIsShowSidebar(false))
+        }
+
+    }, [user.isLogged])
+
+
+    return <div>
+        <div className="navigation-bar-container body-text">
+            { showPatientForm ? <PatientFormModal setShowModalForm={setShowPatientForm} /> : null }
+            { showPatientCardForm ? <PatientCardJoinFormModal setShowModalForm={setShowPatientCardForm} /> : null }
+            { showAppointmentForm ? <AppointmentFormModal setShowFormModal={setShowAppointmentForm} /> : null }
+
+            <div className="navigation-map-container">
+                    <span onClick={e => dispatch(setIsShowSidebar(!sidebar.isShowSidebar))}>
+                        <MenuOpenIcon />
+                    </span>
+                <span>{pageName}</span>
             </div>
-            <div>
-                <NotificationsIcon />
-            </div>
-            <div>
-                <SettingsIcon />
-            </div>
-            <div>
-                <AccountCircleIcon />
+            <div className="navigation-bar-options-container">
+                <div className="quick-form-container">
+                    <button 
+                    className="create-btn" 
+                    onClick={e => setShowQuickFormsMenu(!showQuickFormsMenu)}
+                    >
+                        Create
+                        <KeyboardArrowDownOutlinedIcon />
+                    </button>
+                    { showQuickFormsMenu ?
+                    <QuickFormMenu 
+                    setShowPatientForm={setShowPatientForm}
+                    setShowPatientCardForm={setShowPatientCardForm}
+                    setShowAppointmentForm={setShowAppointmentForm}
+                    /> 
+                    : 
+                    null 
+                    }
+                </div>
+                <div className="user-profile-container">
+                    <span onClick={e => setShowUserProfileMenu(!showUserProfileMenu)}>
+                        <AccountCircleIcon />
+                    </span>
+                    { showUserProfileMenu ? <UserProfileMenu user={user} /> : null }
+                </div>
             </div>
         </div>
     </div>

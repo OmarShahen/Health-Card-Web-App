@@ -3,9 +3,17 @@ import './modals.css'
 import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
 import { getBirthYearByAge } from '../../utils/age-calculator'
+import { useNavigate } from 'react-router-dom'
+import { TailSpin } from 'react-loader-spinner'
+import { useSelector } from 'react-redux'
 
 const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
 
+    const navigate = useNavigate()
+
+    const user = useSelector(state => state.user.user)
+
+    const [isSubmit, setIsSubmit] = useState(false)
     const [firstName, setFirstName] = useState()
     const [lastName, setLastName] = useState()
     const [countryCode, setCountryCode] = useState(20)
@@ -38,7 +46,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
         if(!cardId) return setCardIdError('Card Id is required')
 
         const patient = {
-            doctorId: '63efbbe147537b9ccb47e9d6',
+            doctorId: user._id,
             cardId: Number.parseInt(cardId),
             firstName,
             lastName,
@@ -48,17 +56,39 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
             dateOfBirth: String(getBirthYearByAge(age))
         }
 
+        setIsSubmit(true)
         serverRequest.post(`/v1/patients`, patient)
         .then(response => {
+            setIsSubmit(false)
             const data = response.data
             resetForm()
-            setReload(reload+1)
             setShowModalForm(false)
             toast.success(data.message, { position: 'top-right', duration: 3000 })
+            reload ? setReload(reload+1) : navigate('/patients')
         })
         .catch(error => {
+            setIsSubmit(false)
             console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+            
+            try {
+
+                const errorResponse = error.response.data
+
+                if(errorResponse.field === 'firstName') return setFirstNameError(errorResponse.message)
+
+                if(errorResponse.field === 'lastName') return setLastNameError(errorResponse.message)
+
+                if(errorResponse.field === 'countryCode') return setCountryCodeError(errorResponse.message)
+
+                if(errorResponse.field === 'phone') return setPhoneError(errorResponse.message)
+
+                if(errorResponse.field === 'gender') return setGenderError(errorResponse.message)
+
+                if(errorResponse.field === 'dateOfBirth') return setAgeError(errorResponse.message)
+
+                toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+
+            } catch(error) {}
         })
 
     }
@@ -88,8 +118,8 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                 <h2>Add Patient</h2>
             </div>
             <div className="modal-body-container">
-                <form id="patient-form" className="modal-form-container body-text" onSubmit={handleSubmit}>
-                    <div>
+                <form id="patient-form" className="modal-form-container responsive-form body-text" onSubmit={handleSubmit}>
+                    <div className="form-input-container">
                         <label>First Name*</label>
                         <input 
                         type="text" 
@@ -101,7 +131,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         />
                         <span className="red">{firstNameError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Last Name*</label>
                         <input 
                         type="text" 
@@ -113,7 +143,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         />
                         <span className="red">{lastNameError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Country Code*</label>
                         <input 
                         type="number"
@@ -126,7 +156,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         />
                         <span className="red">{countryCodeError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Phone*</label>
                         <input 
                         type="tel"
@@ -138,7 +168,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         />
                         <span className="red">{phoneError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Gender*</label>
                         <select 
                         name="gender" 
@@ -150,7 +180,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         </select>
                         <span className="red">{genderError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Age</label>
                         <input 
                         type="number"
@@ -163,7 +193,7 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         />
                         <span className="red">{ageError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Card ID*</label>
                         <input 
                         type="text"
@@ -175,15 +205,19 @@ const PatientFormModal = ({ reload, setReload, setShowModalForm }) => {
                         />
                         <span className="red">{cardIdError}</span>
                     </div>
-                    <div></div>
                 </form>
             </div>
             <div className="modal-form-btn-container">
                 <div>
-                    <button 
-                    form="patient-form"
-                    className="normal-button white-text purple-bg"
-                    >Add Patient</button>
+                    {
+                        isSubmit ?
+                        <TailSpin width="25" height="25" color="#4c83ee" />
+                        :
+                        <button 
+                        form="patient-form"
+                        className="normal-button white-text action-color-bg"
+                        >Create</button>
+                    }
                 </div>
                 <div>
                     <button 

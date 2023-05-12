@@ -1,0 +1,32 @@
+.table-container {
+    background-color: #FFF;
+    border: 1px solid #EEE;
+    border-radius: .25rem !important;
+}
+
+
+.print-table-container table {
+    width: 100%;
+    text-align: left;
+    padding: 1rem 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+
+.print-table-container table tr td {
+    border-bottom: 1px solid var(--border-color);
+    color: #414552;
+    padding: .5rem 1rem !important;
+    font-size: .9rem;
+}
+
+.print-table-container table tr th {
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 500;
+    font-size: .9rem;
+    color: #1A1B25;
+    padding: .8rem 1rem !important;
+    background-color: #F2F2F2;
+}
+

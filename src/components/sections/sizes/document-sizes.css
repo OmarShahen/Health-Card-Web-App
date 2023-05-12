@@ -1,0 +1,11 @@
+.documents-sizes-container {
+    text-align: right;
+    padding-bottom: .5rem;
+}
+
+.documents-sizes-container span {
+    padding: .1rem .4rem !important;
+    border-radius: .25rem;
+    display: inline-block;
+    font-weight: bold;
+}

@@ -4,14 +4,23 @@ import SignalCellularAltOutlinedIcon from '@mui/icons-material/SignalCellularAlt
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined'
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import HotelOutlinedIcon from '@mui/icons-material/HotelOutlined'
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { useDispatch } from 'react-redux'
+import { setIsShowSidebar } from '../../redux/slices/sidebarSlice'
 
 const SideBar = () => {
 
+    const dispatch = useDispatch()
+
     return <div className="side-bar-container">
+        <div className="side-bar-arrow-container show-mobile">
+            <span onClick={e => dispatch(setIsShowSidebar(false))}>
+                <ArrowBackIcon />
+            </span>
+        </div>
         <ul>
             <li>
                 <NavLink to="/">
@@ -53,12 +62,6 @@ const SideBar = () => {
                 <NavLink to="/">
                     <CreditCardOutlinedIcon />
                     Billings
-                </NavLink>
-            </li>
-            <li>
-                <NavLink to="/">
-                    <LogoutOutlinedIcon />
-                    Logout
                 </NavLink>
             </li>
         </ul>

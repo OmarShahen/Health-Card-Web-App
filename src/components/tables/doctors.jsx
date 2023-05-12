@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react"
 import { NavLink, useNavigate } from "react-router-dom"
 import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined'
+import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
+
+
 
 const DoctorsTable = ({ doctors, setReload, reload }) => {
 
@@ -9,17 +13,17 @@ const DoctorsTable = ({ doctors, setReload, reload }) => {
 
     useEffect(() => setSearchedRows(doctors), [doctors])
 
-    const searchRows = (patient, value) => {
+    const searchRows = (doctor, value) => {
 
-        const name = `${patient.firstName} ${patient.lastName}`.toLowerCase()
-        const phone = `${patient.countryCode}${patient.phone}`
-        const cardId = `${patient.cardId}`
+        const name = `${doctor.firstName} ${doctor.lastName}`.toLowerCase()
+        const phone = `${doctor.countryCode}${doctor.phone}`
+        const email = `${doctor.email}`
 
         if(name.includes(value.toLowerCase())) {
             return true
         } else if(phone.includes(value)) {
             return true
-        } else if(cardId.includes(value)) {
+        } else if(email.includes(value)) {
             return true
         }
 
@@ -27,26 +31,39 @@ const DoctorsTable = ({ doctors, setReload, reload }) => {
     }
 
     return <div>
-            <div className="table-columns-filters-container">
-                <div>
-                    <span><AddCircleOutlinedIcon />Name</span>
-                    <span><AddCircleOutlinedIcon />Phone</span>
-                    <span><AddCircleOutlinedIcon />Email</span>
-                    <span><AddCircleOutlinedIcon />Speciality</span>
-                </div>
-                <span>Clear Filters</span>
-            </div>
             <div className="table-container body-text">
+                <div className="table-filters-container">
+                    <div className="table-name-container">
+                        <strong>Doctors</strong>
+                    </div>
+                    <div className="table-search-input-container">
+                        <span><SearchIcon /></span>
+                        <input 
+                        type="search" 
+                        className="form-input" 
+                        placeholder="search doctors..."
+                        onChange={e => setSearchedRows(doctors.filter(row => searchRows(row, e.target.value)))}
+                        />
+                    </div>
+                    <div className="refresh-button-container">
+                        <button
+                        onClick={e => setReload(reload+1)}
+                        className="normal-button action-color-bg white-text icon-button">
+                            <RefreshIcon />
+                            Refresh
+                        </button>
+                    </div>
+                </div>
             <table>
                 <tr className="table-header-rows">
-                    <th>NAME</th>
-                    <th>PHONE</th>
-                    <th>EMAIL</th>
-                    <th>SPECIALITY</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Speciality</th>
                 </tr>
                 
                 {
-                    searchedRows.map(row => <tr>
+                    searchedRows.slice(0, 20).map(row => <tr>
                         <td>{row.firstName + ' ' + row.lastName}</td>
                         <td>{`+${row.countryCode}${row.phone}`}</td>
                         <td>{row.email}</td>

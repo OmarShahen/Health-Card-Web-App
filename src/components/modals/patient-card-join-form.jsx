@@ -2,9 +2,17 @@ import { useState } from 'react'
 import './modals.css'
 import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
+import { TailSpin } from 'react-loader-spinner'
+import { useSelector } from 'react-redux'
 
 const PatientCardJoinFormModal = ({ reload, setReload, setShowModalForm }) => {
 
+    const navigate = useNavigate()
+
+    const user = useSelector(state => state.user.user)
+
+    const [isSubmit, setIsSubmit] = useState(false)
     const [cardId, setCardId] = useState()
 
     const [cardIdError, setCardIdError] = useState()
@@ -14,24 +22,37 @@ const PatientCardJoinFormModal = ({ reload, setReload, setShowModalForm }) => {
 
         if(!cardId) return setCardIdError('Card number is required')
 
-        serverRequest.patch(`/v1/patients/cardsId/${cardId}/doctors`, { doctorId: '63efbbe147537b9ccb47e9d6' })
+        setIsSubmit(true)
+        serverRequest.patch(`/v1/patients/cardsId/${cardId}/doctors`, { doctorId: user._id })
         .then(response => {
+            setIsSubmit(false)
             const data = response.data
-            resetForm()
-            setReload(reload+1)
             toast.success(data.message, { position: 'top-right', duration: 3000 })
+            reload ? setReload(reload+1) : navigate('/patients')
             setShowModalForm(false)
+
         })
         .catch(error => {
+            setIsSubmit(false)
             console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+            try {
+
+                const errorResponse = error.response.data
+
+                if(errorResponse.field === 'cardId') return setCardIdError(errorResponse.message)
+
+                if(errorResponse.field === 'doctorId') return setCardIdError(errorResponse.message)
+
+                toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+
+            } catch(error) {}
         })
 
     }
 
     const resetForm  = () => {
 
-        setCardId()
+        setCardId('')
         setCardIdError()
     }
 
@@ -41,8 +62,8 @@ const PatientCardJoinFormModal = ({ reload, setReload, setShowModalForm }) => {
                 <h2>Add Patient With Card</h2>
             </div>
             <div className="modal-body-container">
-                <form className="modal-form-container body-text" onSubmit={handleSubmit}>
-                    <div>
+                <form className="modal-form-container responsive-form body-text" onSubmit={handleSubmit}>
+                    <div className="form-input-container">
                         <label>Card Number</label>
                         <input 
                         type="text" 
@@ -54,10 +75,18 @@ const PatientCardJoinFormModal = ({ reload, setReload, setShowModalForm }) => {
                         />
                         <span className="red">{cardIdError}</span>
                     </div>
-                    <div></div>
                     <div className="modal-form-btn-container">
                         <div>
-                            <button className="normal-button white-text purple-bg">Add Patient</button>
+                            {
+                                !isSubmit ?
+                                <button 
+                                className="normal-button white-text action-color-bg"
+                                >
+                                    Add
+                                </button>
+                                :
+                                <TailSpin width="25" height="25" color="#4c83ee" />
+                            }
                         </div>
                         <div>
                             <button 

@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react"
 import { NavLink, useNavigate } from "react-router-dom"
 import { format } from "date-fns"
-import { getAge } from "../../utils/age-calculator"
-import CachedOutlinedIcon from '@mui/icons-material/CachedOutlined'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
-import ClassOutlinedIcon from '@mui/icons-material/ClassOutlined'
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined'
 import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined'
+import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
+
 
 const DiagnosisTable = ({ diagnosis, setReload, reload }) => {
 
@@ -16,17 +13,14 @@ const DiagnosisTable = ({ diagnosis, setReload, reload }) => {
 
     useEffect(() => setSearchedRows(diagnosis), [diagnosis])
 
-    const searchRows = (patient, value) => {
+    const searchRows = (diagnose, value) => {
 
-        const name = `${patient.firstName} ${patient.lastName}`.toLowerCase()
-        const phone = `${patient.countryCode}${patient.phone}`
-        const cardId = `${patient.cardId}`
+        const diagnoseName = `${diagnose.diagnose}`.toLowerCase()
+        const doctorName = `${diagnose.doctor.firstName} ${diagnose.doctor.lastName}`.toLowerCase()
 
-        if(name.includes(value.toLowerCase())) {
+        if(diagnoseName.includes(value.toLowerCase())) {
             return true
-        } else if(phone.includes(value)) {
-            return true
-        } else if(cardId.includes(value)) {
+        } else if(doctorName.includes(value.toLowerCase())) {
             return true
         }
 
@@ -34,24 +28,38 @@ const DiagnosisTable = ({ diagnosis, setReload, reload }) => {
     }
 
     return <div>
-            <div className="table-columns-filters-container">
-                <div>
-                    <span><AddCircleOutlinedIcon />Diagnose</span>
-                    <span><AddCircleOutlinedIcon />Doctor</span>
-                    <span><AddCircleOutlinedIcon />Registration date</span>
-                </div>
-                <span>Clear Filters</span>
-            </div>
             <div className="table-container body-text">
+                <div className="table-filters-container">
+                    <div className="table-name-container">
+                        <strong>Diagnosis</strong>
+                    </div>
+                    <div className="table-search-input-container">
+                        <span><SearchIcon /></span>
+                        <input 
+                        type="search" 
+                        className="form-input" 
+                        placeholder="search diagnosis..."
+                        onChange={e => setSearchedRows(diagnosis.filter(row => searchRows(row, e.target.value)))}
+                        />
+                    </div>
+                    <div className="refresh-button-container">
+                        <button
+                        onClick={e => setReload(reload+1)} 
+                        className="normal-button action-color-bg white-text icon-button">
+                            <RefreshIcon />
+                            Refresh
+                        </button>
+                    </div>
+                </div>
             <table>
                 <tr className="table-header-rows">
-                    <th>DIAGNOSE</th>
-                    <th>DOCTOR</th>
-                    <th>REGISTRATION DATE</th>
+                    <th>Diagnose</th>
+                    <th>Doctor</th>
+                    <th>Registration Date</th>
                 </tr>
                 
                 {
-                    diagnosis.map(row => <tr>
+                    searchedRows.slice(0, 20).map(row => <tr>
                         <td>{row.diagnose}</td>
                         <td>{row.doctor.firstName + ' ' + row.doctor.lastName}</td>
                         <td>{format(new Date(row.createdAt), 'dd MMM yyyy')}</td>

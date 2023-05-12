@@ -30,7 +30,7 @@ const SymptomsDiagnosisForm = ({ symptoms, setSymptoms, diagnosis, setDiagnosis,
         e.target.value = ''
     }
 
-    return <div className="symptoms-diagnosis-form-container cards-2-list-wrapper">
+    return <div className="symptoms-diagnosis-form-container cards-2-list-wrapper margin-top-1">
     <div className="encounter-form-inputs-container">
         <div className="drug-list-item">
             <div className="form-input-container">

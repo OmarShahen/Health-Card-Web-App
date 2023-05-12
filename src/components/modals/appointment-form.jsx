@@ -3,11 +3,17 @@ import './modals.css'
 import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
 import { TailSpin } from 'react-loader-spinner'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 
 const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
 
-    const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate()
+
+    const user = useSelector(state => state.user.user)
+
+    const [isSubmit, setIsSubmit] = useState(false)
 
     const [patientName, setPatientName] = useState()
     const [patientCountryCode, setPatientCountryCode] = useState(20)
@@ -32,7 +38,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
         if(!reservationDate) return setReservationDateError('Reservation date is required')
 
         const appointment = {
-            doctorId: '63efbbe147537b9ccb47e9d6',
+            doctorId: user._id,
             patientName,
             patientCountryCode: Number.parseInt(patientCountryCode),
             patientPhone: Number.parseInt(patientPhone),
@@ -40,19 +46,36 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
             status: 'UPCOMING'
         }
 
-        setIsLoading(true)
+        setIsSubmit(true)
         serverRequest.post(`/v1/appointments`, appointment)
         .then(response => {
-            setIsLoading(false)
+            setIsSubmit(false)
             const data = response.data
-            setReload(reload+1)
             resetForm()
             toast.success(data.message, { position: 'top-right', duration: 3000 })
+            reload ? setReload(reload+1) : navigate('/appointments')
+            setShowFormModal(false)
         })
         .catch(error => {
-            setIsLoading(false)
+            setIsSubmit(false)
             console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+
+            try {
+
+                const errorResponse = error.response.data
+
+                if(errorResponse.field === 'patientName') return setPatientNameError(errorResponse.message)
+
+                if(errorResponse.field === 'patientCountryCode') return setPatientCountryCodeError(errorResponse.message)
+
+                if(errorResponse.field === 'patientPhone') return setPatientPhoneError(errorResponse.message)
+
+                if(errorResponse.field === 'reservationTime') return setReservationDateError(errorResponse.message)
+
+
+                toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+
+            } catch(error) {}
         })
 
     }
@@ -76,11 +99,11 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
     return <div className="modal">
         <div className="modal-container body-text">
             <div className="modal-header">
-                <h2>Add Appointment</h2>
+                <h2>Create Appointment</h2>
             </div>
             <div className="modal-body-container">
-                <form id="appointment-form" className="modal-form-container body-text" onSubmit={handleSubmit}>
-                    <div>
+                <form id="appointment-form" className="modal-form-container responsive-form body-text" onSubmit={handleSubmit}>
+                    <div className="form-input-container">
                         <label>Patient Name</label>
                         <input 
                         type="text" 
@@ -92,7 +115,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                         />
                         <span className="red">{patientNameError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Patient Country Code</label>
                         <input 
                         type="number" 
@@ -104,7 +127,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                         />
                         <span className="red">{patientCountryCodeError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Patient Phone</label>
                         <input 
                         type="tel" 
@@ -116,12 +139,11 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                         />
                         <span className="red">{patientPhoneError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Reservation Date</label>
                         <input 
                         type="datetime-local" 
                         className="form-input" 
-                        placeholder=""
                         value={reservationDate}
                         onChange={e => setReservationDate(e.target.value)}
                         onClick={e => setReservationDateError()}
@@ -131,14 +153,14 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                     <div className="modal-form-btn-container">
                         <div>   
                             { 
-                                isLoading ?
+                                isSubmit ?
                                 <TailSpin
-                                height="30"
-                                width="30"
-                                color="dodgerblue"
+                                height="25"
+                                width="25"
+                                color="#4c83ee"
                                 />
                                 :
-                                <button className="normal-button white-text purple-bg">Add Appointment </button>
+                                <button className="normal-button white-text action-color-bg">Create</button>
                             } 
                         </div>
                         <div>

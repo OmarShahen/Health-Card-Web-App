@@ -2,13 +2,13 @@ import './buttons.css'
 import AddIcon from '@mui/icons-material/Add'
 import { useNavigate } from 'react-router-dom'
 
-const FloatingButton = ({ url }) => {
+const FloatingButton = ({ url, setIsShowForm }) => {
 
     const navigate = useNavigate()
 
     return <div 
     className="floating-button-container"
-    onClick={e => navigate(url)}
+    onClick={ e => url ? navigate(url) : setIsShowForm(true) }
     >
         <AddIcon />
     </div>

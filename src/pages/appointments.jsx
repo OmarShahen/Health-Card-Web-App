@@ -1,15 +1,8 @@
 import { useState, useEffect } from 'react'
-import PrescriptionCard from "../components/cards/patient-prescriptions"
 import './prescriptions.css'
-import ImportExportOutlinedIcon from '@mui/icons-material/ImportExportOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
-import { useNavigate } from "react-router-dom"
-import ScanButton from "../components/buttons/scan-button"
-import DoctorsBottomBar from "../components/navigation/doctors-bottom-bar"
 import { serverRequest } from "../components/API/request"
 import { useSelector } from 'react-redux'
-import QRCodeScanner from '../components/scanners/QR-code'
-import TableFilters from '../components/tables/filters';
 import PageHeader from '../components/sections/page-header'
 import AppointmentsTable from '../components/tables/appointments';
 import Card from '../components/cards/card';
@@ -20,48 +13,68 @@ import UpcomingOutlinedIcon from '@mui/icons-material/UpcomingOutlined'
 import AppointmentFormModal from '../components/modals/appointment-form'
 import TimerOffOutlinedIcon from '@mui/icons-material/TimerOffOutlined'
 import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined'
-
+import NavigationBar from '../components/navigation/navigation-bar';
+import CircularLoading from '../components/loadings/circular';
+import FiltersSection from '../components/sections/filters/filters'
+import FloatingButton from '../components/buttons/floating-button'
+import AppointmentCard from '../components/cards/appointment'
+import EmptySection from '../components/sections/empty/empty'
+import SearchInput from '../components/inputs/search'
+import { searchAppointments } from '../utils/searches/search-appointments'
+import { format } from 'date-fns'
 
 const AppointmentsPage = () => {
 
-    const navigate = useNavigate()
-
-    const [reload, setReload] = useState(0)
+    const [isLoading, setIsLoading] = useState(true)
+    const [reload, setReload] = useState(1)
     const [showModalForm, setShowModalForm] = useState(false)
     const [appointments, setAppointments] = useState([])
+    const [searchedAppointments, setSearchedAppointments] = useState([])
     const user = useSelector(state => state.user.user)
 
+    const todayDate = new Date()
+
+    const [statsQuery, setStatsQuery] = useState({ specific: format(todayDate, 'yyyy-MM-dd') })
+
+    useEffect(() => scroll(0,0), [])
+
     useEffect(() => {
-        serverRequest.get(`/v1/appointments/doctors/${'63efbbe147537b9ccb47e9d6'}`)
+        setIsLoading(true)
+        serverRequest.get(`/v1/appointments/doctors/${user._id}`, { params: statsQuery })
         .then(response => {
+            setIsLoading(false)
             setAppointments(response.data.appointments)
+            setSearchedAppointments(response.data.appointments)
         })
         .catch(error => {
+            setIsLoading(false)
             console.error(error)
         })
-    }, [reload])
+    }, [reload, statsQuery])
 
-    const searchPatient = (patient, value) => {
-
-        const name = `${patient.firstName} ${patient.lastName}`.toLowerCase()
-        const phone = `${patient.countryCode}${patient.phone}`
-
-        if(name.includes(value)) {
-            return true
-        } else if(phone.includes(value)) {
-            return true
-        }
-
-        return false
-    }
 
     return <div className="page-container">
-        { showModalForm ? <AppointmentFormModal reload={reload} setReload={setReload} setShowFormModal={setShowModalForm} /> : null }
+        <NavigationBar pageName={'Appointments'} />
+        <div className="show-mobile">
+            <FloatingButton setIsShowForm={setShowModalForm} />
+        </div>
+        { 
+            showModalForm ? 
+            <AppointmentFormModal 
+            reload={reload} 
+            setReload={setReload} 
+            setShowFormModal={setShowModalForm} 
+            />
+            : 
+            null 
+         }
         <div className="padded-container">
             <PageHeader 
             pageName="Appointments" 
             setShowModalForm={setShowModalForm} 
-            addBtnText={'Add Appointment'} 
+            addBtnText={'Add Appointment'}
+            setReload={setReload}
+            reload={reload}
             /> 
             <div className="cards-list-wrapper">
                 <Card 
@@ -107,12 +120,46 @@ const AppointmentsPage = () => {
                 iconColor={'#FF8C00'}
                 />
             </div>
-            <AppointmentsTable 
-            appointments={appointments} 
-            setAppointments={setAppointments}
-            reload={reload}
-            setReload={setReload}
-            />  
+            <FiltersSection 
+            statsQuery={statsQuery} 
+            setStatsQuery={setStatsQuery} 
+            isShowUpcomingDates={true}
+            defaultValue={'0'}
+            />
+            <div className="margin-top-1"></div>
+            <div className="search-input-container show-mobile">
+                <SearchInput 
+                rows={appointments} 
+                setRows={setSearchedAppointments}
+                searchRows={searchAppointments}
+                />
+            </div>
+            {
+                isLoading ?
+                <CircularLoading />
+                :
+                searchedAppointments.length !== 0 ?
+                <div>
+                    <div className="page-list-container">
+                        {searchedAppointments.map(appointment => <div className="cards-view-container">
+                            <AppointmentCard appointment={appointment} />
+                        </div>
+                            )}
+                    </div>
+                    <div className="page-table-container">
+                    <AppointmentsTable 
+                    appointments={appointments} 
+                    setAppointments={setAppointments}
+                    reload={reload}
+                    setReload={setReload}
+                    setStatsQuery={setStatsQuery}
+                    statsQuery={statsQuery}
+                    />
+                    </div>
+                </div>
+                :
+                <EmptySection setIsShowForm={setShowModalForm} />
+            }
         </div>
         
     </div>

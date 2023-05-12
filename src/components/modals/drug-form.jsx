@@ -3,7 +3,7 @@ import './modals.css'
 import CancelIcon from '@mui/icons-material/Cancel'
 
 
-const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
+const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) => {
 
     const dosageTypes = [
         'tablet', 'capsule', 'sachet', 'lotion', 'gargle', 'drops', 'ointment', 'cream',
@@ -12,14 +12,14 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
 
     const [dosageTimes, setDosageTimes] = useState(['noon', 'morning', 'after eating', 'before eating' ,'when it is needed', 'before sleep', 'evening',])
 
-    const [drugName, setDrugName] = useState()
-    const [amountNumber, setAmountNumber] = useState()
-    const [amountUnit, setAmountUnit] = useState("tablet")
-    const [frequencyNumber, setFrequencyNumber] = useState()
-    const [frequencyTime, setFrequencyTime] = useState("day")
-    const [periodNumber, setPeriodNumber] = useState()
-    const [periodTime, setPeriodTime] = useState("week")
-    const [instructions, setInstructions] = useState([])
+    const [drugName, setDrugName] = useState(mode === 'EDITE' ? targetDrug?.name : '')
+    const [amountNumber, setAmountNumber] = useState(mode === 'EDITE' ? targetDrug?.dosage?.amount : '')
+    const [amountUnit, setAmountUnit] = useState(mode === 'EDITE' ? targetDrug?.dosage?.unit : "tablet")
+    const [frequencyNumber, setFrequencyNumber] = useState(mode === 'EDITE' ? targetDrug?.frequency?.number : '')
+    const [frequencyTime, setFrequencyTime] = useState(mode === 'EDITE' ? targetDrug?.frequency?.timeUnit : "day")
+    const [periodNumber, setPeriodNumber] = useState(mode === 'EDITE' ? targetDrug?.duration?.number : '')
+    const [periodTime, setPeriodTime] = useState(mode === 'EDITE' ? targetDrug?.duration?.timeUnit : "week")
+    const [instructions, setInstructions] = useState(mode === 'EDITE' ? targetDrug?.instructions : [])
 
     const [drugNameError, setDrugNameError] = useState()
     const [amountNumberError, setAmountNumberError] = useState()
@@ -48,7 +48,7 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
         if(!periodTime) return setPeriodTimeError('Period time is required')
 
 
-        const drug = {
+        const newDrug = {
             name: drugName,
             dosage: { amount: Number.parseInt(amountNumber), unit: amountUnit },
             frequency: { number: Number.parseInt(frequencyNumber), timeUnit: frequencyTime },
@@ -56,7 +56,8 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
             instructions
         }
 
-        setDrugs([ ...drugs, drug ])
+        setDrugs([...drugs, newDrug])
+
         resetForm()
 
     }
@@ -64,11 +65,11 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
     const resetForm  = () => {
 
         setDrugName('')
-        setAmountNumber(0)
+        setAmountNumber('')
         setAmountUnit("tablet")
-        setFrequencyNumber(0)
+        setFrequencyNumber('')
         setFrequencyTime("day")
-        setPeriodNumber(0)
+        setPeriodNumber('')
         setPeriodTime("week")
         setInstructions([])
 
@@ -89,12 +90,11 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
             </div>
             <div className="modal-body-container">
                 <form className="modal-form-container body-text" id="drug-form" onSubmit={handleSubmit}>
-                    <div>
+                    <div className="form-input-container">
                         <label>Drug Name</label>
                         <input 
                         type="text" 
                         className="form-input" 
-                        placeholder=""
                         value={drugName}
                         onChange={e => setDrugName(e.target.value)}
                         onClick={e => setDrugNameError()}
@@ -102,7 +102,7 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
                         <span className="red">{drugNameError}</span>
                     </div>
                     <div></div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Amount Number</label>
                         <input 
                         type="number"
@@ -115,7 +115,7 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
                         />
                         <span className="red">{amountNumberError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Amount Unit</label>
                         <select 
                         name="dosage-types" 
@@ -123,11 +123,21 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
                         onChange={e => setAmountUnit(e.target.value)}
                         onClick={e => amountUnitError()}
                         >
-                            {dosageTypes.map(type => <option value={type}>{type}</option>)}
+                            {
+                                mode === 'EDITE' ?
+                                dosageTypes.map(type => {
+                                    if(type === amountUnit) {
+                                        return <option selected value={type}>{type}</option>
+                                    }
+                                    return <option value={type}>{type}</option>
+                                })
+                                : 
+                                dosageTypes.map(type => <option value={type}>{type}</option>)
+                            }
                         </select>
                         <span className="red">{amountUnitError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Frequency Number</label>
                         <input 
                         type="number" 
@@ -140,20 +150,20 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
                         />
                         <span className="red">{frequencyNumberError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Frequency Time</label>
                         <select 
                         name="frequency-time" 
                         id="frequency-time"
                         onChange={e => setFrequencyTime(e.target.value)}
                         >
-                            <option value="day">Day</option>
-                            <option value="week">Week</option>
-                            <option value="month">Month</option>
+                            { mode === 'EDITE' && frequencyTime === 'day' ? <option selected value="day">Day</option> : <option value="day">Day</option>}
+                            { mode === 'EDITE' && frequencyTime === 'week' ? <option selected value="week">Week</option> : <option value="week">Week</option>}
+                            { mode === 'EDITE' && frequencyTime === 'month' ? <option selected value="month">Month</option> : <option value="month">Month</option>}
                         </select>
                         <span className="red">{frequencyTimeError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Period Number</label>
                         <input 
                         type="number" 
@@ -166,23 +176,25 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
                         />
                         <span className="red">{periodNumberError}</span>
                     </div>
-                    <div>
+                    <div className="form-input-container">
                         <label>Period Time</label>
                         <select 
                         name="period-time" 
                         id="period-time"
                         onChange={e => setPeriodTime(e.target.value)}
                         >
-                            <option value="day">Day</option>
-                            <option value="week" selected>Week</option>
-                            <option value="month">Month</option>
+                            { mode === 'EDITE' && periodTime === 'day' ? <option selected value="day">Day</option> : <option value="day">Day</option>}
+                            { mode === 'EDITE' && periodTime === 'week' ? <option selected value="week">Week</option> : <option value="week">Week</option>}
+                            { mode === 'EDITE' && periodTime === 'month' ? <option selected value="month">Month</option> : <option value="month">Month</option>}
+ 
                         </select>
                         <span className="red">{periodTimeError}</span>
                     </div>
-                    <div>
+                </form>
+                <div className="form-input-container">
                         <label>Dosage Times</label>
                         <div className="drug-instruction-list-container">
-                            { dosageTimes.map(time => {
+                            { instructions ? dosageTimes.map(time => {
                                 if(instructions.includes(time)) {
                                     return <span 
                                     className="status-btn drug-instruction-tag"
@@ -200,18 +212,18 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal }) => {
                                     {time}
                                     </span> 
                                 }
-                            })    
+                            })
+                            :
+                            null    
                             }
                         </div>
                     </div>
-                    <div></div>
-                </form>
             </div>
             <div className="modal-form-btn-container">
                 <div>
                     <button 
                     form="drug-form"
-                    className="normal-button white-text purple-bg"
+                    className="normal-button white-text action-color-bg"
                     >Add Drug</button>
                 </div>
                 <div>

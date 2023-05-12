@@ -6,6 +6,12 @@ import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined'
 import { serverRequest } from "../API/request"
 import { toast } from "react-hot-toast"
 import { getTime } from '../../utils/time'
+import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined'
+
 
 const EncountersTable = ({ encounters, setReload, reload }) => {
 
@@ -27,17 +33,14 @@ const EncountersTable = ({ encounters, setReload, reload }) => {
         })
     }
 
-    const searchRows = (patient, value) => {
+    const searchRows = (encounter, value) => {
 
-        const name = `${patient.firstName} ${patient.lastName}`.toLowerCase()
-        const phone = `${patient.countryCode}${patient.phone}`
-        const cardId = `${patient.cardId}`
+        const doctorName = `${encounter.patient.firstName} ${encounter.patient.lastName}`.toLowerCase()
+        const patientName = `${encounter.doctor.firstName} ${encounter.doctor.lastName}`.toLowerCase()
 
-        if(name.includes(value.toLowerCase())) {
+        if(doctorName.includes(value.toLowerCase())) {
             return true
-        } else if(phone.includes(value)) {
-            return true
-        } else if(cardId.includes(value)) {
+        } else if(patientName.includes(value.toLowerCase())) {
             return true
         }
 
@@ -45,43 +48,56 @@ const EncountersTable = ({ encounters, setReload, reload }) => {
     }
 
     return <div>
-            <div className="table-columns-filters-container">
-                <div>
-                    <span><AddCircleOutlinedIcon />Patient name</span>
-                    <span><AddCircleOutlinedIcon />Doctor name</span>
-                    <span><AddCircleOutlinedIcon />Symptoms</span>
-                    <span><AddCircleOutlinedIcon />Diagnosis</span>
-                    <span><AddCircleOutlinedIcon />Creation date</span>
-                </div>
-                <span>Clear Filters</span>
-            </div>
             <div className="table-container body-text">
+                <div className="table-filters-container">
+                    <div className="table-name-container">
+                        <strong>Encounters</strong>
+                    </div>
+                    <div className="table-search-input-container">
+                        <span><SearchIcon /></span>
+                        <input 
+                        type="search" 
+                        className="form-input" 
+                        placeholder="search encounters..."
+                        onChange={e => setSearchedRows(encounters.filter(row => searchRows(row, e.target.value)))}
+                        />
+                    </div>
+                    <div className="refresh-button-container">
+                        <button
+                        onClick={e => setReload(reload+1)} 
+                        className="normal-button action-color-bg white-text icon-button">
+                            <RefreshIcon />
+                            Refresh
+                        </button>
+                    </div>
+                </div>
             <table>
                 <tr className="table-header-rows">
-                    <th>PATIENT NAME</th>
-                    <th>DOCTOR NAME</th>
-                    <th>SYMPTOMS</th>
-                    <th>DIAGNOSIS</th>
-                    <th>CREATION DATE</th>
+                    <th>Patient Name</th>
+                    <th>Doctor Name</th>
+                    <th>Symptoms</th>
+                    <th>Diagnosis</th>
+                    <th>Creation Date</th>
                     <th>Actions</th>
                 </tr>
                 
                 {
-                    searchedRows.map(row => <tr>
+                    searchedRows.slice(0, 20).map(row => <tr>
                         <td>{row.patient.firstName + ' ' + row.patient.lastName}</td>
                         <td>{row.doctor.firstName + ' ' + row.doctor.lastName}</td>
                         <td>{row.symptoms.length}</td>
                         <td>{row.diagnosis.length}</td>
                         <td>{format(new Date(row.createdAt), 'dd MMM yyyy') + ' ' + getTime(row.createdAt)}</td>
                         <td>
-                            <div className="small-description-text actions-container">
-                                <MoreHorizOutlinedIcon />
-                                <div className="actions-dropdown-container">
-                                    <ul>
-                                        <li className="width" onClick={e => deleteEncounter(row._id)}>Delete Encounter</li>
-                                        <li className="width">Update Encounter</li>
-                                        <li onClick={e => navigate(`/patients/${row.patient._id}/medical-profile`)} className="width">View Patient Profile</li>
-                                    </ul>
+                            <div className="small-description-text actions-container">    
+                                <div>
+                                    <span onClick={e => navigate(`/encounters/${row._id}/view`)}><RemoveRedEyeOutlinedIcon /></span>
+                                </div>
+                                <div>
+                                    <span onClick={e => navigate(`/encounters/${row._id}/update`)}><CreateOutlinedIcon /></span>
+                                </div>
+                                <div>
+                                    <span onClick={e => deleteEncounter(row._id)}><DeleteOutlineOutlinedIcon /></span>
                                 </div>
                             </div>
                         </td>

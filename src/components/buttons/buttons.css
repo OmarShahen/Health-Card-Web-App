@@ -3,12 +3,16 @@
     align-items: center;
     justify-content: center;
     color: #FFF;
-    background-color: var(--blue);
+    background-color: #4c83ee;
     position: fixed;
-    bottom: 5rem;
-    right: 2rem;
+    bottom: 2rem;
+    right: 1rem;
     padding: 1rem;
     border-radius: 50%;
+}
+
+.floating-button-container svg {
+    font-size: 1.7rem;
 }
 
 .floating-button-container:hover, .floating-scan-button-container:hover {

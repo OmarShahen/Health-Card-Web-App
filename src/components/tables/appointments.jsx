@@ -1,23 +1,21 @@
 import { useState, useEffect } from 'react'
 import './table.css'
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
-import CircleIcon from '@mui/icons-material/Circle'
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined'
 import { format } from 'date-fns'
 import { getTime } from '../../utils/time'
 import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
-import CachedOutlinedIcon from '@mui/icons-material/CachedOutlined'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
-import ClassOutlinedIcon from '@mui/icons-material/ClassOutlined'
-import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined'
+import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
 
 
-const AppointmentsTable = ({ appointments, setAppointments, reload, setReload }) => {
+const AppointmentsTable = ({ appointments, setAppointments, reload, setReload, setStatsQuery, statsQuery }) => {
 
     const [searchedRows, setSearchedRows] = useState(appointments)
     const [viewStatus, setViewStatus] = useState('ALL')
+
+    const activeElementColor = { border: '2px solid #4c83ee', color: '#4c83ee' }
 
     useEffect(() => setSearchedRows(appointments), [appointments])
 
@@ -83,90 +81,118 @@ const AppointmentsTable = ({ appointments, setAppointments, reload, setReload })
     const renderAppointmentStatus = (status) => {
 
         if(status === 'DONE') {
-            return <div className="table-appointment-status green">
-                    {status}
+            return <div>
+                <span className="tag-green-text"><FiberManualRecordIcon /></span>
+                {status}
             </div>
         } else if(status === 'CANCELLED') {
-            return <span className="red">{status}</span>
+            return <div>
+                    <span className="tag-red-text"><FiberManualRecordIcon /></span>
+                    {status}
+                </div>
         } else if(status === 'UPCOMING') {
-            return <span className="blue">{status}</span>
+            return <div>
+                <span className="tag-purple-text"><FiberManualRecordIcon /></span>
+                {status}
+            </div>
         } else if(status === 'WAITING') {
-            return <span className="light-blue">{status}</span>
+            return <div>
+                <span className="tag-orange-text"><FiberManualRecordIcon /></span>
+                {status}
+            </div>
         } else if(status === 'ACTIVE') {
-            return <span className="purple">{status}</span>
+            return <div>
+                <span className="tag-light-blue-text"><FiberManualRecordIcon /></span>
+                {status}
+            </div>
         } else {
-            return <span className="grey">{status}</span>
+            return <div>
+                <span className="tag-grey-text"><FiberManualRecordIcon /></span>
+                {status}
+            </div>
         }
     }
 
     return <div>
                 <div className="table-columns-categories-container">
-                    <div style={ viewStatus === 'ALL' ? { border: '2px solid #5c60f5', color: '#5c60f5'} : null}onClick={e => {
+                    <div style={ viewStatus === 'ALL' ? activeElementColor : null } onClick={e => {
                         setViewStatus('ALL')
                         setSearchedRows(appointments.filter(appointment => true))
                     }}>
                         All
                     </div>
-                    <div style={ viewStatus === 'UPCOMING' ? { border: '2px solid #5c60f5', color: '#5c60f5'} : null}onClick={e => {
+                    <div style={ viewStatus === 'UPCOMING' ?  activeElementColor : null } onClick={e => {
                         setViewStatus('UPCOMING')
                         setSearchedRows(appointments.filter(appointment => appointment.status === 'UPCOMING'))
                     }}>
                         Upcoming
                     </div>
-                    <div style={ viewStatus === 'WAITING' ? { border: '2px solid #5c60f5', color: '#5c60f5'} : null}onClick={e => {
+                    <div style={ viewStatus === 'WAITING' ?  activeElementColor : null } onClick={e => {
                         setViewStatus('WAITING')
                         setSearchedRows(appointments.filter(appointment => appointment.status === 'WAITING'))
                     }}>
                         Waiting
                     </div>
-                    <div style={ viewStatus === 'ACTIVE' ? { border: '2px solid #5c60f5', color: '#5c60f5'} : null}onClick={e => {
+                    <div style={ viewStatus === 'ACTIVE' ? activeElementColor : null } onClick={e => {
                         setViewStatus('ACTIVE')
                         setSearchedRows(appointments.filter(appointment => appointment.status === 'ACTIVE'))
                     }}>
                         Active
                     </div>
-                    <div style={ viewStatus === 'DONE' ? { border: '2px solid #5c60f5', color: '#5c60f5'} : null}onClick={e => {
+                    <div style={ viewStatus === 'DONE' ? activeElementColor : null } onClick={e => {
                         setViewStatus('DONE')
                         setSearchedRows(appointments.filter(appointment => appointment.status === 'DONE'))
                     }}>
                         Done
                     </div>
-                    <div style={ viewStatus === 'CANCELLED' ? { border: '2px solid #5c60f5', color: '#5c60f5'} : null}onClick={e => {
+                    <div style={ viewStatus === 'CANCELLED' ? activeElementColor : null } onClick={e => {
                         setViewStatus('CANCELLED')
                         setSearchedRows(appointments.filter(appointment => appointment.status === 'CANCELLED'))
                     }}>
                         Cancelled
                     </div>
-                    <div style={ viewStatus === 'EXPIRED' ? { border: '2px solid #5c60f5', color: '#5c60f5'} : null}onClick={e => {
+                    <div style={ viewStatus === 'EXPIRED' ? activeElementColor : null } onClick={e => {
                         setViewStatus('EXPIRED')
                         setSearchedRows(appointments.filter(appointment => appointment.status === 'EXPIRED'))
                     }}>
                         Expired
                     </div>
                 </div>
-                <div className="table-columns-filters-container">
-                    <div>
-                        <span><AddCircleOutlinedIcon />Patient name</span>
-                        <span><AddCircleOutlinedIcon />Patient phone</span>
-                        <span><AddCircleOutlinedIcon /> Doctor name</span>
-                        <span><AddCircleOutlinedIcon />Doctor phone</span>
-                        <span><AddCircleOutlinedIcon />Reservation date</span>
-                    </div>
-                    <span>Clear Filters</span>
-                </div>
             <div className="table-container body-text">
+                <div className="table-filters-container">
+                    <div className="table-name-container">
+                        <strong>Appointments</strong>
+                    </div>
+                    <div className="table-search-input-container">
+                        <span><SearchIcon /></span>
+                        <input 
+                        type="search" 
+                        className="form-input" 
+                        placeholder="search appointments..."
+                        onChange={e => setSearchedRows(appointments.filter(row => searchRows(row, e.target.value)))}
+                        />
+                    </div>
+                    <div className="refresh-button-container">
+                        <button
+                        onClick={e => setReload(reload+1)}
+                        className="normal-button action-color-bg white-text icon-button">
+                            <RefreshIcon />
+                            Refresh
+                        </button>
+                    </div>
+                </div>
             <table>
                 <tr className="table-header-rows">
-                    <th>PATIENT NAME</th>
-                    <th>PATIENT PHONE</th>
-                    <th>DOCTOR NAME</th>
-                    <th>DOCTOR PHONE</th>
-                    <th>STATUS</th>
-                    <th>RESERVATION DATE</th>
-                    <th></th>
+                    <th>Patient Name</th>
+                    <th>Patient Phone</th>
+                    <th>Doctor Name</th>
+                    <th>Doctor Phone</th>
+                    <th>Status</th>
+                    <th>Reservation Date</th>
+                    <th>Actions</th>
                 </tr>
                 
-                {searchedRows.map(appointment => <tr>
+                {searchedRows.slice(0, 40).map(appointment => <tr>
                     <td>
                         {appointment.patientName}
                     </td>
@@ -179,7 +205,7 @@ const AppointmentsTable = ({ appointments, setAppointments, reload, setReload })
                     <td>
                         {`+${appointment.doctor.countryCode}${appointment.doctor.phone}`}
                     </td>
-                    <td>
+                    <td className="icon-row">
                         {renderAppointmentStatus(appointment.status)}
                     </td>
                     <td>{`${format(new Date(appointment.reservationTime), 'dd MMM yyyy')} ${getTime(appointment.reservationTime)}`}</td>

@@ -72,6 +72,8 @@
 
 .table-container {
     background-color: #FFF;
+    border: 1px solid #EEE;
+    border-radius: .25rem !important;
 }
 
 .table-container h3 {
@@ -79,33 +81,75 @@
 }
 
 .table-footer {
-    padding: .5rem 0;
+    padding: 0 .5rem;
 }
 
 .table-container table {
     width: 100%;
     text-align: left;
+    padding: 1rem 0;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 .drugs-table-container table {
     width: 100%;
 }
 
+.table-container table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
 .table-container table tr td {
     border-bottom: 1px solid var(--border-color);
     color: #414552;
+    padding: .5rem 1rem !important;
 }
 
 .table-container table tr th {
-    border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
     font-weight: 500;
     color: #1A1B25;
+    padding: .8rem 1rem !important;
 }
 
-th, td {
-    padding: 8px 0 !important;
+.table-filters-container {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    padding: 1rem .5rem .5rem .5rem;
 }
+
+.refresh-button-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.table-search-input-container {
+    position: relative;
+}
+
+.table-search-input-container span {
+    position: absolute;
+    margin-right: 1rem;
+    top: .2rem;
+    left: .1rem;
+}
+
+.table-search-input-container span svg {
+    font-size: 1.3rem;
+}
+
+.table-search-input-container input {
+    padding-left: 2rem !important;
+}
+
+.table-name-container {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+}
+
 
 .image-and-name-container {
     display: flex;
@@ -144,44 +188,6 @@ th, td {
     cursor: pointer;
 }
 
-.actions-container {
-    position: relative;
-    display: block;
-}
-
-.actions-container svg {
-    color: #414552;
-}
-
-.actions-dropdown-container {
-    position: absolute;
-    display: none;
-    z-index: 1;
-    background-color: #FFF;
-    border-radius: .25rem;
-    box-shadow: var(--box-shadow);
-}
-
-.actions-dropdown-container ul li {
-    list-style-type: none;
-    padding: .5rem 1rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.actions-dropdown-container ul .width {
-    width: 7rem;
-}
-
-.actions-dropdown-container ul li:hover {
-    background-color: var(--light-grey);
-    cursor: pointer;
-}
-
-.actions-container:hover .actions-dropdown-container {
-    display: block;
-    cursor: pointer;
-    opacity: .8;
-}
 
 .table-columns-filters-container {
     display: flex;
@@ -247,12 +253,12 @@ th, td {
 
 .table-columns-categories-container div:hover {
     cursor: pointer;
-    border: 2px solid #5c60f5;
-    color: #5c60f5;
+    border: 2px solid #4c83ee;
+    color: #4c83ee;
 }
 
 .table-view-button {
-    color: #5c60f5;
+    color: #4c83ee;
     font-weight: 500;
 }
 
@@ -269,4 +275,14 @@ th, td {
 .table-appointment-status svg {
     font-size: .7rem;
     margin-right: .5rem;
+}
+
+.icon-row {
+    display: flex;
+    align-items: center;
+}
+
+.icon-row svg {
+    font-size: .7rem;
+    margin-right: .4rem;
 }

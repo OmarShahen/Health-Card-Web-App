@@ -1,46 +1,68 @@
 .patient-card-container {
-    display: flex;
-    text-align: right;
-    flex-direction: row-reverse;
-    background-color: #FFF;
-    padding: .5rem;
-    margin: .5rem 0;
-    transition: .3s;
+    padding: 1rem;
+    border-radius: .25rem;
     box-shadow: var(--box-shadow);
+    background-color: #FFF;
 }
 
 .patient-card-container:hover {
     cursor: pointer;
+    opacity: .9;
 }
 
-.patient-card-info-container {
+.patient-card-header {
     display: flex;
-    flex-direction: row-reverse;
     justify-content: space-between;
-    width: 100%;
 }
 
-.name-and-phone-container {
+.patient-image-info-container {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    font-size: .8rem;
 }
 
+.patient-image-info-container div strong {
+    display: block;
+}
 
-.patient-card-container div img {
-    width: 3rem;
-    height: 3rem;
+.patient-image-info-container div span {
+    font-size: .8rem;
+}
+
+.patient-image-info-container img {
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%;
-    margin-left: .8rem;
+    margin-right: .3rem;
 }
 
-.patient-card-info-container {
-    display: flex;
-    flex-direction: row-reverse;
-    padding-bottom: .5rem;
+.patient-card-status {
+    font-weight: 600;
 }
 
-.patient-card-name-container {
+.patient-card-body {
+    padding-top: .7rem;
+}
+
+.patient-card-body ul li {
+    font-size: .9rem;
+    list-style-type: none;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.patient-card-body ul li strong {
+    font-weight: 600;
+}
+
+.patient-card-header-right-section {
+    display: flex;
+    align-items: flex-end;
     flex-direction: column;
-    padding-right: .5rem;
+    justify-content: space-between;
+}
+
+.patient-card-header-right-section svg {
+    margin-bottom: 0rem;
 }

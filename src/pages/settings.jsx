@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import PrescriptionCard from "../components/cards/patient-prescriptions"
+import PrescriptionCard from "../components/cards/prescription"
 import './prescriptions.css'
 import ImportExportOutlinedIcon from '@mui/icons-material/ImportExportOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
