@@ -103,6 +103,23 @@
     margin-left: .4rem;
 }
 
+.card-header-left-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.card-buttons-container {
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    padding-top: 1.2rem;
+}
+
+.card-buttons-container button {
+    margin-left: .5rem;
+}
+
 .appointment-card-container {
     padding: .5rem 1rem 0 1rem;
     margin: 1rem 0 0 0;
@@ -147,7 +164,7 @@
 
 .card-container:hover {
     cursor: pointer;
-    opacity: .9;
+    opacity: .8;
 }
 
 .disable-hover {
@@ -225,7 +242,7 @@
 .card-date-container {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px solid #F2F2F2;
@@ -256,7 +273,7 @@
 
 .prescription-card-container:hover {
     cursor: pointer;
-    opacity: .9;
+    opacity: .8;
 }
 
 .prescription-card-header {

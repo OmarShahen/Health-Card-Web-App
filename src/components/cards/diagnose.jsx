@@ -7,7 +7,7 @@ const DiagnoseCard = ({ diagnose }) => {
     const doctorName = `${diagnose?.doctor.firstName} ${diagnose?.doctor.lastName}`
     const doctorPhone = `+${diagnose?.doctor.countryCode}${diagnose?.doctor.phone}`
 
-    return <div className="patient-card-container">
+    return <div className="patient-card-container disable-hover">
         <div className="patient-card-header">
             <div className="patient-image-info-container">
                 <img src={`https://avatars.dicebear.com/api/initials/${doctorName}.svg`} alt="patient-image" />
@@ -16,14 +16,11 @@ const DiagnoseCard = ({ diagnose }) => {
                     <span className="grey-text">{doctorPhone}</span>
                 </div>
             </div>
-            <div>
-                <span className="grey-text span-text">{format(new Date(diagnose.createdAt), 'dd MMM yyyy')}</span>
-            </div>
         </div>
         <div className="codes-container body-text patient-card-body">
                 <span className="status-btn grey-bg">{diagnose.diagnose}</span>
         </div>
-        <CardDate date={diagnose.createdAt} />
+        <CardDate creationDate={diagnose.createdAt} />
     </div>
 }
 

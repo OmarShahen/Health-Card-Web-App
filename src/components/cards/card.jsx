@@ -2,7 +2,7 @@ import NorthOutlinedIcon from '@mui/icons-material/NorthOutlined'
 
 const Card = ({ cardHeader, icon, iconColor, number }) => {
 
-    return <div className="card-container body-text">
+    return <div className="card-container body-text disable-hover">
         <div className="card-header-container">
             <span>
                 {cardHeader}

@@ -39,7 +39,7 @@ const DrugCard = ({ drug, drugs, setDrugs, isShowDelete, drugIndex }) => {
                 null
             }
         </div>
-        <CardDate date={drug.createdAt} />
+        { drug.createdAt ? <CardDate creationDate={drug.createdAt} /> : null }
     </div>
 }
 

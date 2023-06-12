@@ -82,6 +82,10 @@
     background-color: dodgerblue;
 }
 
+.verification-codes-inputs-wrapper {
+    text-align: center;
+}
+
 .verification-codes-inputs-container div {
     --ReactInputVerificationCode-itemSpacing: 0;
 }

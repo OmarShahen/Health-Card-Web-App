@@ -66,10 +66,18 @@ const PrescriptionCard = ({ prescription, setReload, reload }) => {
                 </div>
                 <div className="prescription-name-container">
                     <strong>{doctorName}</strong>
-                    <span className="light-text-color small-description-text">{prescription.doctor.speciality[0]}</span>
+                    {
+                        prescription.clinic ?
+                        <span className="grey-text span-text">{prescription.clinic.name}</span>
+                        :
+                        null
+                    }                
                 </div>
             </div>
-            <CardActions actions={cardActionsList} />
+            <div className="card-header-left-container">
+                <CardActions actions={cardActionsList} />
+                <span>#{prescription.prescriptionId}</span>
+            </div>
         </div>
         <div className="prescription-card-body">
             <div className="card-contact-section-container">
@@ -99,8 +107,23 @@ const PrescriptionCard = ({ prescription, setReload, reload }) => {
                 </div>
             </div>)
             }
+            {
+                prescription.notes && prescription.notes.length != 0 ?
+                <div>
+                    <div className="card-list-header body-text">
+                        <strong>Notes</strong>
+                    </div>
+                    <div className="codes-container">
+                        { prescription.notes.map(note => <span className="status-btn grey-bg">
+                            {note}                        
+                        </span>) }
+                    </div>
+                </div>
+                :
+                null
+            }
         </div>
-        <CardDate date={prescription.createdAt} />
+        <CardDate creationDate={prescription.createdAt} updateDate={prescription.updatedAt} />
     </div>
 }
 

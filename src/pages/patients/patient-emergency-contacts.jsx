@@ -63,6 +63,7 @@ const PatientEmergencyContactsPage = () => {
         reload={reload}
         setReload={setReload}
         mode={formMode}
+        setMode={setFormMode}
         contact={updateContact}
         />
         : 
@@ -77,14 +78,21 @@ const PatientEmergencyContactsPage = () => {
                     searchRows={searchContacts}
                     />
                 </div>
-                <DocumentsSizes size={searchedEmergencyContacts.length} />
                 {
                     isLoading ?
                     <CircularLoading />
                     :
                     searchedEmergencyContacts.length !== 0 ?
                     <div className="cards-grey-container cards-3-list-wrapper">
-                        {searchedEmergencyContacts.map(contact => <ContactCard contact={contact} />)}
+                        {searchedEmergencyContacts.map(contact => <ContactCard
+                         contact={contact}
+                         reload={reload}
+                         setReload={setReload}
+                         patientId={patientId}
+                         setFormMode={setFormMode}
+                         setUpdateContact={setUpdateContact}
+                         setIsShowForm={setIsShowForm}
+                         />)}
                     </div>
                     :
                     <EmptySection setIsShowForm={setIsShowForm} />

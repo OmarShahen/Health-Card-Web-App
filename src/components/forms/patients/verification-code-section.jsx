@@ -1,6 +1,8 @@
 import './patients.css'
 import ReactInputVerificationCode from 'react-input-verification-code'
 import SectionsTracker from './form-section-tracker'
+import VerificationInput from "react-verification-input"
+
 
 const PatientVerificationCodeSection = ({ setShowSection }) => {
 
@@ -16,7 +18,7 @@ const PatientVerificationCodeSection = ({ setShowSection }) => {
             </p>
         </div>
             <div className="verification-codes-inputs-container">
-                <ReactInputVerificationCode />
+                <VerificationInput length={5} />
             </div> 
         <div className="patient-form-btn-container">
             <button className="button" onClick={e => setShowSection('NAME')}>

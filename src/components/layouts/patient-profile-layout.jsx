@@ -4,13 +4,14 @@ import { serverRequest } from '../../components/API/request'
 import NavigationBar from '../../components/navigation/navigation-bar'
 import PageHeader from '../sections/page-header'
 import { setPatient } from '../../redux/slices/patientSlice'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 const PatientProfileLayout = () => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
 
+    const user = useSelector(state => state.user.user)
     const dispatch = useDispatch()
     const [isLoading, setIsLoading] = useState(true)
     const [patientProfile, setPatientProfile] = useState({})
@@ -44,12 +45,12 @@ const PatientProfileLayout = () => {
                 <ul>
                     <li><NavLink to={`/patients/${patientId}/medical-profile`}>Profile</NavLink></li> 
                     <li><NavLink to={`/patients/${patientId}/emergency-contacts`}>Contacts</NavLink></li>
-                    <li><NavLink to={`/patients/${patientId}/doctors`}>Doctors</NavLink></li>
-                    <li><NavLink to={`/patients/${patientId}/encounters`}>Encounters</NavLink></li> 
-                    <li><NavLink to={`/patients/${patientId}/symptoms`}>Symptoms</NavLink></li> 
-                    <li><NavLink to={`/patients/${patientId}/diagnosis`}>Diagnosis</NavLink></li> 
-                    <li><NavLink to={`/patients/${patientId}/prescriptions`}>Prescriptions</NavLink></li> 
-                    <li><NavLink to={`/patients/${patientId}/drugs`}>Drugs</NavLink></li> 
+                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/doctors`}>Doctors</NavLink></li> }
+                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/encounters`}>Encounters</NavLink></li> }
+                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/symptoms`}>Symptoms</NavLink></li> }
+                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/diagnosis`}>Diagnosis</NavLink></li> }
+                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/prescriptions`}>Prescriptions</NavLink></li> }
+                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/drugs`}>Drugs</NavLink></li> }
                 </ul>
             </div>
             <Outlet />

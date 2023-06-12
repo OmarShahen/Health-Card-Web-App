@@ -186,8 +186,9 @@ const AppointmentsTable = ({ appointments, setAppointments, reload, setReload, s
                     <th>Patient Name</th>
                     <th>Patient Phone</th>
                     <th>Doctor Name</th>
-                    <th>Doctor Phone</th>
+                    {/*<th>Doctor Phone</th>*/}
                     <th>Status</th>
+                    <th>Visit Reason</th>
                     <th>Reservation Date</th>
                     <th>Actions</th>
                 </tr>
@@ -202,11 +203,14 @@ const AppointmentsTable = ({ appointments, setAppointments, reload, setReload, s
                     <td>
                         {appointment.doctor.firstName + ' ' + appointment.doctor.lastName}
                     </td>
-                    <td>
+                    {/*<td>
                         {`+${appointment.doctor.countryCode}${appointment.doctor.phone}`}
-                    </td>
+                    </td>*/}
                     <td className="icon-row">
                         {renderAppointmentStatus(appointment.status)}
+                    </td>
+                    <td>
+                        { appointment.visitReason ? appointment.visitReason.name : 'Not Registered' }
                     </td>
                     <td>{`${format(new Date(appointment.reservationTime), 'dd MMM yyyy')} ${getTime(appointment.reservationTime)}`}</td>
                     <td className="actions-container">

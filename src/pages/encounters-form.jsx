@@ -4,17 +4,16 @@ import PageHeader from "../components/sections/page-header";
 import { useSelector } from 'react-redux';
 import { serverRequest } from '../components/API/request';
 import { TailSpin } from 'react-loader-spinner'
-import toast from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import SymptomsDiagnosisForm from '../components/forms/prescriptions/symptoms-diagnosis';
-import DrugsTable from '../components/tables/drugs'
 import DrugFormModal from '../components/modals/drug-form';
 import CancelIcon from '@mui/icons-material/Cancel'
-import NavigationBar from '../components/navigation/navigation-bar';
-import DrugCard from '../components/cards/drug';
+import NavigationBar from '../components/navigation/navigation-bar'
+import DrugCard from '../components/cards/drug'
+import format from 'date-fns/format'
 
-
-const EncountersFormPage = () => {
+const EncountersFormPage = ({ roles }) => {
 
     const navigate = useNavigate()
     const user = useSelector(state => state.user.user)
@@ -26,17 +25,44 @@ const EncountersFormPage = () => {
     const cardId = searchParams.get('cardId')
 
     const [patientCardId, setPatientCardId] = useState(cardId ? cardId : '')
+    const [clinics, setClinics] = useState([])
     const [symptoms, setSymptoms] = useState([])
     const [diagnosis, setDiagnosis] = useState([])
     const [notes, setNotes] = useState([])
     const [drugs, setDrugs] = useState([])
+    const [clinic, setClinic] = useState()
+    const [registrationDate, setRegistrationDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+    const [registrationTime, setRegistrationTime] = useState(format(new Date(), 'HH:MM'))
+
 
     const [patientCardIdError, setPatientCardIdError] = useState()
     const [symptomsError, setSymptomsError] = useState()
     const [diagnosisError, setDiagnosisError] = useState()
     const [notesError, setNotesError] = useState()
+    const [registrationDateError, setRegistrationDateError] = useState()
+    const [registrationTimeError, setRegistrationTimeError] = useState()
+    const [clinicError, setClinicError] = useState()
 
-    useEffect(() => scroll(0,0), [])
+    useEffect(() => {
+        scroll(0,0)
+
+        if(!roles.includes(user.role)) {
+            navigate('/login')
+        }
+    }, [])
+
+    useEffect(() => {
+        serverRequest.get(`/v1/clinics/doctors/${user._id}`)
+        .then(response => {
+            const data = response.data
+            setClinics(data.clinics)
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+        })
+
+    }, [])
 
     const handleNotesKeyDown = (e) => {
 
@@ -55,16 +81,27 @@ const EncountersFormPage = () => {
         
         if(!patientCardId) return setPatientCardIdError('patient card ID is required')
 
+        if(!clinic) return setClinicError('clinic is required')
+
+        if(!registrationDate) return setRegistrationDateError('registration date is required')
+
+        if(!registrationTime) return setRegistrationTimeError('registration time is required')
+
         if(symptoms.length === 0) return setSymptomsError('patient symptoms is required') 
 
         if(diagnosis.length === 0) return setDiagnosisError('patient diagnose is required')
 
         const medicalData = {
             doctorId: user._id,
+            clinicId: clinic,
             symptoms,
             diagnosis,
-            notes,
-            medicines: drugs
+            medicines: drugs,
+            registrationDate: format(new Date(`${registrationDate} ${registrationTime}`), 'yyyy-MM-dd HH:MM:ss')
+        }
+
+        if(notes.length != 0) {
+            medicalData.notes = notes
         }
 
         setIsSubmit(true)
@@ -78,7 +115,7 @@ const EncountersFormPage = () => {
         })
         .catch(error => {
             setIsSubmit(false)
-            console.error(error)
+            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
         })
         
     }
@@ -90,11 +127,17 @@ const EncountersFormPage = () => {
         setDiagnosis([])
         setDrugs([])
         setNotes([])
+        setRegistrationDate(format(new Date(), 'yyyy-MM-dd HH:MM:ss'))
+        setRegistrationTime(format(new Date(), 'HH:MM'))
+        setClinic('')
 
         setPatientCardIdError()
         setSymptomsError()
         setDiagnosisError()
         setNotesError()
+        setRegistrationDateError()
+        setRegistrationTimeError()
+        setClinicError()
     }
 
     return <div className="page-container">
@@ -132,6 +175,47 @@ const EncountersFormPage = () => {
                         </div>
                         <span className="red">{patientCardIdError}</span>
                     </div>
+                    <div className="prescription-form-notes-container">
+                        <div className="form-input-container">
+                            <label>Clinic</label>
+                            <select
+                            onChange={e => setClinic(e.target.value)}
+                            onClick={e => setClinicError()}
+                            >
+                                <option selected disabled>Select Clinic</option>
+                                {clinics.map(clinic => <option value={clinic.clinic._id}>{clinic.clinic.name}</option>)}
+                            </select>
+                        </div>
+                        <span className="red">{clinicError}</span>
+                    </div>
+                </div>
+                <div className="cards-2-list-wrapper box-shadow margin-top-1">          
+                    <div className="prescription-form-notes-container">
+                        <strong>Encounter Date</strong>
+                        <div className="form-input-container">
+                            <input 
+                            type="date" 
+                            className="form-input" 
+                            onClick={e => setRegistrationDateError()}
+                            onChange={e => setRegistrationDate(format(new Date(e.target.value), 'yyyy-MM-dd'))}
+                            value={registrationDate}
+                            />
+                            <span className="red">{registrationDateError}</span>
+                        </div>                        
+                    </div>  
+                    <div className="prescription-form-notes-container">
+                        <strong>Encounter Time</strong>
+                        <div className="form-input-container">
+                            <input 
+                            type="time" 
+                            className="form-input" 
+                            onClick={e => setRegistrationTimeError()}
+                            onChange={e => setRegistrationTime(e.target.value)}
+                            value={registrationTime}
+                            />
+                            <span className="red">{registrationTimeError}</span>
+                        </div>
+                    </div>                  
                 </div>
                 <SymptomsDiagnosisForm
                 symptoms={symptoms}
@@ -181,20 +265,8 @@ const EncountersFormPage = () => {
                         Add Drug
                         </button>
                     </div>
-                    <div>
-                        <div className="page-list-container">
-                                {drugs.map(drug => <div className="cards-view-container">
-                                    <DrugCard drug={drug} />
-                                </div>)}
-                        </div>
-                        <div className="page-table-container">
-                            <DrugsTable 
-                            drugs={drugs} 
-                            setDrugs={setDrugs} 
-                            isRemoveAction={true}
-                            isShowFilters={false}
-                            />  
-                        </div>
+                    <div className="cards-grey-container cards-3-list-wrapper">
+                            {drugs.map(drug => <DrugCard drug={drug} />)}
                     </div>
                 </div>
                 

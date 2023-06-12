@@ -14,11 +14,13 @@ import EmptySection from '../components/sections/empty/empty'
 import SearchInput from '../components/inputs/search'
 import { searchPatients } from '../utils/searches/search-patients'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import DocumentsSizes from '../components/sections/sizes/documents-size'
-
+import { useNavigate } from 'react-router-dom'
 
 const PatientsPage = () => {
 
+    const navigate = useNavigate()
+
+    const [targetClinic, setTargetClinic] = useState()
     const [reload, setReload] = useState(1)
     const [isLoading, setIsLoading] = useState(true)
     const [showPatientIdForm, setShowPatientIdForm] = useState(false)
@@ -30,8 +32,12 @@ const PatientsPage = () => {
     useEffect(() => scroll(0,0), [])
 
     useEffect(() => {
-        setIsLoading(true)
-        serverRequest.get(`/v1/patients/doctors/${user._id}`)
+        setIsLoading(true)    
+        const endpointURL = user.role === 'STAFF' ? 
+        `/v1/patients/clinics/${user.clinicId}`
+        :
+        `/v1/patients/doctors/${user._id}`    
+        serverRequest.get(endpointURL)
         .then(response => {
             setIsLoading(false)
             setPatients(response.data.patients)
@@ -70,46 +76,46 @@ const PatientsPage = () => {
             :
             null
         }
-        <div className="padded-container">
-            <div className="page-header-wrapper">
-                <div className="back-button-container">
-                    <ArrowBackIcon />
-                    <span onClick={e => navigate(-1)}>Back</span>
-                </div>
-                <div className="page-header-container">
-                    <div>
-                        <h1>
-                            Patients
-                        </h1>
+            <div className="padded-container">
+                <div className="page-header-wrapper">
+                    <div className="back-button-container">
+                        <ArrowBackIcon />
+                        <span onClick={e => navigate(-1)}>Back</span>
                     </div>
-                    <div 
-                    className="btns-container subheader-text">
-                        <button onClick={e => setShowPatientDataForm(true)}><AddOutlinedIcon /><strong>Add patient with card</strong></button>
-                        <button onClick={e => setShowPatientIdForm(true)}><AddOutlinedIcon /><strong>Add patient by ID</strong></button>
-                    </div>
-                    <div className="header-mobile-icons-container">
-                        <div onClick={e => setReload(reload + 1)}>
-                            <CachedIcon />
+                    <div className="page-header-container">
+                        <div>
+                            <h1>
+                                Patients
+                            </h1>
+                        </div>
+                        <div 
+                        className="btns-container subheader-text">
+                            <button onClick={e => navigate('/patients/form')}><AddOutlinedIcon /><strong>Create patient</strong></button>
+                            <button onClick={e => setShowPatientIdForm(true)}><AddOutlinedIcon /><strong>Add patient by ID</strong></button>
+                        </div>
+                        <div className="header-mobile-icons-container">
+                            <div onClick={e => setReload(reload + 1)}>
+                                <CachedIcon />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div>
-                <div className="search-input-container">
-                    <SearchInput 
-                    rows={patients} 
-                    setRows={setSearchedPatients}
-                    searchRows={searchPatients}
-                    />
-                </div>
-                <DocumentsSizes size={searchedPatients.length} />
+                <div>
+                    <div className="search-input-container">
+                        <SearchInput 
+                        rows={patients} 
+                        setRows={setSearchedPatients}
+                        searchRows={searchPatients}
+                        setTargetClinic={setTargetClinic}
+                        />
+                    </div>
                 {
                     isLoading ?
                     <CircularLoading />
                     :
                     searchedPatients.length !== 0 ?
                     <div className="cards-grey-container cards-3-list-wrapper">
-                        {searchedPatients.map(patient => <PatientCard patient={patient} />)}
+                        {searchedPatients.map(patient => <PatientCard patient={patient} setReload={setReload} reload={reload} />)}
                     </div>
                     :
                     <EmptySection setIsShowForm={setShowPatientDataForm} />

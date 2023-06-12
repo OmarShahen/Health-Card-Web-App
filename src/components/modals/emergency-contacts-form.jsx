@@ -4,7 +4,7 @@ import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
 import { TailSpin } from 'react-loader-spinner'
 
-const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, contact }) => {
+const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, setMode, contact }) => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
@@ -104,6 +104,7 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
             resetForm()
             setReload(reload+1)
             setShowModalForm(false)
+            setMode('')
             toast.success(data.message, { position: 'top-right', duration: 3000 })
         })
         .catch(error => {
@@ -224,6 +225,7 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
                     <button 
                     className="normal-button cancel-button"
                     onClick={e => {
+                        setMode('')
                         setShowModalForm(false)
                     }}
                     >Close</button>

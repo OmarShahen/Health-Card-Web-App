@@ -10,14 +10,18 @@ import SearchInput from '../../components/inputs/search'
 import { searchEncounters } from '../../utils/searches/search-encounters'
 import PageHeader from '../../components/sections/page-header'
 import { useSelector } from 'react-redux'
-import DocumentsSizes from '../../components/sections/sizes/documents-size'
+import { useNavigate } from 'react-router-dom'
 
-const PatientEncountersPage = () => {
+const PatientEncountersPage = ({ roles }) => {
+
+    const navigate = useNavigate()
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
 
     const patient = useSelector(state => state.patient.patient)
+    const user = useSelector(state => state.user.user)
+
     const [reload, setReload] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
     const [encounters, setEncounters] = useState([])
@@ -25,8 +29,14 @@ const PatientEncountersPage = () => {
 
     const [statsQuery, setStatsQuery] = useState({})
 
-    useEffect(() => scroll(0,0), [])
+    useEffect(() => {
+        scroll(0,0)
 
+        if(!roles.includes(user.role)) {
+            navigate('/login')
+        }
+
+    }, [])
     useEffect(() => {
         setIsLoading(true)
         serverRequest.get(`/v1/encounters/patients/${patientId}`, { params: statsQuery })
@@ -68,7 +78,6 @@ const PatientEncountersPage = () => {
                     />
                 </div>
                 <div>
-                    <DocumentsSizes size={searchedEncounters.length} />
                     {
                         isLoading ?
                         <CircularLoading />

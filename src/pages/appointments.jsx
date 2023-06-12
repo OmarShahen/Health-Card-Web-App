@@ -4,7 +4,6 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import { serverRequest } from "../components/API/request"
 import { useSelector } from 'react-redux'
 import PageHeader from '../components/sections/page-header'
-import AppointmentsTable from '../components/tables/appointments';
 import Card from '../components/cards/card';
 import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined'
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
@@ -22,6 +21,7 @@ import EmptySection from '../components/sections/empty/empty'
 import SearchInput from '../components/inputs/search'
 import { searchAppointments } from '../utils/searches/search-appointments'
 import { format } from 'date-fns'
+import { formatNumber } from '../utils/numbers'
 
 const AppointmentsPage = () => {
 
@@ -30,7 +30,10 @@ const AppointmentsPage = () => {
     const [showModalForm, setShowModalForm] = useState(false)
     const [appointments, setAppointments] = useState([])
     const [searchedAppointments, setSearchedAppointments] = useState([])
+    const [viewStatus, setViewStatus] = useState('ALL')
     const user = useSelector(state => state.user.user)
+
+    const activeElementColor = { border: '2px solid #4c83ee', color: '#4c83ee' }
 
     const todayDate = new Date()
 
@@ -40,7 +43,11 @@ const AppointmentsPage = () => {
 
     useEffect(() => {
         setIsLoading(true)
-        serverRequest.get(`/v1/appointments/doctors/${user._id}`, { params: statsQuery })
+        const endpointURL = user.role === 'STAFF' ?
+        `/v1/appointments/clinics/${user.clinicId}`
+        :
+        `/v1/appointments/doctors/${user._id}`
+        serverRequest.get(endpointURL, { params: statsQuery })
         .then(response => {
             setIsLoading(false)
             setAppointments(response.data.appointments)
@@ -80,43 +87,43 @@ const AppointmentsPage = () => {
                 <Card 
                 icon={<CalendarMonthOutlinedIcon />}
                 cardHeader={'All'}
-                number={appointments.length}
+                number={formatNumber(appointments.length)}
                 iconColor={'#5C60F5'}
                 />
                 <Card 
                 icon={<UpcomingOutlinedIcon />}
                 cardHeader={'Upcoming'}
-                number={appointments.filter(appointment => appointment.status === 'UPCOMING').length}
+                number={formatNumber(appointments.filter(appointment => appointment.status === 'UPCOMING').length)}
                 iconColor={'#FF8C00'}
                 />
                 <Card 
                 icon={<HourglassEmptyOutlinedIcon />}
                 cardHeader={'Waiting'}
-                number={appointments.filter(appointment => appointment.status === 'WAITING').length}
+                number={formatNumber(appointments.filter(appointment => appointment.status === 'WAITING').length)}
                 iconColor={'#5C60F5'}
                 />
                 <Card 
                 icon={<MeetingRoomOutlinedIcon />}
                 cardHeader={'Active'}
-                number={appointments.filter(appointment => appointment.status === 'ACTIVE').length}
+                number={formatNumber(appointments.filter(appointment => appointment.status === 'ACTIVE').length)}
                 iconColor={'#5C60F5'}
                 />
                 <Card 
                 icon={<CheckCircleOutlineOutlinedIcon />}
                 cardHeader={'Done'}
-                number={appointments.filter(appointment => appointment.status === 'DONE').length}
+                number={formatNumber(appointments.filter(appointment => appointment.status === 'DONE').length)}
                 iconColor={'#00D4FF'}
                 />
                 <Card 
                 icon={<CancelOutlinedIcon />}
                 cardHeader={'Cancelled'}
-                number={appointments.filter(appointment => appointment.status === 'CANCELLED').length}
+                number={formatNumber(appointments.filter(appointment => appointment.status === 'CANCELLED').length)}
                 iconColor={'#FF579A'}
                 />
                 <Card 
                 icon={<TimerOffOutlinedIcon />}
                 cardHeader={'Expired'}
-                number={appointments.filter(appointment => appointment.status === 'EXPIRED').length}
+                number={formatNumber(appointments.filter(appointment => appointment.status === 'EXPIRED').length)}
                 iconColor={'#FF8C00'}
                 />
             </div>
@@ -127,35 +134,68 @@ const AppointmentsPage = () => {
             defaultValue={'0'}
             />
             <div className="margin-top-1"></div>
-            <div className="search-input-container show-mobile">
+            <div className="search-input-container">
                 <SearchInput 
                 rows={appointments} 
                 setRows={setSearchedAppointments}
                 searchRows={searchAppointments}
                 />
             </div>
+            <div className="appointments-categories-container">
+                    <div style={ viewStatus === 'ALL' ? activeElementColor : null } onClick={e => {
+                        setViewStatus('ALL')
+                        setSearchedAppointments(appointments.filter(appointment => true))
+                    }}>
+                        All
+                    </div>
+                    <div style={ viewStatus === 'UPCOMING' ?  activeElementColor : null } onClick={e => {
+                        setViewStatus('UPCOMING')
+                        setSearchedAppointments(appointments.filter(appointment => appointment.status === 'UPCOMING'))
+                    }}>
+                        Upcoming
+                    </div>
+                    <div style={ viewStatus === 'WAITING' ?  activeElementColor : null } onClick={e => {
+                        setViewStatus('WAITING')
+                        setSearchedAppointments(appointments.filter(appointment => appointment.status === 'WAITING'))
+                    }}>
+                        Waiting
+                    </div>
+                    <div style={ viewStatus === 'ACTIVE' ? activeElementColor : null } onClick={e => {
+                        setViewStatus('ACTIVE')
+                        setSearchedAppointments(appointments.filter(appointment => appointment.status === 'ACTIVE'))
+                    }}>
+                        Active
+                    </div>
+                    <div style={ viewStatus === 'DONE' ? activeElementColor : null } onClick={e => {
+                        setViewStatus('DONE')
+                        setSearchedAppointments(appointments.filter(appointment => appointment.status === 'DONE'))
+                    }}>
+                        Done
+                    </div>
+                    <div style={ viewStatus === 'CANCELLED' ? activeElementColor : null } onClick={e => {
+                        setViewStatus('CANCELLED')
+                        setSearchedAppointments(appointments.filter(appointment => appointment.status === 'CANCELLED'))
+                    }}>
+                        Cancelled
+                    </div>
+                    <div style={ viewStatus === 'EXPIRED' ? activeElementColor : null } onClick={e => {
+                        setViewStatus('EXPIRED')
+                        setSearchedAppointments(appointments.filter(appointment => appointment.status === 'EXPIRED'))
+                    }}>
+                        Expired
+                    </div>
+                </div>
             {
                 isLoading ?
                 <CircularLoading />
                 :
                 searchedAppointments.length !== 0 ?
-                <div>
-                    <div className="page-list-container">
-                        {searchedAppointments.map(appointment => <div className="cards-view-container">
-                            <AppointmentCard appointment={appointment} />
-                        </div>
-                            )}
-                    </div>
-                    <div className="page-table-container">
-                    <AppointmentsTable 
-                    appointments={appointments} 
-                    setAppointments={setAppointments}
-                    reload={reload}
-                    setReload={setReload}
-                    setStatsQuery={setStatsQuery}
-                    statsQuery={statsQuery}
-                    />
-                    </div>
+                <div className="cards-grey-container cards-3-list-wrapper">
+                        {searchedAppointments.map(appointment => <AppointmentCard 
+                        appointment={appointment} 
+                        reload={reload} 
+                        setReload={setReload} 
+                        />)}                    
                 </div>
                 :
                 <EmptySection setIsShowForm={setShowModalForm} />

@@ -1,3 +1,18 @@
+
+.profile-form-container h5 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: .7rem;
+    padding: 0;
+}
+
+.profile-form-wrapper {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+
 .form-input-button-container {
     display: grid;
     grid-template-columns: 80% 20%;

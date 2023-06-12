@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast'
 import PageHeader from '../components/sections/page-header'
 
 
-const EncounterPage = () => {
+const EncounterPage = ({ roles }) => {
 
     const navigate = useNavigate()
 
@@ -20,7 +20,13 @@ const EncounterPage = () => {
     const [encounter, setEncounter] = useState()
     const user = useSelector(state => state.user.user)
 
-    useEffect(() => scroll(0,0), [])
+    useEffect(() => {
+        scroll(0,0)
+
+        if(!roles.includes(user.role)) {
+            navigate('/login')
+        }
+    }, [])
 
     useEffect(() => {
         serverRequest.get(`/v1/encounters/${encounterId}`)

@@ -11,7 +11,7 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined'
-
+import TableFunctions from "./table-functions"
 
 const EncountersTable = ({ encounters, setReload, reload }) => {
 

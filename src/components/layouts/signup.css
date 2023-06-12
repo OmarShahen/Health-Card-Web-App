@@ -1,0 +1,16 @@
+.signup-form-navigator-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.signup-form-navigator-container ul {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 30rem;
+}
+
+.signup-form-navigator-container ul li {
+    list-style-type: none;
+}

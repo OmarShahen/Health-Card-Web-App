@@ -1,16 +1,23 @@
-import { format } from 'date-fns'
-import { getTime } from '../../../utils/time'
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
+import { format, formatDistance  } from 'date-fns'
 
-
-const CardDate = ({ date }) => {
+const CardDate = ({ creationDate, updateDate }) => {
 
     return <div className="card-date-container grey-text">
-        <span>{format(new Date(date), 'dd MMM yyyy')}</span>
-        <span>
-            <FiberManualRecordIcon />
-        </span>
-        <span>{getTime(date)}</span>
+        <div>
+            <span>{format(new Date(creationDate), 'dd MMM yyyy')}</span>
+        </div>
+        <div>
+            {
+                !updateDate || new Date(creationDate).getTime() === new Date(updateDate).getTime() ?
+                <span>
+                    {formatDistance(new Date(creationDate), new Date(), { addSuffix: true })}
+                </span>
+                :
+                <span>
+                    last modified({formatDistance(new Date(updateDate), new Date(), { addSuffix: true })})
+                </span>
+            }
+        </div>
     </div>
 }
 

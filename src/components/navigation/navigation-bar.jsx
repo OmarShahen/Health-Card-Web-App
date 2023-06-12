@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import './navigation-bar.css'
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined'
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import MenuOpenIcon from '@mui/icons-material/MenuOpen'
 import UserProfileMenu from '../menus/profile/profile'
@@ -9,7 +11,7 @@ import PatientFormModal from '../modals/patient-form'
 import AppointmentFormModal from '../modals/appointment-form'
 import PatientCardJoinFormModal from '../modals/patient-card-join-form'
 import { useSelector, useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { setIsShowSidebar } from '../../redux/slices/sidebarSlice'
 
 const NavigationBar = ({ pageName }) => {
@@ -70,6 +72,14 @@ const NavigationBar = ({ pageName }) => {
                     : 
                     null 
                     }
+                </div>
+                <div>
+                    <NavLink to="/settings/profile">
+                        <SettingsOutlinedIcon />
+                    </NavLink>
+                </div>
+                <div>
+                    <NotificationsNoneOutlinedIcon />
                 </div>
                 <div className="user-profile-container">
                     <span onClick={e => setShowUserProfileMenu(!showUserProfileMenu)}>

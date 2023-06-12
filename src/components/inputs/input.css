@@ -1,0 +1,20 @@
+.search-field-input-container {
+    position: relative
+}
+
+.search-field-input-container span svg {
+    position: absolute;
+    font-size: 1.4rem;
+    top: .2rem;
+    bottom: 0;
+    left: .2rem;
+}
+
+.search-field-input-container input {
+    padding-left: 2rem !important;
+}
+
+.search-input-result-size-container {
+    display: flex;
+    justify-content: flex-end;
+}

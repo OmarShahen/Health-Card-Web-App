@@ -7,7 +7,7 @@
 
 .patient-card-container:hover {
     cursor: pointer;
-    opacity: .9;
+    opacity: .8;
 }
 
 .patient-card-header {

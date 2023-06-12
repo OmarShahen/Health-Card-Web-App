@@ -66,7 +66,12 @@ const EncounterCard = ({ encounter, setReload, reload }) => {
                 </div>
                 <div className="card-image-description-container">
                     <strong>{doctorName}</strong>
-                    <span className="grey-text span-text">{encounter.doctor.speciality[0]}</span>
+                    {
+                        encounter.clinic ?
+                        <span className="grey-text span-text">{encounter.clinic.name}</span>
+                        :
+                        null
+                    }
                 </div>
             </div>
             <CardActions actions={cardActionsList} />
@@ -116,7 +121,7 @@ const EncounterCard = ({ encounter, setReload, reload }) => {
                 }
             </ul>
         </div>
-        <CardDate date={encounter.createdAt} />
+        <CardDate creationDate={encounter.createdAt} updateDate={encounter.updatedAt} />
     </div>
 }
 

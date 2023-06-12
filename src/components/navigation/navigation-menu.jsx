@@ -2,7 +2,9 @@
 const NavigationMenu = () => {
 
     return <div>
-        Omar Reda
+        <ul>
+            <li></li>
+        </ul>
     </div>
 }
 

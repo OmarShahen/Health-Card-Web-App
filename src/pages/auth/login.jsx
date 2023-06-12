@@ -5,6 +5,7 @@ import { TailSpin } from 'react-loader-spinner'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { setUser } from '../../redux/slices/userSlice'
+import { NavLink } from 'react-router-dom'
 
 const LoginPage = () => {
 
@@ -33,7 +34,12 @@ const LoginPage = () => {
             const data = response.data
             sessionStorage.setItem('user', JSON.stringify({ ...data.user, isLogged: true }))
             dispatch(setUser({ ...data.user, isLogged: true }))
-            navigate('/patients')
+
+            if(data.user.role === 'STAFF') {
+                return navigate('/appointments')
+            }
+
+            return navigate('/patients')
         })
         .catch(error => {
             setIsSubmit(false)
@@ -91,6 +97,9 @@ const LoginPage = () => {
                             :
                             <input type="submit" className="action-color-bg white-text" value="Continue" />
                         }
+                    </div>
+                    <div className="form-note-container">
+                        <span>Don't have an account? <strong><NavLink to="/signup">Signup</NavLink></strong></span>
                     </div>
                 </div>
             </form>

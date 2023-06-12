@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined'
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined'
 import SmokingRoomsOutlinedIcon from '@mui/icons-material/SmokingRoomsOutlined'
 import ElderlyOutlinedIcon from '@mui/icons-material/ElderlyOutlined'
@@ -9,9 +8,6 @@ import MacroOffOutlinedIcon from '@mui/icons-material/MacroOffOutlined'
 import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined'
 import VaccinesOutlinedIcon from '@mui/icons-material/VaccinesOutlined'
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
-import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import translations from '../../i18n'
 import { getAge } from '../../utils/age-calculator'
 
 const PatientProfileSection = ({ patient }) => {
@@ -28,11 +24,11 @@ const PatientProfileSection = ({ patient }) => {
 
     const formatValue = (value) => {
 
-        if(typeof value != 'boolean') {
+        if(typeof value !== 'boolean') {
             return 'Not Registered'
-        } else if(value == true) {
+        } else if(value === true) {
             return 'Yes'
-        } else if(value == false) {
+        } else if(value === false) {
             return 'No'
         }
     }
@@ -40,7 +36,7 @@ const PatientProfileSection = ({ patient }) => {
     return <div>
 
     <div className="cards-grey-container">
-        <div className="information-list-container">
+        <div className="information-list-container" id="demographic-section">
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
@@ -64,6 +60,14 @@ const PatientProfileSection = ({ patient }) => {
                 </li>
                 <li>
                     <div className="bold-text">
+                        Card ID
+                    </div>
+                    <div>
+                        #{patient.cardId}
+                    </div>
+                </li>
+                <li>
+                    <div className="bold-text">
                         Phone
                     </div>
                     <div>
@@ -75,7 +79,7 @@ const PatientProfileSection = ({ patient }) => {
                         City
                     </div>
                     <div>
-                        { patient.country ? patient.country : 'Not Registered' }
+                        { patient.city ? patient.city : 'Not Registered' }
                     </div>
                 </li>
                 <li>
@@ -86,14 +90,14 @@ const PatientProfileSection = ({ patient }) => {
                         { patient.gender ? patient.gender : 'Not Registered' }
                     </div>
                 </li>
-                {/*<li>
+                <li>
                     <div className="bold-text">
                         Social Status
                     </div>
                     <div>
-                        {patient.soci}
+                        {patient.socialStatus ? patient.socialStatus : 'Not Registered'}
                     </div>
-                </li>*/}
+                </li>
                 <li>
                     <div className="bold-text">
                         Age
@@ -113,7 +117,7 @@ const PatientProfileSection = ({ patient }) => {
     <br />
 
     <div className="cards-grey-container">
-        <div className="information-list-container">
+        <div className="information-list-container" id="bad-habits-section">
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
@@ -169,7 +173,7 @@ const PatientProfileSection = ({ patient }) => {
     <br />
 
     <div className="cards-grey-container">
-        <div className="information-list-container">
+        <div className="information-list-container" id="chronic-section">
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
@@ -241,7 +245,7 @@ const PatientProfileSection = ({ patient }) => {
     <br />
 
     <div className="cards-grey-container">
-        <div className="information-list-container">
+        <div className="information-list-container" id="genetic-section">
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
@@ -281,7 +285,7 @@ const PatientProfileSection = ({ patient }) => {
     <br />
 
     <div className="cards-grey-container">
-        <div className="information-list-container">
+        <div className="information-list-container" id="blood-section">
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
@@ -300,7 +304,7 @@ const PatientProfileSection = ({ patient }) => {
                             Blood Group
                         </div>
                         <div>
-                            { patient?.bloodGroup ? patient.bloodGroup : 'غير مسجل' }
+                            { patient?.bloodGroup ? patient.bloodGroup : 'Not Registered' }
                         </div>
                     </li>
                     <li>
@@ -329,7 +333,7 @@ const PatientProfileSection = ({ patient }) => {
     <br />
 
     <div className="cards-grey-container">
-        <div className="information-list-container">
+        <div className="information-list-container" id="allergies-section">
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
@@ -357,12 +361,11 @@ const PatientProfileSection = ({ patient }) => {
                             <div className="bold-text">
                             Allergies  
                             </div>
-                            <div>
+                            <div className="codes-container">
                                 {
-                                    patient?.healthHistory.allergies.map(allergy => <p>
-                                        <FiberManualRecordIcon />
+                                    patient?.healthHistory.allergies.map(allergy => <span className="status-btn grey-bg">
                                         {allergy}
-                                    </p>)
+                                    </span>)
                                 }
                             </div>
                         </li>
@@ -380,7 +383,7 @@ const PatientProfileSection = ({ patient }) => {
     <br />
 
     <div className="cards-grey-container">
-        <div className="information-list-container">
+        <div className="information-list-container" id="immune-section">
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
@@ -411,7 +414,7 @@ const PatientProfileSection = ({ patient }) => {
 
     <br />
 
-    <div className="cards-grey-container">
+    <div className="cards-grey-container" id="surgery-section">
         <div className="information-list-container">
         <div className="information-list-header">
             <div className="header-and-icon-container">
@@ -440,12 +443,11 @@ const PatientProfileSection = ({ patient }) => {
                         <div className="bold-text">
                             Confine Reason  
                         </div>
-                        <div>
+                        <div className="codes-container">
                             {
-                                patient.healthHistory.hospitalConfinedReason.map(reason => <p>
-                                    <FiberManualRecordIcon />
+                                patient.healthHistory.hospitalConfinedReason.map(reason => <span className="status-btn grey-bg">
                                     {reason}
-                                </p>)
+                                </span>)
                             }
                         </div>
                     </li>
@@ -467,11 +469,10 @@ const PatientProfileSection = ({ patient }) => {
                         <div className="bold-text">
                             Surgeries  
                         </div>
-                        <div>
-                            { patient?.healthHistory?.surgicalOperationsReason.map(reason => <p>
-                                <FiberManualRecordIcon />
+                        <div className="codes-container">
+                            { patient?.healthHistory?.surgicalOperationsReason.map(reason => <span className="status-btn grey-bg">
                                 {reason}
-                            </p>) }
+                            </span>) }
                         </div>
                     </li>
                     :

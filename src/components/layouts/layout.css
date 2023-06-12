@@ -10,9 +10,62 @@
 }
 
 .page-main-margin-left {
-    margin-left: 14vw;
+    margin-left: 16vw;
 }
 
 .page-main-margin-left-none {
     margin-left: 0;
+}
+
+.patient-form-layout-container {
+    min-height: 100vh;
+    /*display: grid;
+    grid-template-columns: 25% auto;*/
+}
+
+.patient-form-header h2 {
+    margin: 0;
+}
+
+.patient-form-header {
+    padding-bottom: 1rem !important;
+    margin-bottom: 1rem !important;
+    border-bottom: 1px solid #F2F2F2;
+}
+
+.patient-form-layout-body-container .patient-form-layout-body-wrapper {
+    background-color: #FFF;
+    padding: 0;
+    margin: 0 1rem;
+}
+
+.patient-form-layout-list-container ul {
+    background-color: #FFF;
+    margin-bottom: 1rem;
+    padding: 0 1rem;
+}
+
+.patient-form-layout-list-container ul li {
+    list-style-type: none;
+}
+
+.patient-form-layout-container ul li a {
+    display: block;
+    color: #000;
+    font-weight: normal;
+    padding: .7rem 1rem;
+    border: 2px solid #F2F2F2;
+    border-radius: .25rem;
+    margin: .5rem 0;
+    transition: .2s;
+}
+
+.patient-form-layout-container ul li a:hover {
+    color: #4c83ee;
+    border: 2px solid #4c83ee;
+}
+
+.patient-form-layout-container ul li .active {
+    color: #4c83ee;
+    border: 2px solid #4c83ee;
 }

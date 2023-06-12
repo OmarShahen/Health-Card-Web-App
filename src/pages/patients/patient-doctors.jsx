@@ -7,19 +7,44 @@ import EmptySection from '../../components/sections/empty/empty'
 import SearchInput from '../../components/inputs/search'
 import { searchDoctors } from '../../utils/searches/search-doctors'
 import PageHeader from '../../components/sections/page-header'
-import DocumentsSizes from '../../components/sections/sizes/documents-size'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
-const PatientDoctorsPage = () => {
+
+const PatientDoctorsPage = ({ roles }) => {
+
+    const navigate = useNavigate()
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+
+    const user = useSelector(state => state.user.user)
 
     const [reload, setReload] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
     const [doctors, setDoctors] = useState([])
     const [searchedDoctors, setSearchedDoctors] = useState([])
+    const [clinics, setClinics] = useState([])
 
-    useEffect(() => scroll(0,0), [])
+    useEffect(() => {
+        scroll(0,0)
+
+        if(!roles.includes(user.role)) {
+            navigate('/login')
+        }
+
+    }, [])
+
+    useEffect(() => {
+        serverRequest.get(`/v1/clinics/patients/${patientId}`)
+        .then(response => {
+            const data = response.data
+            setClinics(data.clinics)
+        })
+        .catch(error => {
+            console.error(error)
+        })
+    }, [])
 
     useEffect(() => {
         setIsLoading(true)
@@ -51,9 +76,10 @@ const PatientDoctorsPage = () => {
                         rows={doctors} 
                         setRows={setSearchedDoctors}
                         searchRows={searchDoctors}
+                        isCustomClincis={true}
+                        customClinics={clinics}
                         />
                     </div>
-                    <DocumentsSizes size={searchedDoctors.length} />
                     {
                         isLoading ?
                         <CircularLoading />

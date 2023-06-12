@@ -8,10 +8,14 @@
     flex-direction: column;
     margin-top: 2rem;
     border-radius: .25rem;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    /*box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;*/
     width: 30rem;
     background-color: #FFF;
     padding: 1rem 2rem;
+}
+
+.login-form-header-container {
+    padding-bottom: 2rem;
 }
 
 .login-form-header-container h3 {
@@ -19,11 +23,19 @@
     color: #3C4257;
     text-align: center;
     font-weight: 600;
+    margin-bottom: 0 !important;
+}
+
+.login-form-header-container h6 {
+    margin-top: .3rem;
+    margin-bottom: 0;
+    font-size: .9rem;
+    font-weight: normal;
 }
 
 .login-form-container div label {
     color: #3C4257;
-    font-weight: 500;
+    font-weight: normal;
 }
 
 .password-and-forgot-password-container {
@@ -58,6 +70,38 @@
 .submit-btn-container input:hover {
     cursor: pointer;
     opacity: .9;
+}
+
+.form-note-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-note-container span a {
+    color: #5d93fc;
+}
+
+.policy-container {
+    margin-top: .7rem !important;
+    font-size: .8rem;
+}
+
+.policy-container a {
+    color: #5d93fc;
+    font-weight: bold;
+}
+
+.mail-success-message-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: .5rem;
+}
+
+.mail-success-message-container svg {
+    font-size: 1rem;
+    margin-right: .3rem;
 }
 
 @media only screen and (max-width: 600px) {

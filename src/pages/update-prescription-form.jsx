@@ -5,18 +5,22 @@ import { serverRequest } from '../components/API/request';
 import { TailSpin } from 'react-loader-spinner'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom';
-import DrugsTable from '../components/tables/drugs'
-import DrugFormModal from '../components/modals/drug-form';
-import NavigationBar from '../components/navigation/navigation-bar';
+import DrugFormModal from '../components/modals/drug-form'
+import NavigationBar from '../components/navigation/navigation-bar'
+import DrugCard from '../components/cards/drug'
+import CircularLoading from '../components/loadings/circular'
+import EmptySection from '../components/sections/empty/empty'
+import { useSelector } from 'react-redux';
 
-
-const UpdatePrescriptionsFormPage = () => {
+const UpdatePrescriptionsFormPage = ({ roles }) => {
 
     const navigate = useNavigate()
+    const user = useSelector(state => state.user.user)
     const pagePath = window.location.pathname
     const prescriptionId = pagePath.split('/')[2]
 
     const [isSubmit, setIsSubmit] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
 
     const [targetDrug, setTargetDrug] = useState()
     const [targetIndex, setTargetIndex] = useState()
@@ -28,13 +32,23 @@ const UpdatePrescriptionsFormPage = () => {
     const [drugsError, setDrugsError] = useState()
 
     useEffect(() => {
+        scroll(0,0)
+
+        if(!roles.includes(user.role)) {
+            navigate('/login')
+        }
+    }, [])
+
+    useEffect(() => {
         serverRequest.get(`/v1/prescriptions/${prescriptionId}`)
         .then(response => {
+            setIsLoading(false)
             const data = response.data
             setPrescription(data.prescription)
             setDrugs(data.prescription.medicines)
         })
         .catch(error => {
+            setIsLoading(false)
             console.error(error)
             toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
         })
@@ -98,7 +112,10 @@ const UpdatePrescriptionsFormPage = () => {
         }
         <div className="padded-container">
             <PageHeader pageName={'Update Prescription'} />
-            <div className="prescription-form-wrapper left">
+            {
+                !isLoading ?
+                prescription ?  
+                <div className="prescription-form-wrapper left">
                 <div className="prescription-form-notes-container box-shadow margin-top-1">
                     <div className="prescription-header-container">
                         <div>
@@ -118,16 +135,16 @@ const UpdatePrescriptionsFormPage = () => {
                     
                     {
                         prescription ?
-                        <DrugsTable 
-                        drugs={drugs} 
-                        setDrugs={setDrugs} 
-                        isRemoveAction={true}
-                        isUpdateAction={false}
-                        isShowFilters={false}
-                        setTargetDrug={setTargetDrug}
-                        setShowFormModal={setShowFormModal}
-                        setTargetIndex={setTargetIndex}
-                        />
+                        <div className="cards-grey-container cards-3-list-wrapper">
+                            {drugs.map((drug, index) =>
+                                <DrugCard 
+                                drug={drug} 
+                                isShowDelete={true} 
+                                drugs={drugs} 
+                                setDrugs={setDrugs} 
+                                drugIndex={index}
+                                />)}
+                        </div>
                         :
                         null
                     }
@@ -156,7 +173,12 @@ const UpdatePrescriptionsFormPage = () => {
                             Reset
                         </button>
                 </div>
-            </div>
+                </div>
+                :
+                <EmptySection />
+                :
+                <CircularLoading />
+            }
         </div>
         
     </div>

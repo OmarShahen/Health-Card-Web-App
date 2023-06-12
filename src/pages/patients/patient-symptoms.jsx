@@ -10,15 +10,19 @@ import SearchInput from '../../components/inputs/search'
 import { searchSymptoms } from '../../utils/searches/search-symptoms'
 import PageHeader from '../../components/sections/page-header'
 import { useSelector } from 'react-redux'
-import DocumentsSizes from '../../components/sections/sizes/documents-size'
-
-const PatientSymptomsPage = () => {
+import { useNavigate } from 'react-router-dom'
 
 
+const PatientSymptomsPage = ({ roles }) => {
+
+
+    const navigate = useNavigate()
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
 
     const patientProfile = useSelector(state => state.patient.patient)
+    const user = useSelector(state => state.user.user)
+
     const [statsQuery, setStatsQuery] = useState({})
     const [reload, setReload] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
@@ -38,7 +42,14 @@ const PatientSymptomsPage = () => {
         return symptoms
     }
 
-    useEffect(() => scroll(0,0), [])
+    useEffect(() => {
+        scroll(0,0)
+
+        if(!roles.includes(user.role)) {
+            navigate('/login')
+        }
+
+    }, [])
 
     useEffect(() => {
         setIsLoading(true)
@@ -80,7 +91,6 @@ const PatientSymptomsPage = () => {
                     />
                 </div>
                 <div>
-                    <DocumentsSizes size={searchedSymptoms.length} />
                     {
                         isLoading ?
                         <CircularLoading />

@@ -3,8 +3,6 @@ import './prescriptions.css'
 import { useNavigate } from "react-router-dom"
 import { serverRequest } from "../components/API/request"
 import { useSelector } from 'react-redux'
-import EncountersTable from '../components/tables/encounters'
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
 import NavigationBar from '../components/navigation/navigation-bar'
 import CircularLoading from '../components/loadings/circular'
 import FiltersSection from '../components/sections/filters/filters'
@@ -14,9 +12,10 @@ import SearchInput from '../components/inputs/search'
 import { searchEncounters } from '../utils/searches/search-encounters'
 import { toast } from 'react-hot-toast'
 import PageHeader from '../components/sections/page-header'
-import DocumentsSizes from '../components/sections/sizes/documents-size'
+import CardsFilters from '../components/filters/cards-filters'
 
-const EncountersPage = () => {
+
+const EncountersPage = ({ roles }) => {
 
     const navigate = useNavigate()
 
@@ -34,7 +33,13 @@ const EncountersPage = () => {
     const [statsQuery, setStatsQuery] = useState({ from: weekDate, to: todayDate })
     const user = useSelector(state => state.user.user)
 
-    useEffect(() => scroll(0,0), [])
+    useEffect(() => {
+        scroll(0,0)
+
+        if(!roles.includes(user.role)) {
+            navigate('/login')
+        }
+    }, [])
 
     useEffect(() => {
         setIsLoading(true)
@@ -73,7 +78,6 @@ const EncountersPage = () => {
                 searchRows={searchEncounters}
                 />
             </div>
-            <DocumentsSizes size={searchedEncounters.length} />
             {
                 isLoading ?
                 <CircularLoading />

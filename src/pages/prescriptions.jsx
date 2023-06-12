@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import './prescriptions.css'
 import PageHeader from '../components/sections/page-header'
 import { serverRequest } from '../components/API/request'
-import PrescriptionsTable from '../components/tables/prescriptions'
 import NavigationBar from '../components/navigation/navigation-bar'
 import CircularLoading from '../components/loadings/circular'
 import { useSelector } from 'react-redux'
@@ -11,10 +10,12 @@ import PrescriptionCard from '../components/cards/prescription'
 import EmptySection from '../components/sections/empty/empty'
 import SearchInput from '../components/inputs/search'
 import { searchPrescriptions } from '../utils/searches/search-prescriptions'
-import DocumentsSizes from '../components/sections/sizes/documents-size'
+import { useNavigate } from 'react-router-dom'
 
 
-const PrescriptionsPage = () => {
+const PrescriptionsPage = ({ roles }) => {
+
+    const navigate = useNavigate()
 
     const [isLoading, setIsLoading] = useState(true)
     const [reload, setReload] = useState(1)
@@ -31,7 +32,13 @@ const PrescriptionsPage = () => {
 
     const user = useSelector(state => state.user.user)
 
-    useEffect(() => scroll(0,0), [])
+    useEffect(() => {
+        scroll(0,0)
+
+        if(!roles.includes(user.role)) {
+            navigate('/login')
+        }
+    }, [])
 
     useEffect(() => {
         setIsLoading(true)
@@ -71,7 +78,6 @@ const PrescriptionsPage = () => {
                 searchRows={searchPrescriptions}
                 />
             </div>
-            <DocumentsSizes size={searchedPrescriptions.length} />
             {
                 isLoading ?
                 <CircularLoading />

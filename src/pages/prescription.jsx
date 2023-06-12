@@ -10,7 +10,7 @@ import PrintPrescription from '../components/prints/prescriptions/print-prescrip
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 
-const PrescriptionPage = () => {
+const PrescriptionPage = ({ roles }) => {
 
     const navigate = useNavigate()
 
@@ -19,9 +19,16 @@ const PrescriptionPage = () => {
 
     const [reload, setReload] = useState(1)
     const [prescription, setPrescription] = useState()
+
     const user = useSelector(state => state.user.user)
 
-    useEffect(() => scroll(0,0), [])
+    useEffect(() => {
+        scroll(0,0)
+
+        if(!roles.includes(user.role)) {
+            navigate('/login')
+        }
+    }, [])
 
     useEffect(() => {
         serverRequest.get(`/v1/prescriptions/${prescriptionId}`)

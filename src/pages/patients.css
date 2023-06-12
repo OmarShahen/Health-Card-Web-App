@@ -65,3 +65,17 @@
 .patients-list-container {
     padding: 1rem;
 }
+
+.patient-form-wrapper {
+    padding: 1rem .5rem;
+    border-radius: .25rem;
+    box-shadow: var(--box-shadow);
+    background-color: #FFF;
+}
+
+.patient-form-wrapper h3 {
+    margin: .2rem 0;
+    font-size: .9rem;
+    font-weight: normal;
+}
+

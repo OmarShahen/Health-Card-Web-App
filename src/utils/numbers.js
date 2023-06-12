@@ -1,5 +1,9 @@
 export const formatNumber = (number) => {
-    return new Intl.NumberFormat('ar').format(number)
+    return new Intl.NumberFormat().format(number)
+}
+
+export const formatMoney = (number, lang='en') => {
+    return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EGP' }).format(number)
 }
 
 export const toIndiaDigits = (number) => {

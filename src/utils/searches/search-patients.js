@@ -1,8 +1,10 @@
 export const searchPatients = (patient, value) => {
 
-    const name = `${patient.firstName} ${patient.lastName}`.toLowerCase()
-    const phone = `${patient.countryCode}${patient.phone}`
-    const cardId = `${patient.cardId}`
+    const currentPatient = patient.patient
+
+    const name = `${currentPatient.firstName} ${currentPatient.lastName}`.toLowerCase()
+    const phone = `${currentPatient.countryCode}${currentPatient.phone}`
+    const cardId = `${currentPatient.cardId}`
 
     if(name.includes(value.toLowerCase())) {
         return true

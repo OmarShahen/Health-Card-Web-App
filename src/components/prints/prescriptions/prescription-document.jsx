@@ -20,7 +20,7 @@ class PrescriptionDocument extends React.Component {
                     <div>
                         <div>
                             <strong>Series</strong>
-                            <span className="grey-text">1</span>
+                            <span className="grey-text">{prescription.prescriptionId}</span>
                         </div>
                         <div>
                             <strong>Patient</strong>
