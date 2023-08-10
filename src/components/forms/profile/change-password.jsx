@@ -4,10 +4,12 @@ import { serverRequest } from "../../API/request"
 import { toast } from "react-hot-toast"
 import { TailSpin } from "react-loader-spinner"
 import { useSelector } from "react-redux"
+import translations from "../../../i18n"
 
 const ChangePasswordForm = () => {
 
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     const [isSubmit, setIsSubmit] = useState(false)
 
@@ -22,13 +24,13 @@ const ChangePasswordForm = () => {
     const handleUpdate = (e) => {
         e.preventDefault()
 
-        if(!currentPassword) return setCurrentPasswordError('Current password is required')
+        if(!currentPassword) return setCurrentPasswordError(translations[lang]['current password is required'])
 
-        if(!newPassword) return setNewPasswordError('New password is required')
+        if(!newPassword) return setNewPasswordError(translations[lang]['new password is required'])
         
-        if(!confirmPassword) return setConfirmPasswordError('Confirm password is required')
+        if(!confirmPassword) return setConfirmPasswordError(translations[lang]['confirm password is required'])
 
-        if(newPassword !== confirmPassword) return setConfirmPasswordError('Confirm password is not the same as new password')
+        if(newPassword !== confirmPassword) return setConfirmPasswordError(translations[lang]['confirm password is not the same as new password'])
 
         const updatedData = { newPassword, currentPassword }
 
@@ -69,10 +71,10 @@ const ChangePasswordForm = () => {
     }
 
     return <div className="profile-form-container">
-        <div className="profile-form-wrapper">
+        <div className="cards-2-list-wrapper">
             <form id="profile-form" className="body-text">
                 <div>
-                    <label>Verify current password</label>
+                    <label>{translations[lang]['Verify Current Password']}</label>
                     <div className="form-input-button-container">
                         <input 
                         type="password" 
@@ -85,7 +87,7 @@ const ChangePasswordForm = () => {
                     <span className="red">{currentPasswordError}</span>
                 </div>
                 <div>
-                    <label>New password</label>
+                    <label>{translations[lang]['New Password']}</label>
                     <div className="form-input-button-container">
                         <input 
                         type="password" 
@@ -98,7 +100,7 @@ const ChangePasswordForm = () => {
                     <span className="red">{newPasswordError}</span>
                 </div>
                 <div>
-                    <label>Confirm new password</label>
+                    <label>{translations[lang]['Confirm New Password']}</label>
                     <div className="form-input-button-container">
                         <input 
                         type="password" 
@@ -117,7 +119,7 @@ const ChangePasswordForm = () => {
                         <TailSpin width="30" height="30" color="#22D172" />
                         :
                         <button onClick={handleUpdate} className="update-btn">
-                            Update
+                            {translations[lang]['Update']}
                         </button>
                     }
                 </div>

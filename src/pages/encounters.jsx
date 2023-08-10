@@ -12,13 +12,21 @@ import SearchInput from '../components/inputs/search'
 import { searchEncounters } from '../utils/searches/search-encounters'
 import { toast } from 'react-hot-toast'
 import PageHeader from '../components/sections/page-header'
-import CardsFilters from '../components/filters/cards-filters'
+import EncounterDeleteConfirmationModal from '../components/modals/confirmation/encounter-delete-confirmation-modal'
+import { isRolesValid } from '../utils/roles'
+import Card from '../components/cards/card'
+import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
+import { formatNumber } from '../utils/numbers'
+import FloatingButton from '../components/buttons/floating-button'
+import translations from '../i18n'
 
 
 const EncountersPage = ({ roles }) => {
 
     const navigate = useNavigate()
 
+    const [targetEncounter, setTargetEncounter] = useState({})
+    const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [reload, setReload] = useState(1)
     const [encounters, setEncounters] = useState([])
@@ -27,18 +35,17 @@ const EncountersPage = ({ roles }) => {
     const todayDate = new Date()
     const weekDate = new Date()
 
-    todayDate.setDate(todayDate.getDate())
+    todayDate.setDate(todayDate.getDate() + 1)
     weekDate.setDate(weekDate.getDate() - 7)
 
     const [statsQuery, setStatsQuery] = useState({ from: weekDate, to: todayDate })
+
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     useEffect(() => {
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
     }, [])
 
     useEffect(() => {
@@ -59,13 +66,35 @@ const EncountersPage = ({ roles }) => {
 
  
     return <div className="page-container page-white-background">
-        <NavigationBar pageName={"Encounters"} />
+        <NavigationBar pageName={translations[lang]["Encounters"]} />
+        { 
+        isShowDeleteModal ? 
+        <EncounterDeleteConfirmationModal 
+        encounter={targetEncounter}
+        reload={reload}
+        setReload={setReload} 
+        setIsShowModal={setIsShowDeleteModal}
+        /> 
+        : 
+        null 
+        }
         <div className="padded-container">
             <PageHeader
-            pageName={'Encounters'}
-            addBtnText={'Add Encounter'}
+            pageName={translations[lang]['Encounters']}
+            addBtnText={translations[lang]['Add Encounter']}
             formURL={'/encounters/form'}
             />
+            <div className="show-mobile">
+                <FloatingButton url={'/encounters/form'} />
+            </div>
+            <div className="cards-list-wrapper margin-bottom-1">
+                <Card 
+                icon={<NumbersOutlinedIcon />}
+                cardHeader={translations[lang]['Encounters']}
+                number={formatNumber(encounters.length)}
+                iconColor={'#5C60F5'}
+                />
+            </div>
             <FiltersSection 
             setStatsQuery={setStatsQuery} 
             statsQuery={statsQuery}
@@ -76,6 +105,8 @@ const EncountersPage = ({ roles }) => {
                 rows={encounters} 
                 setRows={setSearchedEncounters}
                 searchRows={searchEncounters}
+                isHideClinics={false}
+                isCustomClincis={false}
                 />
             </div>
             {
@@ -88,6 +119,8 @@ const EncountersPage = ({ roles }) => {
                     encounter={encounter} 
                     setReload={setReload}
                     reload={reload}
+                    setTargetEncounter={setTargetEncounter}
+                    setIsShowDeleteModal={setIsShowDeleteModal}
                     />) }
                 </div>
                 :

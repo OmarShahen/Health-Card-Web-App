@@ -1,6 +1,9 @@
-
+import translations from "../../../i18n"
+import { useSelector } from "react-redux"
 
 const PatientBloodGroupForm = (props) => {
+
+    const lang = useSelector(state => state.lang.lang)
 
     const bloodGroups = [
         'A', 'A-', 'A+',
@@ -9,21 +12,21 @@ const PatientBloodGroupForm = (props) => {
         'O', 'O-', 'O+',
     ]
 
-    return <div className="patient-form-wrapper">
+    return <div className="patient-form-wrapper" id="blood-section">
         <div className="patient-form-header">
             <h2>
-                Blood
+                {translations[lang]['Blood']}
             </h2>
         </div>
         <div className="cards-2-list-wrapper">
             <div className="form-input-container">
-                <select onChange={e => props.setBloodGroup(e.target.value)}>
-                    <option selected disabled>Select blood group</option>
+                <select className="form-input" onChange={e => props.setBloodGroup(e.target.value)}>
+                    <option selected disabled>{translations[lang]['Select Blood Group']}</option>
                     {bloodGroups.map(group => <option value={group}>{group}</option>)}
                 </select>
             </div>
             <div>
-                <h3>Blood transfusion</h3>
+                <h3>{translations[lang]['Blood Transfusion']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -31,7 +34,7 @@ const PatientBloodGroupForm = (props) => {
                     name="transfusion"
                     onChange={e => props.setIsBloodTransfusion(true)}
                     />
-                    <label for="transfusion">Yes</label>
+                    <label for="transfusion">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -40,11 +43,11 @@ const PatientBloodGroupForm = (props) => {
                     name="transfusion"
                     onChange={e => props.setIsBloodTransfusion(false)}
                     />
-                    <label for="transfusion">No</label>
+                    <label for="transfusion">{translations[lang]['No']}</label>
                 </div>
             </div>
             <div>
-                <h3>Blood diseases</h3>
+                <h3>{translations[lang]['Blood Diseases']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -52,7 +55,7 @@ const PatientBloodGroupForm = (props) => {
                     name="blood-diseases"
                     onChange={e => props.setIsBloodDiseases(true)}
                     />
-                    <label for="blood-diseases">Yes</label>
+                    <label for="blood-diseases">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -61,7 +64,7 @@ const PatientBloodGroupForm = (props) => {
                     name="blood-diseases"
                     onChange={e => props.setIsBloodDiseases(false)}
                     />
-                    <label for="blood-diseases">No</label>
+                    <label for="blood-diseases">{translations[lang]['No']}</label>
                 </div>
             </div>
         </div>

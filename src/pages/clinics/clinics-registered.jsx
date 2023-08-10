@@ -8,24 +8,29 @@ import SearchInput from '../../components/inputs/search'
 import { useNavigate } from 'react-router-dom'
 import ClinicCard from '../../components/cards/clinic'
 import { searchClinics } from '../../utils/searches/search-clinics'
+import PageHeader from '../../components/sections/page-header'
+import { isRolesValid } from '../../utils/roles'
+import Card from '../../components/cards/card'
+import { formatNumber } from '../../utils/numbers'
+import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
+import translations from '../../i18n'
 
-
-const ClinicsPage = ({ roles }) => {
+const ClinicsRegisteredPage = ({ roles }) => {
 
     const navigate = useNavigate()
 
     const [reload, setReload] = useState(1)
+
     const [isLoading, setIsLoading] = useState(true)
     const [clinics, setClinics] = useState([])
     const [searchedClinics, setSearchedClinics] = useState([])
+
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     useEffect(() => {
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
 
     useEffect(() => {
@@ -44,6 +49,19 @@ const ClinicsPage = ({ roles }) => {
 
 
     return <div className="page-container">
+        
+        <PageHeader 
+        pageName={translations[lang]['Registered']} 
+        isHideBackButton={true} 
+        />
+        <div className="cards-list-wrapper margin-bottom-1">
+            <Card 
+            icon={<NumbersOutlinedIcon />}
+            cardHeader={translations[lang]['Registered']}
+            number={formatNumber(clinics.length)}
+            iconColor={'#5C60F5'}
+            />
+        </div>
         <div className="show-mobile">
         </div>
             <div className="padded-container">
@@ -52,7 +70,7 @@ const ClinicsPage = ({ roles }) => {
                         rows={clinics} 
                         setRows={setSearchedClinics}
                         searchRows={searchClinics}
-                        isHideClinics={false}
+                        isHideClinics={true}
                         />
                     </div>
                 {
@@ -61,7 +79,7 @@ const ClinicsPage = ({ roles }) => {
                     :
                     searchedClinics.length !== 0 ?
                     <div className="cards-grey-container cards-3-list-wrapper">
-                        {searchedClinics.map(clinic => <ClinicCard clinic={clinic} setReload={setReload} reload={reload} />)}
+                        {searchedClinics.map(clinic => <ClinicCard clinic={clinic} setReload={setReload} reload={reload} disableOnClickView={true} />)}
                     </div>
                     :
                     <EmptySection />
@@ -70,4 +88,4 @@ const ClinicsPage = ({ roles }) => {
         </div>
 }
 
-export default ClinicsPage
+export default ClinicsRegisteredPage

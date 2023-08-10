@@ -6,10 +6,17 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
 import HotelOutlinedIcon from '@mui/icons-material/HotelOutlined'
 import CardActions from './components/actions'
-import { serverRequest } from '../API/request'
+import CardTransition from '../transitions/card-transitions'
+import translations from '../../i18n'
+import { useSelector } from 'react-redux'
 
-
-const EncounterCard = ({ encounter, setReload, reload }) => {
+const EncounterCard = ({ 
+    encounter, 
+    setReload, 
+    reload, 
+    setTargetEncounter, 
+    setIsShowDeleteModal 
+    }) => {
 
      const patientName = `${encounter.patient.firstName} ${encounter.patient.lastName}`
      const doctorName = `${encounter.doctor.firstName} ${encounter.doctor.lastName}`
@@ -17,30 +24,21 @@ const EncounterCard = ({ encounter, setReload, reload }) => {
 
      const navigate = useNavigate()
 
-     const deleteEncounter = (encounterId) => {
-        serverRequest.delete(`/v1/encounters/${encounterId}`)
-        .then(response => {
-            const data = response.data
-            setReload(reload+1)
-            toast.success(data.message, { position: 'top-right', duration: 3000 })
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-    }
+     const lang = useSelector(state => state.lang.lang)
+
 
      const cardActionsList = [
         {
-            name: 'Delete Encounter',
+            name: translations[lang]['Delete Encounter'],
             icon: <DeleteOutlineOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                deleteEncounter(encounter._id)
+                setTargetEncounter(encounter)
+                setIsShowDeleteModal(true)
             }
         },
         {
-            name: 'Update Encounter',
+            name: translations[lang]['Update Encounter'],
             icon: <CreateOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -48,7 +46,7 @@ const EncounterCard = ({ encounter, setReload, reload }) => {
             }
         },
         {
-            name: 'View Patient',
+            name: translations[lang]['View Patient'],
             icon: <HotelOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -58,7 +56,10 @@ const EncounterCard = ({ encounter, setReload, reload }) => {
      ]
 
 
-    return <div onClick={e => navigate(`/encounters/${encounter._id}/view`)} className="card-container body-text">
+    return <CardTransition>
+    <div 
+    onClick={e => navigate(`/encounters/${encounter._id}/view`)} 
+    className="card-container white-bg body-text">
         <div className="card-header-container">
             <div className="card-header-person-info">
                 <div>
@@ -79,14 +80,14 @@ const EncounterCard = ({ encounter, setReload, reload }) => {
         <div className="card-body">
             <div className="card-contact-section-container">
                 <div>
-                    <strong>Patient</strong><br />
+                    <strong>{translations[lang]['Patient']}</strong><br />
                     <span className="grey-text">{patientName} { patientCardId ? `- ${patientCardId}` : null }</span>
                 </div>
             </div>
             <ul>
                 <li>
                     <div className="card-list-header body-text">
-                        <strong>Symptoms</strong>
+                        <strong>{translations[lang]['Symptoms']}</strong>
                     </div>
                     <div className="codes-container">
                         { encounter.symptoms.map(symptom => <span className="status-btn grey-bg">
@@ -96,7 +97,7 @@ const EncounterCard = ({ encounter, setReload, reload }) => {
                 </li>
                 <li>
                     <div className="card-list-header body-text">                     
-                        <strong>Diagnosis</strong>
+                        <strong>{translations[lang]['Diagnosis']}</strong>
                     </div>
                     <div className="codes-container">
                         { encounter.diagnosis.map(diagnose => <span className="status-btn grey-bg">
@@ -108,7 +109,7 @@ const EncounterCard = ({ encounter, setReload, reload }) => {
                     encounter?.notes.length !== 0 ?
                     <li>
                         <div className="card-list-header body-text">
-                            <strong>Notes</strong>
+                            <strong>{translations[lang]['Notes']}</strong>
                         </div>
                         <div className="codes-container">
                             { encounter.notes.map(note => <span className="status-btn grey-bg">
@@ -123,6 +124,7 @@ const EncounterCard = ({ encounter, setReload, reload }) => {
         </div>
         <CardDate creationDate={encounter.createdAt} updateDate={encounter.updatedAt} />
     </div>
+    </CardTransition>
 }
 
 export default EncounterCard

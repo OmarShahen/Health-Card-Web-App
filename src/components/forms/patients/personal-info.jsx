@@ -1,20 +1,22 @@
 import { useSelector } from "react-redux"
+import { cities } from "../../../utils/cities"
+import { capitalizeFirstLetter } from "../../../utils/formatString"
+import translations from "../../../i18n"
 
 const PatientPersonalInformationForm = (props) => {
-
-    const mainEgyptCities = ["Cairo", "Alexandria", "Luxor", "Aswan", "Hurghada", "Sharm El Sheikh", "Port Said", "Suez", "Ismailia", "Faiyum", "Tanta", "Zagazig", "Sohag", "Asyut", "Minya", "Beni Suef", "Qena", "Damanhur", "Damietta"]
     
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
-    return <div className="patient-form-wrapper">
+    return <div className="patient-form-wrapper" id="demographic-section">
         <div className="patient-form-header">
             <h2>
-                Personal Information
+                {translations[lang]['Personal Information']}
             </h2>
         </div>
         <div className="cards-2-list-wrapper">
             <div className="form-input-container">
-                <label>First Name</label>
+                <label>{translations[lang]['First Name']}</label>
                 <input 
                 type="text" 
                 className="form-input"
@@ -24,7 +26,7 @@ const PatientPersonalInformationForm = (props) => {
                 <span className="red">{props.firstNameError}</span>
             </div>
             <div className="form-input-container">
-                <label>Last Name</label>
+                <label>{translations[lang]['Last Name']}</label>
                 <input 
                 type="text" 
                 className="form-input"
@@ -34,7 +36,7 @@ const PatientPersonalInformationForm = (props) => {
                 <span className="red">{props.lastNameError}</span>
             </div>
             <div className="form-input-container">
-                <label>Phone</label>
+                <label>{translations[lang]['Phone']}</label>
                 <input 
                 type="tel" 
                 className="form-input"
@@ -44,35 +46,37 @@ const PatientPersonalInformationForm = (props) => {
                 <span className="red">{props.phoneError}</span>
             </div>
             <div className="form-input-container">
-                <label>Gender</label>
+                <label>{translations[lang]['Gender']}</label>
                 <select
+                className="form-input"
                 onClick={e => props.setGenderError()}
                 onChange={e => props.setGender(e.target.value)}
                 >
-                    <option disabled selected>Select Gender</option>
-                    <option value="MALE">Male</option>
-                    <option value="FEMALE">Female</option>
+                    <option disabled selected>{translations[lang]['Select Gender']}</option>
+                    <option value="MALE">{translations[lang]['Male']}</option>
+                    <option value="FEMALE">{translations[lang]['Female']}</option>
                 </select>
                 <span className="red">{props.genderError}</span>
             </div>
             <div className="form-input-container">
-                <label>Social Status</label>
+                <label>{translations[lang]['Social Status']}</label>
                 <select
+                className="form-input"
                 onClick={e => props.setSocialStatusError()}
                 onChange={e => props.setSocialStatus(e.target.value)}
                 >
-                    <option disabled selected>Select Social Status</option>
-                    <option value="SINGLE">Single</option>
-                    <option value="MARRIED">Married</option>
-                    <option value="DIVORCED">Divorced</option>
-                    <option value="WIDOWED">Widowed</option>
+                    <option disabled selected>{translations[lang]['Select Social Status']}</option>
+                    <option value="SINGLE">{translations[lang]['Single']}</option>
+                    <option value="MARRIED">{translations[lang]['Married']}</option>
+                    <option value="DIVORCED">{translations[lang]['Divorced']}</option>
+                    <option value="WIDOWED">{translations[lang]['Widowed']}</option>
                 </select>
                 <span className="red">{props.socialStatusError}</span>
             </div>
             <div className="form-input-container">
-                <label>Age</label>
+                <label>{translations[lang]['Age']}</label>
                 <input 
-                type="text" 
+                type="number" 
                 className="form-input"
                 onClick={e => props.setAgeError()}
                 onChange={e => props.setAge(e.target.value)}
@@ -80,25 +84,16 @@ const PatientPersonalInformationForm = (props) => {
                 <span className="red">{props.ageError}</span>
             </div>
             <div className="form-input-container">
-                <label>City</label>
+                <label>{translations[lang]['City']}</label>
                 <select
+                className="form-input"
                 onClick={e => props.setCityError()}
                 onChange={e => props.setCity(e.target.value)}
                 >
-                    <option disabled selected>Select City</option>
-                    {mainEgyptCities.map(city => <option value={city}>{city}</option>)}
+                    <option disabled selected>{translations[lang]['Select City']}</option>
+                    {cities.map(city => <option value={city}>{translations[lang][capitalizeFirstLetter(city)]}</option>)}
                 </select>
                 <span className="red">{props.cityError}</span>
-            </div>
-            <div className="form-input-container">
-                <label>Card ID</label>
-                <input 
-                type="number" 
-                className="form-input"
-                onClick={e => props.setCardIdError()}
-                onChange={e => props.setCardId(e.target.value)}
-                />
-                <span className="red">{props.cardIdError}</span>
             </div>
             {
                 user.role === 'DOCTOR' ?

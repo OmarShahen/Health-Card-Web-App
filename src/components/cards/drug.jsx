@@ -1,11 +1,16 @@
 import './cards.css'
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined';
 import CardDate from './components/date'
-
+import CardTransition from '../transitions/card-transitions';
+import translations from '../../i18n';
+import { useSelector } from 'react-redux';
 
 const DrugCard = ({ drug, drugs, setDrugs, isShowDelete, drugIndex }) => {
 
-    return <div className="prescription-card-container body-text disable-hover">
+    const lang = useSelector(state => state.lang.lang)
+
+    return <CardTransition>
+    <div className="prescription-card-container body-text disable-hover">
         <div className="">
                 <div className="card-drug-container">
                 <div className="drug-icon-container">
@@ -17,11 +22,11 @@ const DrugCard = ({ drug, drugs, setDrugs, isShowDelete, drugIndex }) => {
                     </div>
                     <div className="grey-text drug-description">
                         <p>
-                            {`${drug.dosage.amount} ${drug.dosage.unit} X ${drug.frequency.number} ${drug.frequency.timeUnit} X ${drug.duration.number} ${drug.duration.timeUnit}`}
+                            {`${drug.dosage.amount} ${translations[lang][drug.dosage.unit]} X ${drug.frequency.number} ${translations[lang][drug.frequency.timeUnit]} X ${drug.duration.number} ${translations[lang][drug.duration.timeUnit]}`}
                         </p>
                     </div>
                     <div className="codes-container">
-                            { drug.instructions.map(instruction => <span className="status-btn grey-bg">{instruction}</span>) }
+                            { drug.instructions.map(instruction => <span className="status-btn grey-bg">{translations[lang][instruction]}</span>) }
                     </div>
                 </div>
             </div>
@@ -32,7 +37,7 @@ const DrugCard = ({ drug, drugs, setDrugs, isShowDelete, drugIndex }) => {
                     className="normal-button action-color-bg white-text"
                     onClick={e => setDrugs(drugs.filter((prescriptionDrug, index) => index !== drugIndex))}
                     >
-                        Remove
+                        {translations[lang]['Remove']}
                     </button>
                 </div>
                 :
@@ -41,6 +46,7 @@ const DrugCard = ({ drug, drugs, setDrugs, isShowDelete, drugIndex }) => {
         </div>
         { drug.createdAt ? <CardDate creationDate={drug.createdAt} /> : null }
     </div>
+    </CardTransition>
 }
 
 export default DrugCard

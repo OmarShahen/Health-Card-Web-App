@@ -9,16 +9,21 @@ import { searchDoctors } from '../../utils/searches/search-doctors'
 import PageHeader from '../../components/sections/page-header'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-
+import { isRolesValid } from '../../utils/roles'
+import Card from '../../components/cards/card'
+import { formatNumber } from '../../utils/numbers'
+import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
+import translations from '../../i18n'
 
 const PatientDoctorsPage = ({ roles }) => {
-
-    const navigate = useNavigate()
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
 
+    const navigate = useNavigate()
+
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     const [reload, setReload] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
@@ -27,23 +32,8 @@ const PatientDoctorsPage = ({ roles }) => {
     const [clinics, setClinics] = useState([])
 
     useEffect(() => {
-        scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
-
-    }, [])
-
-    useEffect(() => {
-        serverRequest.get(`/v1/clinics/patients/${patientId}`)
-        .then(response => {
-            const data = response.data
-            setClinics(data.clinics)
-        })
-        .catch(error => {
-            console.error(error)
-        })
+        scroll(0, 0)
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
 
     useEffect(() => {
@@ -64,10 +54,18 @@ const PatientDoctorsPage = ({ roles }) => {
 
     return <div>
         <PageHeader 
-        pageName={"Doctors"}
+        pageName={translations[lang]["Doctors"]}
         isHideBackButton={true}
         isHideRefresh={true}
         />
+        <div className="cards-list-wrapper margin-bottom-1">
+            <Card 
+            icon={<NumbersOutlinedIcon />}
+            cardHeader={translations[lang]['Doctors']}
+            number={formatNumber(doctors.length)}
+            iconColor={'#5C60F5'}
+            />
+        </div>
         <div>
             <div>
                 <div>
@@ -76,8 +74,9 @@ const PatientDoctorsPage = ({ roles }) => {
                         rows={doctors} 
                         setRows={setSearchedDoctors}
                         searchRows={searchDoctors}
-                        isCustomClincis={true}
-                        customClinics={clinics}
+                        isHideClinics={true}
+                        isHideSpeciality={false}
+                        isSpecialityNested={false}
                         />
                     </div>
                     {

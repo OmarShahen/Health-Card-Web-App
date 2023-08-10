@@ -1,8 +1,10 @@
 import CancelIcon from '@mui/icons-material/Cancel'
-
+import translations from '../../../i18n'
+import { useSelector } from 'react-redux'
 
 const SymptomsDiagnosisForm = ({ symptoms, setSymptoms, diagnosis, setDiagnosis, symptomsError, setSymptomsError, diagnosisError, setDiagnosisError }) => {
 
+    const lang = useSelector(state => state.lang.lang)
 
     const handleSymptomsKeyDown = (e) => {
 
@@ -34,11 +36,11 @@ const SymptomsDiagnosisForm = ({ symptoms, setSymptoms, diagnosis, setDiagnosis,
     <div className="encounter-form-inputs-container">
         <div className="drug-list-item">
             <div className="form-input-container">
-                <strong>Symptoms</strong>
+                <strong>{translations[lang]['Symptoms']} <span className="grey-text span-text">{translations[lang]['(press enter to register symptom)']}</span></strong>
                 <input 
                 type="text" 
                 className="form-input" 
-                placeholder="symptoms" 
+                placeholder={translations[lang]["Symptoms"]} 
                 onKeyDown={handleSymptomsKeyDown}
                 onClick={e => setSymptomsError()}
                 />
@@ -67,11 +69,11 @@ const SymptomsDiagnosisForm = ({ symptoms, setSymptoms, diagnosis, setDiagnosis,
             <div className="prescription-form-icon-container">
             </div>
             <div className="form-input-container">
-                <strong>Diagnosis</strong>
+                <strong>{translations[lang]['Diagnosis']} <span className="grey-text span-text">{translations[lang]['(press enter to register diagnose)']}</span></strong>
                 <input 
                 type="text" 
                 className="form-input" 
-                placeholder="diagnosis" 
+                placeholder={translations[lang]["Diagnosis"]} 
                 onKeyDown={handleDiagnosisKeyDown}
                 onClick={e => setDiagnosisError()}
                 />

@@ -1,5 +1,5 @@
 :root {
-  font-family: 'Inter', sans-serif !important;
+  font-family: 'Inter', 'Cairo', sans-serif !important;
   line-height: 1.5;
   font-weight: 400;
   --light-grey: #F2F2F2;
@@ -7,8 +7,9 @@
   --grey: #F7F7F7;
   --border-color: rgba(242, 242, 242, 1);
   --blue: #2193B0;
-  /*--box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;*/
   --box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.1);
+  --box-shadow-line: 0 0 0 1px rgba(23, 23, 23, 0.1);
+  --main-color: #4c83ee;
   /*--box-shadow: 0 0 2rem 0 rgba(41,48,66,.1);*/
 }
 
@@ -29,6 +30,11 @@ a {
 
 .icon:hover {
   cursor: pointer;
+}
+
+.center {
+  display: flex !important;
+  align-items: center !important;
 }
 
 .cards-grey-container {
@@ -74,6 +80,10 @@ a {
 
 .light-text-color, .grey-text {
   color: #7C82A1;
+}
+
+.black-text {
+  color: #000 !important;
 }
 
 .header-text {
@@ -143,6 +153,7 @@ a {
   flex-direction: row-reverse;
 }
 
+
 .form-buttons-container button {
   margin-right: 1rem;
 }
@@ -164,7 +175,7 @@ a {
   padding-left: 2% !important;
   padding: .3rem 0rem;
   font-size: 1rem;
-  font-family: 'Inter', sans-serif !important;
+  font-family: 'Inter', 'Cairo', sans-serif !important;
   box-sizing: border-box;
 }
 
@@ -177,8 +188,16 @@ a {
   background-color: #F2F2F2;
 }
 
+.input-field-button-container {
+  padding: .4rem 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
 select {
   background-color: #FFF;
+  font-family: 'Inter', 'Cairo', sans-serif !important;
   box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.1);
   border-radius: .25rem;
   outline: none;
@@ -235,12 +254,47 @@ select {
   text-align: right;
 }
 
-.box-shadow {
-  box-shadow: var(--box-shadow);
+.flex-right {
+  display: flex;
+  justify-content: flex-end;
 }
+
+.center {
+  display: block;
+  align-items: center;
+  justify-content: center;
+}
+
+.box-shadow {
+  box-shadow: var(--box-shadow) !important;
+}
+
+.box-shadow-line {
+  box-shadow: var(--box-shadow-line) !important;
+}
+
 
 .margin-top-1 {
   margin-top: 1rem;
+}
+
+.margin-bottom-1 {
+  margin-bottom: 1rem;
+}
+
+.margin-vertical-1 {
+  margin: 1rem 0;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.logo-container img {
+  width: 10rem;
 }
 
 .full-width-button {
@@ -248,7 +302,7 @@ select {
   align-items: center;
   justify-content: center;
   border-radius: .3rem;
-  background-color: #5c60f5;
+  background-color: var(--main-color);
   color: #FFF;
   border: none;
   font-weight: 500;
@@ -258,12 +312,10 @@ select {
 }
 
 button {
-  font-family: 'Inter', sans-serif !important;
+  font-family: 'Inter', 'Cairo', sans-serif !important;
   transition: .5s;
 }
 
-input[type="submit"] {
-}
 
 button:hover {
   opacity: .9;
@@ -274,13 +326,19 @@ button:hover {
   display: flex;
   align-items: center;
   border-radius: .3rem;
-  background-color: #5c60f5;
+  background-color: var(--main-color);
   color: #FFF;
   border: none;
   font-weight: 500;
   font-size: .9rem;
   padding: .4rem .7rem;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  font-family: 'Inter', 'Cairo', sans-serif !important;
+}
+
+.button svg {
+  margin-right: .7rem;
+  font-size: 1rem;
 }
 
 .normal-button {
@@ -292,6 +350,7 @@ button:hover {
   font-size: .9rem;
   padding: .4rem .7rem;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  font-family: 'Inter', 'Cairo', sans-serif !important;
 }
 
 .cancel-button {
@@ -316,6 +375,18 @@ button:hover {
 
 .purple-bg {
   background-color: #5c60f5 !important;
+}
+
+.red-text {
+  color: #DE350B;
+}
+
+.green-bg {
+  background-color: #3bb077;
+}
+
+.red-bg {
+  color: #DE350B;
 }
 
 .grey-text {
@@ -511,8 +582,16 @@ button:hover {
   color: #FFF !important;
 }
 
+.bright-red-text {
+  color: #fb5151;
+}
+
 .red-bg {
   background-color: #d9534f;
+}
+
+.bright-red-bg {
+  background-color: #fb5151;
 }
 
 .blue-bg {
@@ -764,11 +843,21 @@ button:hover {
   border: none;
 }
 
+.right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.number-container {
+  padding-right: .4rem;
+  opacity: .8;
+}
+
 
 .cards-list-wrapper {
-  display: grid;
-  grid-template-columns: auto auto auto auto;
-  gap: 1rem;
+  display: grid !important;
+  grid-template-columns: auto auto auto auto !important;
+  gap: 1rem !important;
   padding: 0 0 1rem 0;
 }
 
@@ -778,9 +867,22 @@ button:hover {
   gap: 1rem;
 }
 
+.cards-2-list-wrapper-gap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+
 .cards-2-list-wrapper {
   display: grid;
   grid-template-columns: 50% 50%;
+}
+
+.cards-4-list-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1rem;
 }
 
 .large-cards-container {
@@ -838,7 +940,54 @@ background-clip: content-box;
 background-color: #a8bbbf;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 950px) {
+  .page-container {
+    padding: 0;
+    padding-bottom: 10rem !important;
+  }
+
+  .padded-container {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .cards-grey-container {
+    padding: .5rem
+  }
+
+  .page-table-container {
+    display: none;
+  }
+
+  .page-list-container {
+    display: block;
+  }
+
+  .show-large {
+    display: none;
+  }
+
+  .cards-list-wrapper {
+    grid-template-columns: auto auto auto !important;
+    column-gap: .7rem;
+  }
+
+  .cards-2-list-wrapper, .cards-3-list-wrapper {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .appointments-categories-container {
+    grid-template-columns: auto auto auto auto;
+  }
+
+}
+
+.form-buttons-container button {
+  margin-right: 0 !important;
+  margin-left: .7rem;
+}
+
+@media only screen and (max-width: 700px) {
   .page-container {
     padding: 0;
     padding-bottom: 10rem !important;
@@ -850,7 +999,7 @@ background-color: #a8bbbf;
   }
 
   .cards-grey-container {
-    padding: .5rem
+    padding: .5rem;
   }
 
   .page-table-container {
@@ -870,7 +1019,7 @@ background-color: #a8bbbf;
   }
 
   .cards-list-wrapper {
-    grid-template-columns: auto auto;
+    grid-template-columns: 1fr !important;
     column-gap: .7rem;
   }
 
@@ -878,8 +1027,16 @@ background-color: #a8bbbf;
     grid-template-columns: auto;
   }
 
+  .cards-2-list-wrapper-gap {
+    grid-template-columns: auto;
+  }
+
   .appointments-categories-container {
     grid-template-columns: auto;
+  }
+
+  .form-input , select {
+    background-color: #F2F2F2;
   }
 
 }

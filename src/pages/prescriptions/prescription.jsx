@@ -1,19 +1,15 @@
 import { useState, useEffect } from 'react'
 import '../prescriptions.css'
-import ImportExportOutlinedIcon from '@mui/icons-material/ImportExportOutlined';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
-import FloatingButton from '../../components/buttons/floating-button';
-import FavoriteIcon from '@mui/icons-material/Favorite'
-import PrescriptionMobileNavBar from '../../components/navigation/prescriptions-mobile-nav-bar';
-import PrescriptionsBottomNavigationBar from '../../components/navigation/doctors-bottom-bar';
-import { serverRequest } from '../../components/API/request';
-import { useSelector } from 'react-redux/es/exports';
-import PrescriptionCard from '../../components/cards/patient-prescriptions';
-import { TailSpin } from 'react-loader-spinner';
-import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined'
-import PatientTabBar from '../../components/navigation/tab-bar';
+import { serverRequest } from '../../components/API/request'
+import PrescriptionCard from '../../components/cards/patient-prescriptions'
+import { TailSpin } from 'react-loader-spinner'
+import PatientTabBar from '../../components/navigation/tab-bar'
+import { isRolesValid } from '../../utils/roles'
+import { useNavigate } from 'react-router-dom'
 
-const PrescriptionPage = () => {
+const PrescriptionPage = ({ roles }) => {
+
+    const navigate = useNavigate()
 
     const pagePath = window.location.pathname
     const prescriptionId = pagePath.split('/')[3]
@@ -26,6 +22,7 @@ const PrescriptionPage = () => {
     useEffect(() => {
 
         window.scrollTo(0, 0)
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
 
         setIsLoading(true)
         serverRequest.get(`/v1/prescriptions/${prescriptionId}`)

@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import './modals.css'
 import CancelIcon from '@mui/icons-material/Cancel'
-
+import translations from '../../i18n'
+import { useSelector } from 'react-redux'
 
 const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) => {
+
+    const lang = useSelector(state => state.lang.lang)
 
     const dosageTypes = [
         'tablet', 'capsule', 'sachet', 'lotion', 'gargle', 'drops', 'ointment', 'cream',
@@ -33,19 +36,19 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if(!drugName) return setDrugNameError('Drug name is required')
+        if(!drugName) return setDrugNameError(translations[lang]['drug name is required'])
 
-        if(!amountNumber) return setAmountNumberError('Amount number is required')
+        if(!amountNumber) return setAmountNumberError(translations[lang]['amount number is required'])
         
-        if(!amountUnit) return setAmountUnitError('Amount unit is required')
+        if(!amountUnit) return setAmountUnitError(translations[lang]['amount unit is required'])
 
-        if(!frequencyNumber) return setFrequencyNumberError('Frequency number is required')
+        if(!frequencyNumber) return setFrequencyNumberError(translations[lang]['frequency number is required'])
 
-        if(!frequencyTime) return setFrequencyTimeError('Frequency time is required')
+        if(!frequencyTime) return setFrequencyTimeError(translations[lang]['frequency time is required'])
 
-        if(!periodNumber) return setPeriodNumberError('Period number is required')
+        if(!periodNumber) return setPeriodNumberError(translations[lang]['period number is required'])
         
-        if(!periodTime) return setPeriodTimeError('Period time is required')
+        if(!periodTime) return setPeriodTimeError(translations[lang]['period time is required'])
 
 
         const newDrug = {
@@ -57,8 +60,7 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
         }
 
         setDrugs([...drugs, newDrug])
-
-        resetForm()
+        setShowFormModal(false)
 
     }
 
@@ -86,12 +88,12 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
     return <div className="modal">
         <div className="modal-container body-text">
             <div className="modal-header">
-                <h2>Add Drug</h2>
+                <h2>{translations[lang]['Add Drug']}</h2>
             </div>
             <div className="modal-body-container">
                 <form className="modal-form-container body-text" id="drug-form" onSubmit={handleSubmit}>
                     <div className="form-input-container">
-                        <label>Drug Name</label>
+                        <label>{translations[lang]['Drug Name']}</label>
                         <input 
                         type="text" 
                         className="form-input" 
@@ -103,7 +105,7 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
                     </div>
                     <div></div>
                     <div className="form-input-container">
-                        <label>Amount Number</label>
+                        <label>{translations[lang]['Amount Number']}</label>
                         <input 
                         type="number"
                         min="0"
@@ -116,10 +118,11 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
                         <span className="red">{amountNumberError}</span>
                     </div>
                     <div className="form-input-container">
-                        <label>Amount Unit</label>
+                        <label>{translations[lang]['Amount Unit']}</label>
                         <select 
                         name="dosage-types" 
                         id="dosage-types"
+                        className="form-input"
                         onChange={e => setAmountUnit(e.target.value)}
                         onClick={e => amountUnitError()}
                         >
@@ -127,18 +130,18 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
                                 mode === 'EDITE' ?
                                 dosageTypes.map(type => {
                                     if(type === amountUnit) {
-                                        return <option selected value={type}>{type}</option>
+                                        return <option selected value={type}>{translations[lang][type]}</option>
                                     }
-                                    return <option value={type}>{type}</option>
+                                    return <option value={type}>{translations[lang][type]}</option>
                                 })
                                 : 
-                                dosageTypes.map(type => <option value={type}>{type}</option>)
+                                dosageTypes.map(type => <option value={type}>{translations[lang][type]}</option>)
                             }
                         </select>
                         <span className="red">{amountUnitError}</span>
                     </div>
                     <div className="form-input-container">
-                        <label>Frequency Number</label>
+                        <label>{translations[lang]['Frequency Number']}</label>
                         <input 
                         type="number" 
                         min="0"
@@ -151,20 +154,21 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
                         <span className="red">{frequencyNumberError}</span>
                     </div>
                     <div className="form-input-container">
-                        <label>Frequency Time</label>
+                        <label>{translations[lang]['Frequency Time']}</label>
                         <select 
                         name="frequency-time" 
                         id="frequency-time"
+                        className="form-input"
                         onChange={e => setFrequencyTime(e.target.value)}
                         >
-                            { mode === 'EDITE' && frequencyTime === 'day' ? <option selected value="day">Day</option> : <option value="day">Day</option>}
-                            { mode === 'EDITE' && frequencyTime === 'week' ? <option selected value="week">Week</option> : <option value="week">Week</option>}
-                            { mode === 'EDITE' && frequencyTime === 'month' ? <option selected value="month">Month</option> : <option value="month">Month</option>}
+                            { mode === 'EDITE' && frequencyTime === 'day' ? <option selected value="day">{translations[lang]['Day']}</option> : <option value="day">{translations[lang]['Day']}</option>}
+                            { mode === 'EDITE' && frequencyTime === 'week' ? <option selected value="week">{translations[lang]['Week']}</option> : <option value="week">{translations[lang]['Week']}</option>}
+                            { mode === 'EDITE' && frequencyTime === 'month' ? <option selected value="month">{translations[lang]['Month']}</option> : <option value="month">{translations[lang]['Month']}</option>}
                         </select>
                         <span className="red">{frequencyTimeError}</span>
                     </div>
                     <div className="form-input-container">
-                        <label>Period Number</label>
+                        <label>{translations[lang]['Period Number']}</label>
                         <input 
                         type="number" 
                         min="0"
@@ -177,29 +181,30 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
                         <span className="red">{periodNumberError}</span>
                     </div>
                     <div className="form-input-container">
-                        <label>Period Time</label>
+                        <label>{translations[lang]['Period Time']}</label>
                         <select 
                         name="period-time" 
                         id="period-time"
+                        className="form-input"
                         onChange={e => setPeriodTime(e.target.value)}
                         >
-                            { mode === 'EDITE' && periodTime === 'day' ? <option selected value="day">Day</option> : <option value="day">Day</option>}
-                            { mode === 'EDITE' && periodTime === 'week' ? <option selected value="week">Week</option> : <option value="week">Week</option>}
-                            { mode === 'EDITE' && periodTime === 'month' ? <option selected value="month">Month</option> : <option value="month">Month</option>}
+                            { mode === 'EDITE' && periodTime === 'day' ? <option selected value="day">{translations[lang]['Day']}</option> : <option value="day">{translations[lang]['Day']}</option>}
+                            { mode === 'EDITE' && periodTime === 'week' ? <option selected value="week">{translations[lang]['Week']}</option> : <option value="week">{translations[lang]['Week']}</option>}
+                            { mode === 'EDITE' && periodTime === 'month' ? <option selected value="month">{translations[lang]['Month']}</option> : <option value="month">{translations[lang]['Month']}</option>}
  
                         </select>
                         <span className="red">{periodTimeError}</span>
                     </div>
                 </form>
                 <div className="form-input-container">
-                        <label>Dosage Times</label>
+                        <label>{translations[lang]['Dosage Times']}</label>
                         <div className="drug-instruction-list-container">
                             { instructions ? dosageTimes.map(time => {
                                 if(instructions.includes(time)) {
                                     return <span 
                                     className="status-btn drug-instruction-tag"
                                     >
-                                        {time}
+                                        {translations[lang][time]}
                                         <span onClick={e => setInstructions(instructions.filter(instruction => instruction !== time))}>
                                             <CancelIcon />
                                         </span>
@@ -209,7 +214,7 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
                                     className="status-btn pending" 
                                     onClick={e => setInstructions([...instructions, time])}
                                     >
-                                    {time}
+                                    {translations[lang][time]}
                                     </span> 
                                 }
                             })
@@ -224,13 +229,13 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
                     <button 
                     form="drug-form"
                     className="normal-button white-text action-color-bg"
-                    >Add Drug</button>
+                    >{translations[lang]['Add Drug']}</button>
                 </div>
                 <div>
                     <button 
                     className="normal-button cancel-button"
                     onClick={e => setShowFormModal(false)}
-                    >Close</button>
+                    >{translations[lang]['Close']}</button>
                 </div>
             </div>
         </div>

@@ -1,8 +1,10 @@
 import { format } from 'date-fns'
+import CardTransition from '../transitions/card-transitions'
 
 const DoctorCard = ({ doctor }) => {
 
-    return <div className="doctor-card-container body-text">
+    return <CardTransition>
+    <div className="doctor-card-container body-text">
         <div className="doctor-card-header">
             <div className="doctor-card-image-and-name">
                 <img src={`https://avatars.dicebear.com/api/initials/${doctor.firstName} ${doctor.lastName}.svg`} />
@@ -20,6 +22,7 @@ const DoctorCard = ({ doctor }) => {
             </div>
         </div>
     </div>
+    </CardTransition>
 }
 
 export default DoctorCard

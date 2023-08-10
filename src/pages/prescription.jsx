@@ -8,7 +8,9 @@ import { toast } from 'react-hot-toast'
 import PrescriptionCard from '../components/cards/prescription'
 import PrintPrescription from '../components/prints/prescriptions/print-prescription'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-
+import { isRolesValid } from '../utils/roles'
+import PrescriptionConfirmationDeleteModal from '../components/modals/confirmation/prescription-delete-confirmation-modal'
+import translations from '../i18n'
 
 const PrescriptionPage = ({ roles }) => {
 
@@ -18,16 +20,15 @@ const PrescriptionPage = ({ roles }) => {
     const prescriptionId = pagePath.split('/')[2]
 
     const [reload, setReload] = useState(1)
+    const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
     const [prescription, setPrescription] = useState()
 
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     useEffect(() => {
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
 
     useEffect(() => {
@@ -38,23 +39,37 @@ const PrescriptionPage = ({ roles }) => {
         })
         .catch(error => {
             console.error(error)
+
+            if(error.response.data.field === 'prescriptionId') return navigate('/prescriptions')
+
             toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
         })
     }, [reload])
 
  
     return <div className="page-container page-white-background">
-        <NavigationBar pageName={"Prescription"} />
+        <NavigationBar pageName={translations[lang]['Prescription']} />
+        {
+            isShowDeleteModal ?
+            <PrescriptionConfirmationDeleteModal
+            setReload={setReload}
+            reload={reload}
+            prescription={prescription}
+            setIsShowModal={setIsShowDeleteModal}
+            />
+            :
+            null
+        }
         <div className="padded-container">
             <div className="page-header-wrapper">
             <div className="back-button-container">
                     <ArrowBackIcon />
-                    <span onClick={e => navigate(-1)}>Back</span>
+                    <span onClick={e => navigate(-1)}>{translations[lang]['Back']}</span>
                 </div>
                 <div className="page-header-container">
                     <div>
                         <h1>
-                            Prescription
+                            {translations[lang]['Prescription']} #{prescription?.prescriptionId}
                         </h1>
                     </div>
                     <div className="btns-container subheader-text">
@@ -63,7 +78,11 @@ const PrescriptionPage = ({ roles }) => {
             </div>
            { prescription ?
            <div className="grey-bg-container">
-                <PrescriptionCard prescription={prescription} /> 
+                <PrescriptionCard 
+                prescription={prescription} 
+                setIsShowDeleteModal={setIsShowDeleteModal}
+                setTargetPrescription={setPrescription}
+                /> 
            </div>
            : 
            null 

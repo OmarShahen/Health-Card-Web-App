@@ -6,3 +6,14 @@
 .support-page-text-container {
     margin-right: 0;
 }
+
+.support-page-text-container div {
+    border-radius: .25rem;
+    background-color: #FFF;
+    box-shadow: var(--box-shadow-line);
+    padding: .1rem 1rem;
+}
+
+.support-page-text-container ul li {
+    list-style-type: none;
+}

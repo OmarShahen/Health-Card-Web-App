@@ -6,42 +6,38 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
 import HotelOutlinedIcon from '@mui/icons-material/HotelOutlined'
 import CardActions from './components/actions'
-import { serverRequest } from '../API/request';
-import { toast } from 'react-hot-toast';
+import CardTransition from '../transitions/card-transitions'
+import { useSelector } from 'react-redux'
+import translations from '../../i18n'
 
-const PrescriptionCard = ({ prescription, setReload, reload }) => {
+const PrescriptionCard = ({ 
+    prescription, 
+    setReload, 
+    reload,
+    setTargetPrescription,
+    setIsShowDeleteModal
+}) => {
 
     const navigate = useNavigate()
+    const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
-    const patientName = `${prescription.patient.firstName} ${prescription.patient.lastName}`
-    const doctorName = `${prescription.doctor.firstName} ${prescription.doctor.lastName}`
-    const patientCardId = prescription.patient.cardId
+    const patientName = `${prescription?.patient?.firstName} ${prescription?.patient?.lastName}`
+    const doctorName = `${prescription?.doctor?.firstName} ${prescription?.doctor?.lastName}`
+    const patientCardId = prescription?.patient?.cardId
 
-    const deletePrescription = (prescriptionId) => {
-
-        serverRequest.delete(`/v1/prescriptions/${prescriptionId}`)
-        .then(response => {
-            const data = response.data
-            setReload(reload+1)
-            toast.success(data.message, { position: 'top-right', duration: 3000 })
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-    }
-
-    const cardActionsList = [
+    const doctorActionsList = [
         {
-            name: 'Delete Prescription',
+            name: translations[lang]['Delete Prescription'],
             icon: <DeleteOutlineOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                deletePrescription(prescription._id)
+                setTargetPrescription(prescription)
+                setIsShowDeleteModal(true)
             }
         },
         {
-            name: 'Update Prescription',
+            name: translations[lang]['Update Prescription'],
             icon: <CreateOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -49,7 +45,7 @@ const PrescriptionCard = ({ prescription, setReload, reload }) => {
             }
         },
         {
-            name: 'View Patient',
+            name: translations[lang]['View Patient'],
             icon: <HotelOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -58,7 +54,21 @@ const PrescriptionCard = ({ prescription, setReload, reload }) => {
         },
      ]
 
-    return <div onClick={e => navigate(`/prescriptions/${prescription._id}/view`)} className="prescription-card-container body-text">
+     const staffActionsList = [
+        {
+            name: translations[lang]['View Patient'],
+            icon: <HotelOutlinedIcon />,
+            onAction: (e) => {
+                e.stopPropagation()
+                navigate(`/patients/${prescription.patient._id}/medical-profile`)
+            }
+        },
+     ]
+
+    const cardActionsList = user.roles.includes('STAFF') ? staffActionsList : doctorActionsList
+
+    return <CardTransition>
+    <div onClick={e => navigate(`/prescriptions/${prescription._id}/view`)} className="prescription-card-container body-text">
         <div className="prescription-card-header">
             <div className="prescription-image-and-name-container">
                 <div className="card-image-container">
@@ -68,7 +78,7 @@ const PrescriptionCard = ({ prescription, setReload, reload }) => {
                     <strong>{doctorName}</strong>
                     {
                         prescription.clinic ?
-                        <span className="grey-text span-text">{prescription.clinic.name}</span>
+                        <span className="grey-text span-text">{prescription.clinic.name ? prescription.clinic.name : prescription.doctor.email}</span>
                         :
                         null
                     }                
@@ -82,7 +92,7 @@ const PrescriptionCard = ({ prescription, setReload, reload }) => {
         <div className="prescription-card-body">
             <div className="card-contact-section-container">
                 <div>
-                    <strong>Patient</strong><br />
+                    <strong>{translations[lang]['Patient']}</strong><br />
                     <span className="grey-text">{patientName} { patientCardId ? `- ${patientCardId}` : null }</span>
                 </div>
                 
@@ -98,11 +108,11 @@ const PrescriptionCard = ({ prescription, setReload, reload }) => {
                     </div>
                     <div className="grey-text drug-description">
                         <p>
-                            {`${drug.dosage.amount} ${drug.dosage.unit} X ${drug.frequency.number} ${drug.frequency.timeUnit} X ${drug.duration.number} ${drug.duration.timeUnit}`}
+                            {`${drug.dosage.amount} ${translations[lang][drug.dosage.unit]} X ${drug.frequency.number} ${translations[lang][drug.frequency.timeUnit]} X ${drug.duration.number} ${translations[lang][drug.duration.timeUnit]}`}
                         </p>
                     </div>
                     <div className="codes-container">
-                            { drug.instructions.map(instruction => <span className="status-btn grey-bg">{instruction}</span>) }
+                            { drug.instructions.map(instruction => <span className="status-btn grey-bg">{translations[lang][instruction]}</span>) }
                     </div>
                 </div>
             </div>)
@@ -111,7 +121,7 @@ const PrescriptionCard = ({ prescription, setReload, reload }) => {
                 prescription.notes && prescription.notes.length != 0 ?
                 <div>
                     <div className="card-list-header body-text">
-                        <strong>Notes</strong>
+                        <strong>{translations[lang]['Notes']}</strong>
                     </div>
                     <div className="codes-container">
                         { prescription.notes.map(note => <span className="status-btn grey-bg">
@@ -125,6 +135,7 @@ const PrescriptionCard = ({ prescription, setReload, reload }) => {
         </div>
         <CardDate creationDate={prescription.createdAt} updateDate={prescription.updatedAt} />
     </div>
+    </CardTransition>
 }
 
 export default PrescriptionCard

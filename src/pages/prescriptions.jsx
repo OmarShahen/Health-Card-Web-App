@@ -11,11 +11,21 @@ import EmptySection from '../components/sections/empty/empty'
 import SearchInput from '../components/inputs/search'
 import { searchPrescriptions } from '../utils/searches/search-prescriptions'
 import { useNavigate } from 'react-router-dom'
+import PrescriptionDeleteConfirmationModal from '../components/modals/confirmation/prescription-delete-confirmation-modal'
+import { isRolesValid } from '../utils/roles'
+import Card from '../components/cards/card'
+import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
+import { formatNumber } from '../utils/numbers'
+import FloatingButton from '../components/buttons/floating-button'
+import translations from '../i18n'
 
 
 const PrescriptionsPage = ({ roles }) => {
 
     const navigate = useNavigate()
+    
+    const [isShowModal, setIsShowModal] = useState(false)
+    const [targetPrescription, setTargetPrescription] = useState({})
 
     const [isLoading, setIsLoading] = useState(true)
     const [reload, setReload] = useState(1)
@@ -25,24 +35,31 @@ const PrescriptionsPage = ({ roles }) => {
     const todayDate = new Date()
     const weekDate = new Date()
 
-    todayDate.setDate(todayDate.getDate())
+    todayDate.setDate(todayDate.getDate() + 1)
     weekDate.setDate(weekDate.getDate() - 7)
 
     const [statsQuery, setStatsQuery] = useState({ from: weekDate, to: todayDate })
 
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     useEffect(() => {
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
     }, [])
 
     useEffect(() => {
+
+        let endpointURL = ''
+
+        if(user.roles.includes('STAFF')) {
+            endpointURL = `/v1/prescriptions/clinics/${user.clinicId}`
+        } else {
+            endpointURL = `/v1/prescriptions/doctors/${user._id}`
+        }
+
         setIsLoading(true)
-        serverRequest.get(`/v1/prescriptions/doctors/${user._id}`, { params: statsQuery })
+        serverRequest.get(endpointURL, { params: statsQuery })
         .then(response => {
             setIsLoading(false)
             setPrescriptions(response.data.prescriptions)
@@ -56,15 +73,37 @@ const PrescriptionsPage = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={'Prescriptions'} />
+        <NavigationBar pageName={translations[lang]['Prescriptions']} />
+        { 
+        isShowModal ? 
+        <PrescriptionDeleteConfirmationModal 
+        prescription={targetPrescription}
+        reload={reload}
+        setReload={setReload} 
+        setIsShowModal={setIsShowModal}
+        /> 
+        : 
+        null 
+        }
         <div className="padded-container">
             <PageHeader 
-            pageName="Prescriptions" 
-            addBtnText={"Add Prescription"}
+            pageName={translations[lang]['Prescriptions']} 
+            addBtnText={user.roles.includes('STAFF') ? null : translations[lang]["Add Prescription"]}
             formURL={"/prescriptions/form"}
             reload={reload}
             setReload={setReload}
             />
+            <div className="show-mobile">
+                <FloatingButton url={'/prescriptions/form'} />
+            </div>
+            <div className="cards-list-wrapper margin-bottom-1">
+                <Card 
+                icon={<NumbersOutlinedIcon />}
+                cardHeader={translations[lang]['Prescriptions']}
+                number={formatNumber(prescriptions.length)}
+                iconColor={'#5C60F5'}
+                />
+            </div>
             <FiltersSection 
             setStatsQuery={setStatsQuery} 
             statsQuery={statsQuery}
@@ -76,6 +115,7 @@ const PrescriptionsPage = ({ roles }) => {
                 rows={prescriptions} 
                 setRows={setSearchedPrescriptions}
                 searchRows={searchPrescriptions}
+                isHideClinics={user.roles.includes('STAFF') ? true : false }
                 />
             </div>
             {
@@ -88,6 +128,8 @@ const PrescriptionsPage = ({ roles }) => {
                     prescription={prescription} 
                     setReload={setReload} 
                     reload={reload} 
+                    setTargetPrescription={setTargetPrescription}
+                    setIsShowDeleteModal={setIsShowModal}
                     />)}
                 </div>
                     

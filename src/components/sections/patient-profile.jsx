@@ -7,10 +7,15 @@ import BloodtypeOutlinedIcon from '@mui/icons-material/BloodtypeOutlined'
 import MacroOffOutlinedIcon from '@mui/icons-material/MacroOffOutlined'
 import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined'
 import VaccinesOutlinedIcon from '@mui/icons-material/VaccinesOutlined'
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
 import { getAge } from '../../utils/age-calculator'
+import { capitalizeFirstLetter } from '../../utils/formatString'
+import translations from '../../i18n'
+import { useSelector } from 'react-redux'
+
 
 const PatientProfileSection = ({ patient }) => {
+
+    const lang = useSelector(state => state.lang.lang)
 
     const [demographic, setDemographic] = useState(true)
     const [emergencyContacts, setEmergencyContacts] = useState(true)
@@ -40,7 +45,7 @@ const PatientProfileSection = ({ patient }) => {
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
-                        Personal Information
+                        {translations[lang]['Personal Information']}
                     </h2>
                     <span className="icon-container pending">
                         <Person2OutlinedIcon />
@@ -52,15 +57,15 @@ const PatientProfileSection = ({ patient }) => {
                 <ul className="body-text">
                 <li>
                     <div className="bold-text">
-                        Name
+                        {translations[lang]['Name']}
                     </div>
                     <div>
-                        {patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : 'Not Registered' }
+                        {patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : translations[lang]['Not Registered'] }
                     </div>
                 </li>
                 <li>
                     <div className="bold-text">
-                        Card ID
+                        {translations[lang]['Card ID']}
                     </div>
                     <div>
                         #{patient.cardId}
@@ -68,42 +73,42 @@ const PatientProfileSection = ({ patient }) => {
                 </li>
                 <li>
                     <div className="bold-text">
-                        Phone
+                        {translations[lang]['Phone']}
                     </div>
                     <div>
-                    {patient.countryCode && patient.phone ? `+${patient.countryCode}${patient.phone}` : 'Not Registered' }
+                    {patient.countryCode && patient.phone ? `+${patient.countryCode}${patient.phone}` : translations[lang]['Not Registered'] }
                     </div>
                 </li>
                 <li>
                     <div className="bold-text">
-                        City
+                        {translations[lang]['City']}
                     </div>
                     <div>
-                        { patient.city ? patient.city : 'Not Registered' }
+                        { patient.city ? capitalizeFirstLetter(patient.city) : translations[lang]['Not Registered'] }
                     </div>
                 </li>
                 <li>
                     <div className="bold-text">
-                        Gender
+                        {translations[lang]['Gender']}
                     </div>
                     <div>
-                        { patient.gender ? patient.gender : 'Not Registered' }
+                        { patient.gender ? translations[lang][capitalizeFirstLetter(patient.gender)] : translations[lang]['Not Registered'] }
                     </div>
                 </li>
                 <li>
                     <div className="bold-text">
-                        Social Status
+                        {translations[lang]['Social Status']}
                     </div>
                     <div>
-                        {patient.socialStatus ? patient.socialStatus : 'Not Registered'}
+                        {patient.socialStatus ? capitalizeFirstLetter(patient.socialStatus) : translations[lang]['Not Registered']}
                     </div>
                 </li>
                 <li>
                     <div className="bold-text">
-                        Age
+                        {translations[lang]['Age']}
                     </div>
                     <div>
-                        {patient.dateOfBirth ? getAge(patient.dateOfBirth) : 'Not Registered'}
+                        {patient.dateOfBirth ? getAge(patient.dateOfBirth) : translations[lang]['Not Registered']}
                     </div>
                 </li>
                 </ul>
@@ -121,7 +126,7 @@ const PatientProfileSection = ({ patient }) => {
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
-                        Bad Habits
+                        {translations[lang]['Bad Habits']}
                     </h2>
                     <span className="icon-container pending">
                         <SmokingRoomsOutlinedIcon />
@@ -133,34 +138,34 @@ const PatientProfileSection = ({ patient }) => {
                 <ul className="body-text">
                     <li>
                         <div className="bold-text">
-                            Current Smoker
+                            {translations[lang]['Current Smoker']}
                         </div>
                         <div>
-                            {formatValue(patient?.healthHistory?.isSmokingPresent)}
+                            {translations[lang][formatValue(patient?.healthHistory?.isSmokingPresent)]}
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                            Past Smoker
+                            {translations[lang]['Past Smoker']}
                         </div>
                         <div>
-                            {formatValue(patient?.healthHistory?.isSmokingPast)}
+                            {translations[lang][formatValue(patient?.healthHistory?.isSmokingPast)]}
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                            Current Alcoholic
+                            {translations[lang]['Current Alcoholic']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isAlcoholPresent)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isAlcoholPresent)]}
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                            Past Alcoholic
+                            {translations[lang]['Past Alcoholic']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isAlcoholPast)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isAlcoholPast)]}
                         </div>
                     </li>
                 </ul>
@@ -177,7 +182,7 @@ const PatientProfileSection = ({ patient }) => {
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
-                        Chronic Diseases
+                        {translations[lang]['Chronic Diseases']}
                     </h2>
                     <span className="icon-container done">
                         <ElderlyOutlinedIcon />
@@ -189,50 +194,50 @@ const PatientProfileSection = ({ patient }) => {
                 <ul className="body-text">
                     <li>
                         <div className="bold-text">
-                            High Pressure
+                            {translations[lang]['High Pressure']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isHighBloodPressure)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isHighBloodPressure)]}
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                            Diabetes
+                            {translations[lang]['Diabetes']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isDiabetic)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isDiabetic)]}
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                            Heart Diseases
+                            {translations[lang]['Heart Diseases']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isChronicHeart)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isChronicHeart)]}
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                            Neurological Diseases
+                            {translations[lang]['Neurological Diseases']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isChronicNeurological)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isChronicNeurological)]}
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                            Liver Diseases
+                            {translations[lang]['Liver Diseases']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isChronicLiver)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isChronicLiver)]}
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                            Kidney Diseases
+                            {translations[lang]['Kidney Diseases']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isChronicKidney)}
+                            {translations[lang][formatValue(patient?.healthHistory?.isChronicKidney)]}
                         </div>
                     </li>
                 </ul>
@@ -249,7 +254,7 @@ const PatientProfileSection = ({ patient }) => {
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
-                        Genetic Diseases
+                        {translations[lang]['Genetic Diseases']}
                     </h2>
                     <span className="icon-container pending">
                         <CoronavirusOutlinedIcon />
@@ -261,18 +266,18 @@ const PatientProfileSection = ({ patient }) => {
                 <ul className="body-text">
                     <li>
                         <div className="bold-text">
-                            Cancer in Family
+                            {translations[lang]['Cancer in Family']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isCancerFamily)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isCancerFamily)]}
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                        Genetic Issue
+                        {translations[lang]['Genetic Issue']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isGeneticIssue)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isGeneticIssue)]}
                         </div>
                     </li>
                 </ul>
@@ -289,7 +294,7 @@ const PatientProfileSection = ({ patient }) => {
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
-                        Blood
+                        {translations[lang]['Blood']}
                     </h2>
                     <span className="icon-container declined">
                         <BloodtypeOutlinedIcon />
@@ -301,26 +306,26 @@ const PatientProfileSection = ({ patient }) => {
                 <ul className="body-text">
                     <li>
                         <div className="bold-text">
-                            Blood Group
+                            {translations[lang]['Blood Group']}
                         </div>
                         <div>
-                            { patient?.bloodGroup ? patient.bloodGroup : 'Not Registered' }
+                            { patient?.bloodGroup ? patient.bloodGroup : translations[lang]['Not Registered'] }
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                        Blood Transfusion
+                        {translations[lang]['Blood Transfusion']}
                         </div>
                         <div>
-                            {formatValue(patient?.healthHistory?.isBloodTransfusion)}
+                            {translations[lang][formatValue(patient?.healthHistory?.isBloodTransfusion)]}
                         </div>
                     </li>
                     <li>
                         <div className="bold-text">
-                            Blood Diseases
+                            {translations[lang]['Blood Diseases']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isBloodDiseases)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isBloodDiseases)]}
                         </div>
                     </li>
                 </ul>
@@ -337,7 +342,7 @@ const PatientProfileSection = ({ patient }) => {
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
-                        Allergies
+                        {translations[lang]['Allergies']}
                     </h2>
                     <span className="icon-container done">
                         <MacroOffOutlinedIcon />
@@ -349,17 +354,17 @@ const PatientProfileSection = ({ patient }) => {
                 <ul className="body-text">
                     <li>
                         <div className="bold-text">
-                            Allergic
+                            {translations[lang]['Allergic']}
                         </div>
                         <div>
-                            {formatValue(patient?.healthHistory?.isAllergic)}
+                            {translations[lang][formatValue(patient?.healthHistory?.isAllergic)]}
                         </div>
                     </li>
                     {
                         patient?.healthHistory?.allergies && patient?.healthHistory?.allergies.length !== 0 ?
                         <li className="nested-list">
                             <div className="bold-text">
-                            Allergies  
+                            {translations[lang]['Allergies']}  
                             </div>
                             <div className="codes-container">
                                 {
@@ -387,7 +392,7 @@ const PatientProfileSection = ({ patient }) => {
             <div className="information-list-header">
                 <div className="header-and-icon-container">
                     <h2 className="subheader-text">
-                        Immune Diseases
+                        {translations[lang]['Immune Diseases']}
                     </h2>
                     <span className="icon-container declined">
                         <HealthAndSafetyOutlinedIcon />
@@ -399,10 +404,10 @@ const PatientProfileSection = ({ patient }) => {
                 <ul className="body-text">
                     <li>
                         <div className="bold-text">
-                            Immune Diseases
+                            {translations[lang]['Immune Diseases']}
                         </div>
                         <div>
-                        {formatValue(patient?.healthHistory?.isImmuneDiseases)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isImmuneDiseases)]}
                         </div>
                     </li>
                 </ul>
@@ -419,7 +424,7 @@ const PatientProfileSection = ({ patient }) => {
         <div className="information-list-header">
             <div className="header-and-icon-container">
                 <h2 className="subheader-text">
-                    Past Surgery
+                    {translations[lang]['Past Surgery']}
                 </h2>
                 <span className="icon-container pending">
                     <VaccinesOutlinedIcon />
@@ -431,17 +436,17 @@ const PatientProfileSection = ({ patient }) => {
             <ul className="body-text">
                 <li>
                     <div className="bold-text">
-                        Hospital Confined
+                        {translations[lang]['Hospital Confined']}
                     </div>
                     <div>
-                        {formatValue(patient?.healthHistory?.isHospitalConfined)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isHospitalConfined)]}
                     </div>
                 </li>
                 {
                     patient?.healthHistory?.isHospitalConfined && patient.healthHistory.hospitalConfinedReason.length !== 0 ?
                     <li className="nested-list">
                         <div className="bold-text">
-                            Confine Reason  
+                            {translations[lang]['Confine Reason']}
                         </div>
                         <div className="codes-container">
                             {
@@ -457,17 +462,17 @@ const PatientProfileSection = ({ patient }) => {
                 
                 <li>
                     <div className="bold-text">
-                        Past Surgery
+                        {translations[lang]['Past Surgery']}
                     </div>
                     <div>
-                    {formatValue(patient?.healthHistory?.isSurgicalOperations)}
+                        {translations[lang][formatValue(patient?.healthHistory?.isSurgicalOperations)]}
                     </div>
                 </li>
                 {
                     patient?.healthHistory?.isSurgicalOperations && patient?.healthHistory?.surgicalOperationsReason.length !== 0 ?
                     <li className="nested-list">
                         <div className="bold-text">
-                            Surgeries  
+                            {translations[lang]['Surgeries']} 
                         </div>
                         <div className="codes-container">
                             { patient?.healthHistory?.surgicalOperationsReason.map(reason => <span className="status-btn grey-bg">

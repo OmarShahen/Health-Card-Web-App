@@ -3,7 +3,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useNavigate } from 'react-router-dom'
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
 import CachedIcon from '@mui/icons-material/Cached'
-
+import translations from '../../i18n'
+import { useSelector } from 'react-redux'
 
 const PageHeader = ({ 
     pageName, 
@@ -17,6 +18,7 @@ const PageHeader = ({
 }) => {
 
     const navigate = useNavigate()
+    const lang = useSelector(state => state.lang.lang)
 
     return <div className="page-header-wrapper">
         {
@@ -25,7 +27,7 @@ const PageHeader = ({
             :
             <div className="back-button-container">
                 <ArrowBackIcon />
-                <span onClick={e => navigate(-1)}>Back</span>
+                <span onClick={e => navigate(-1)}>{translations[lang]['Back']}</span>
             </div>
         }
             <div className="page-header-container">

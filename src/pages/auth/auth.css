@@ -6,7 +6,7 @@
 .login-form-container {
     display: flex;
     flex-direction: column;
-    margin-top: 2rem;
+    margin-top: 1rem;
     border-radius: .25rem;
     /*box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;*/
     width: 30rem;
@@ -43,11 +43,11 @@
     justify-content: space-between;
 }
 
-.password-and-forgot-password-container span {
-    font-weight: 500;
+.password-and-forgot-password-container a {
+    font-weight: 600 !important;
 }
 
-.password-and-forgot-password-container span:hover {
+.password-and-forgot-password-container a:hover {
     cursor: pointer;
     opacity: .9;
 }
@@ -65,6 +65,7 @@
     font-weight: 500;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     font-size: 1rem;
+    font-family: 'Inter', 'Cairo', sans-serif !important;
 }
 
 .submit-btn-container input:hover {
@@ -104,12 +105,73 @@
     margin-right: .3rem;
 }
 
+.choose-input-container {
+    display: flex;
+    align-items: center;
+    border-radius: .5rem;
+    border: 1px solid #adb5bd;
+    padding: 0 1rem;
+}
+
+.choose-input-container:hover {
+    cursor: pointer;
+    opacity: .8;
+}
+
+
+.choose-input-wrapper .choose-input-container {
+    margin-bottom: 1rem;
+}
+
+.choose-input-container span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 1rem;
+}
+
+.auth-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 6rem 0 6rem;
+}
+
+.auth-form-header img {
+    width: 10rem;
+}
+
+.language-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 1rem;
+}
+
+.language-container span {
+    margin-left: 2rem;
+}
+
+.language-container span:hover {
+    cursor: pointer;
+    color: #4c83ee;
+}
+
+
 @media only screen and (max-width: 600px) {
 
     .login-form-container {
         width: 100vw;
         box-shadow: none;
         margin-top: 1rem;
+    }
+
+    .auth-form-header {
+        padding: 1rem !important;
+    }
+
+    .auth-form-header img {
+        width: 7rem;
     }
     
   }

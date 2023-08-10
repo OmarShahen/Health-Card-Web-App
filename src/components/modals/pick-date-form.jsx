@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import './modals.css'
+import translations from '../../i18n'
+import { useSelector } from 'react-redux'
 
 
 const PickDateFormModal = ({ reload, setReload, setShowModalForm, setStatsQuery, setDatePeriod }) => {
+
+    const lang = useSelector(state => state.lang.lang)
 
     const [customDateType, setCustomDateType] = useState()
 
@@ -52,24 +56,24 @@ const PickDateFormModal = ({ reload, setReload, setShowModalForm, setStatsQuery,
     return <div className="modal">
         <div className="modal-container body-text">
             <div className="modal-header">
-                <h2>Pick Date</h2>
+                <h2>{translations[lang]['Pick Date']}</h2>
             </div>
             <div className="modal-body-container">
                 <form className="modal-form-container responsive-form body-text" onSubmit={handleSubmit}>
                     <div className="form-input-container">
-                        <label>Custom Date Type</label>
-                        <select onChange={e => setCustomDateType(e.target.value)}>
-                            <option selected disabled>choose date type</option>
-                            <option value="UNTIL">Until Date</option>
-                            <option value="FROM-TO">From Date To Date</option>
-                            <option value="SPECIFIC">Specific Date</option>
+                        <label>{translations[lang]['Custom Date Type']}</label>
+                        <select className="form-input" onChange={e => setCustomDateType(e.target.value)}>
+                            <option selected disabled>{translations[lang]['Choose Date Type']}</option>
+                            <option value="UNTIL">{translations[lang]['Until Date']}</option>
+                            <option value="FROM-TO">{translations[lang]['From Date To Date']}</option>
+                            <option value="SPECIFIC">{translations[lang]['Specific Date']}</option>
                         </select>
                         <span className="red">{customDateError}</span>
                     </div>
                     {
                         customDateType === 'SPECIFIC' ?
                         <div className="form-input-container">
-                            <label>Specific Date</label>
+                            <label>{translations[lang]['Specific Date']}</label>
                             <input 
                             type="date" 
                             className="form-input" 
@@ -85,7 +89,7 @@ const PickDateFormModal = ({ reload, setReload, setShowModalForm, setStatsQuery,
                     {
                         customDateType === 'UNTIL' ?
                         <div className="form-input-container">
-                            <label>Until Date</label>
+                            <label>{translations[lang]['Until Date']}</label>
                             <input 
                             type="date" 
                             className="form-input" 
@@ -102,7 +106,7 @@ const PickDateFormModal = ({ reload, setReload, setShowModalForm, setStatsQuery,
                     {
                         customDateType === 'FROM-TO' ?
                         <div className="form-input-container">
-                            <label>From Date</label>
+                            <label>{translations[lang]['From Date']}</label>
                             <input 
                             type="date" 
                             className="form-input" 
@@ -119,7 +123,7 @@ const PickDateFormModal = ({ reload, setReload, setShowModalForm, setStatsQuery,
                     {
                         customDateType === 'FROM-TO' ?
                         <div className="form-input-container">
-                            <label>To Date</label>
+                            <label>{translations[lang]['To Date']}</label>
                             <input 
                             type="date" 
                             className="form-input" 
@@ -139,7 +143,7 @@ const PickDateFormModal = ({ reload, setReload, setShowModalForm, setStatsQuery,
                             className="normal-button white-text action-color-bg"
                             onClick={handleSubmit}
                             >
-                                submit
+                                {translations[lang]['Submit']}
                             </button>
                             
                         </div>
@@ -150,7 +154,7 @@ const PickDateFormModal = ({ reload, setReload, setShowModalForm, setStatsQuery,
                                 e.preventDefault()
                                 setShowModalForm(false)
                             }}
-                            >Close</button>
+                            >{translations[lang]['Close']}</button>
                         </div>
                     </div>
             </div>

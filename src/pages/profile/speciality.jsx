@@ -3,7 +3,10 @@ import { serverRequest } from '../../components/API/request'
 import '../patient-medical.css'
 import { useSelector } from 'react-redux'
 import SpecialityForm from '../../components/forms/profile/speciality'
+import { isRolesValid } from '../../utils/roles'
 import { useNavigate } from 'react-router-dom'
+import CircularLoading from '../../components/loadings/circular'
+
 
 const SpecialityPage = ({ roles }) => {
 
@@ -15,10 +18,7 @@ const SpecialityPage = ({ roles }) => {
 
     useEffect(() => {
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const SpecialityPage = ({ roles }) => {
     }, [reload])
 
     return <div>
-        { profile ? <SpecialityForm profile={profile} reload={reload} setReload={setReload} /> : null }
+        { profile ? <SpecialityForm profile={profile} reload={reload} setReload={setReload} /> : <CircularLoading /> }
     </div>
 }
 

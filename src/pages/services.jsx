@@ -13,9 +13,10 @@ import { format } from 'date-fns'
 import ServiceCard from '../components/cards/service'
 import { useNavigate } from 'react-router-dom'
 import CartBanner from '../components/banners/cart'
+import { isRolesValid } from '../utils/roles'
+import translations from '../i18n'
 
-
-const ServicesPage = () => {
+const ServicesPage = ({ roles }) => {
 
     const navigate = useNavigate()
 
@@ -27,6 +28,7 @@ const ServicesPage = () => {
     const [searchedServices, setSearchedServices] = useState([])
 
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
     const invoice = useSelector(state => state.invoice)
 
     const todayDate = new Date()
@@ -35,6 +37,7 @@ const ServicesPage = () => {
 
     useEffect(() => {
         scroll(0,0)
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
         if(!invoice.isActive) {
             navigate('/invoices')
         }
@@ -57,13 +60,13 @@ const ServicesPage = () => {
 
     return <div className="page-container">
         { invoice.isActive ? <CartBanner /> : null }
-        <NavigationBar pageName={'Services'} />
+        <NavigationBar pageName={translations[lang]['Services']} />
         <div className="show-mobile">
             <FloatingButton setIsShowForm={setShowModalForm} />
         </div>
         <div className="padded-container">
             <PageHeader 
-            pageName="Add Invoice Services" 
+            pageName={translations[lang]["Add Invoice Services"]} 
             /> 
             <div className="margin-top-1"></div>
             <div className="search-input-container">

@@ -4,8 +4,17 @@ import { serverRequest } from '../../components/API/request'
 import PatientProfileSection from '../../components/sections/patient-profile'
 import CircularLoading from '../../components/loadings/circular'
 import './patient-profile.css'
+import { isRolesValid } from '../../utils/roles'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import translations from '../../i18n'
 
-const PatientMedicalPage = () => {
+const PatientMedicalPage = ({ roles }) => {
+
+    const navigate = useNavigate()
+
+    const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
@@ -13,7 +22,10 @@ const PatientMedicalPage = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [patient, setPatient] = useState({})
 
-    useEffect(() => scroll(0,0), [])
+    useEffect(() => { 
+        scroll(0, 0) 
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
+    }, [])
     
     useEffect(() => {
         setIsLoading(true)
@@ -42,42 +54,42 @@ const PatientMedicalPage = () => {
                             <ul>
                                 <li>
                                     <a href="#demographic-section">
-                                        Demographic
+                                        {translations[lang]['Demographic']}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#bad-habits-section">
-                                        Bad Habits
+                                        {translations[lang]['Bad Habits']}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#chronic-section">
-                                        Chronic Diseases
+                                        {translations[lang]['Chronic Diseases']}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#genetic-section">
-                                        Genetic Issues
+                                        {translations[lang]['Genetic Issue']}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#blood-section">
-                                        Blood
+                                        {translations[lang]['Blood']}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#allergies-section">
-                                        Allergies
+                                        {translations[lang]['Allergies']}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#immune-section">
-                                        Immune Diseases
+                                        {translations[lang]['Immune Diseases']}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#surgery-section">
-                                        Past Surgeries
+                                        {translations[lang]['Past Surgeries']}
                                     </a>
                                 </li>
                             </ul>

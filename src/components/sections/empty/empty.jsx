@@ -2,20 +2,23 @@ import './empty.css'
 import AddIcon from '@mui/icons-material/Add'
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
 import { useNavigate } from 'react-router-dom'
-
+import translations from '../../../i18n'
+import { useSelector } from 'react-redux'
 
 const EmptySection = ({ setIsShowForm, url }) => {
 
     const navigate = useNavigate()
+
+    const lang = useSelector(state => state.lang.lang)
 
     return <div className="empty-section-container">
         <div className="empty-section-body-container">
             <div className="empty-section-icon-container">
                 <InboxOutlinedIcon />
             </div>
-            <span>Oops! No results found</span>
+            <span>{translations[lang]['Oops! No results found']}</span>
         </div>
-        {
+        {/*
             !url && !setIsShowForm ?
             null
             :
@@ -26,7 +29,7 @@ const EmptySection = ({ setIsShowForm, url }) => {
                 <AddIcon />
                 Add New
             </button>
-        }
+        */}
     </div>
 }
 

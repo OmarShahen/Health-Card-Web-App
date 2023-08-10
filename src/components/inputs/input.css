@@ -1,17 +1,24 @@
 .search-field-input-container {
-    position: relative
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
+
+.search-field-input-container span {
+    background-color: #5d93fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFF;
+    margin-right: 0rem;
+    padding: .2rem;
+    border-radius: .25rem;
+    margin-right: .2rem;
+}
+
 
 .search-field-input-container span svg {
-    position: absolute;
     font-size: 1.4rem;
-    top: .2rem;
-    bottom: 0;
-    left: .2rem;
-}
-
-.search-field-input-container input {
-    padding-left: 2rem !important;
 }
 
 .search-input-result-size-container {

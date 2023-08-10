@@ -26,3 +26,24 @@
     border: 2px solid #4c83ee;
     color: #4c83ee;
 }
+
+@media only screen and (max-width: 950px) {
+
+    .patient-profile-page-navigator-container ul li a {
+        font-size: .8rem !important;
+    }
+}
+
+@media only screen and (max-width: 750px) {
+    .patient-profile-grid-container {
+        grid-template-columns: auto !important;
+    }
+
+    .patient-profile-page-navigator-container {
+        display: none;
+    }
+
+    .patient-profile-page-navigator-container ul li a {
+        font-size: .8rem !important;
+    }
+}

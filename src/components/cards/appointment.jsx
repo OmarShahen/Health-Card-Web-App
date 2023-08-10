@@ -8,161 +8,166 @@ import UpcomingOutlinedIcon from '@mui/icons-material/UpcomingOutlined'
 import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import CardActions from './components/actions'
-import { serverRequest } from '../API/request'
-import { toast } from 'react-hot-toast'
+import { formatMoney } from '../../utils/numbers'
+import CardTransition from '../transitions/card-transitions'
+import { useSelector } from 'react-redux'
+import translations from '../../i18n'
 
-const AppointmentCard = ({ appointment, reload, setReload }) => {
+const AppointmentCard = ({ 
+    appointment, 
+    setIsShowDeleteModal, 
+    setTargetAppointment, 
+    setIsShowStatusModal,
+    setStatus
+}) => {
+
+    const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     const renderAppointmentStatus = (status) => {
 
         if(status === 'DONE') {
-            return <span className="tag-green-text">{status}</span>
+            return <span className="status-btn done bold-text">{translations[lang]['Done']}</span>
         } else if(status === 'CANCELLED') {
-            return <span className="tag-red-text">{status}</span>         
+            return <span className="status-btn declined bold-text">{translations[lang]['Cancelled']}</span>         
         } else if(status === 'UPCOMING') {
-            return <span className="tag-purple-text">{status}</span>      
+            return <span className="status-btn pending bold-text">{translations[lang]['Upcoming']}</span>      
         } else if(status === 'WAITING') {
-            return <span className="tag-orange-text">{status}</span>      
+            return <span className="status-btn tag-purple-bg white-text bold-text">{translations[lang]['Waiting']}</span>      
         } else if(status === 'ACTIVE') {
-            return <span className="tag-light-blue-text">{status}</span>    
-        } else {
-            return <span className="tag-grey-text">{status}</span>
+            return <span className="status-btn tag-green-bg white-text bold-text">{translations[lang]['Active']}</span>    
+        } else if(status === 'EXPIRED'){
+            return <span className="status-btn grey-bg bold-text">{translations[lang]['Expired']}</span>
         }
     }
 
-    const updateAppointmentStatus = (appointmentId, status) => {
-
-        serverRequest.patch(`/v1/appointments/${appointmentId}/status`, { status })
-        .then(response => {
-            const data = response.data
-            const updatedAppointment = data.appointment
-            setReload(reload + 1)
-            setViewStatus('ALL')
-            toast.success(data.message, { position: 'top-right', duration: 3000 })
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-    }
-
-    const deleteAppointment = (appointmentId) => {
-
-        serverRequest.delete(`/v1/appointments/${appointmentId}`)
-        .then(response => {
-            const data = response.data
-            const deletedAppointment = data.appointment
-            setReload(reload + 1)
-            setViewStatus('ALL')
-            toast.success(data.message, { position: 'top-right', duration: 3000 })
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-    }
 
     const cardActionsList = [
         {
-            name: 'Upcoming',
+            name: translations[lang]['Upcoming'],
             icon: <UpcomingOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                updateAppointmentStatus(appointment._id, 'UPCOMING')
+                setTargetAppointment(appointment)
+                setStatus('UPCOMING')
+                setIsShowStatusModal(true)
             }
         },
         {
-            name: 'Waiting',
+            name: translations[lang]['Waiting'],
             icon: <HourglassEmptyOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                updateAppointmentStatus(appointment._id, 'WAITING')
+                setTargetAppointment(appointment)
+                setStatus('WAITING')
+                setIsShowStatusModal(true)
             }
         },
         {
-            name: 'Active',
+            name: translations[lang]['Active'],
             icon: <MeetingRoomOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                updateAppointmentStatus(appointment._id, 'ACTIVE')
+                setTargetAppointment(appointment)
+                setStatus('ACTIVE')
+                setIsShowStatusModal(true)
             }
         },
         {
-            name: 'Done',
+            name: translations[lang]['Done'],
             icon: <CheckCircleOutlineOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                updateAppointmentStatus(appointment._id, 'DONE')
+                setTargetAppointment(appointment)
+                setStatus('DONE')
+                setIsShowStatusModal(true)
             }
         },
         {
-            name: 'Cancelled',
+            name: translations[lang]['Cancelled'],
             icon: <CancelOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                updateAppointmentStatus(appointment._id, 'CANCELLED')
+                setTargetAppointment(appointment)
+                setStatus('CANCELLED')
+                setIsShowStatusModal(true)
             }
         },
-        {
-            name: 'Delete',
-            icon: <DeleteOutlineOutlinedIcon />,
-            onAction: (e) => {
-                e.stopPropagation()
-                deleteAppointment(appointment._id)
-            }
-        },
-     ]
+    ]
 
-    return <div className="patient-card-container disable-hover">
+    user.roles.includes('STAFF') ?
+    cardActionsList.push({
+        name: translations[lang]['Delete'],
+        icon: <DeleteOutlineOutlinedIcon />,
+        onAction: (e) => {
+            e.stopPropagation()
+            setTargetAppointment(appointment)
+            setIsShowDeleteModal(true)
+        }
+    })
+    :
+    null
+
+    return <CardTransition>
+    <div className="patient-card-container disable-hover body-text">
         <div className="patient-card-header">
             <div className="patient-image-info-container">
-                <img src={`https://avatars.dicebear.com/api/initials/${appointment.doctor.firstName + appointment.doctor.lastName}.svg`} alt="patient-image" />
+                <img src={`https://avatars.dicebear.com/api/initials/${appointment?.patientName}.svg`} alt="patient-image" />
                 <div>
-                    <strong>{appointment.doctor.firstName + ' ' + appointment.doctor.lastName}</strong>
-                    <span className="grey-text">{`+${appointment.doctor.countryCode}${appointment.doctor.phone}`}</span>
+                    <strong>{appointment?.patientName}</strong>
+                    <span className="grey-text">{`+${String(appointment?.patientCountryCode) + String(appointment?.patientPhone)}`}</span>
                 </div>
             </div>
-            <CardActions actions={cardActionsList} />
+            { !user.roles.includes('STAFF') ? null : <CardActions actions={cardActionsList} /> }
         </div>
         <div className="patient-card-body">
-        <div className="card-contact-section-container body-text">
-                <div>
-                    <strong>Patient</strong><br />
-                    <span className="grey-text">{appointment.patientName} {'+' + appointment.patientCountryCode + appointment.patientPhone}</span>
-                </div>
-            </div>
+        
             <ul>
                 {
-                    appointment.clinic ?
+                    !user.roles.includes('DOCTOR') ?
                     <li>
                         <strong>
-                            Clinic
+                            {translations[lang]['Clinic']}
                         </strong>
-                        <span>{appointment.clinic.name}</span>
+                        <span>{appointment?.clinic?.name}</span>
                     </li>
                     :
                     null
                 }
                 <li>
-                    <strong>Date</strong>
-                    <span>{format(new Date(appointment.reservationTime), 'dd MMM yyyy')}</span>
+                    <strong>{translations[lang]['Doctor']}</strong>
+                    <span>{appointment?.doctor?.firstName + ' ' + appointment?.doctor?.lastName}</span>
                 </li>
                 <li>
-                    <strong>Time</strong>
-                    <span>{getTime(new Date(appointment.reservationTime))}</span>
+                    <strong>{translations[lang]['Date']}</strong>
+                    <span>{format(new Date(appointment?.reservationTime), 'dd MMM yyyy')}</span>
                 </li>
                 <li>
-                    <strong>Status</strong>
-                    <span className="patient-card-status">{renderAppointmentStatus(appointment.status)}</span>
+                    <strong>{translations[lang]['Time']}</strong>
+                    <span>{new Date(appointment?.reservationTime).toLocaleTimeString()}</span>
                 </li>
                 <li>
-                    <strong>Visit Reason</strong>
-                    <span>{appointment.visitReason ? appointment.visitReason.name : 'Not Registered'}</span>
+                    <strong>{translations[lang]['Service']}</strong>
+                    <span>{appointment?.service ? appointment.service.name : 'Not Registered'}</span>
+                </li>
+                {
+                    !user.roles.includes('DOCTOR') ?
+                    <li>
+                        <strong>{translations[lang]['Cost']}</strong>
+                        <span>{appointment?.service ? formatMoney(appointment.service.cost) : 'Not Registered'}</span>
+                    </li>
+                    :
+                    null
+                }
+                <li>
+                    <strong>{translations[lang]['Status']}</strong>
+                    {renderAppointmentStatus(appointment?.status)}
                 </li>
             </ul>
         </div>
-        <CardDate creationDate={appointment.createdAt} updateDate={appointment.updatedAt} />
+        <CardDate creationDate={appointment?.createdAt} updateDate={appointment?.updatedAt} />
     </div>
+    </CardTransition>
 }
 
 export default AppointmentCard

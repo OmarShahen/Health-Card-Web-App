@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react'
 import '../prescriptions.css'
-import ImportExportOutlinedIcon from '@mui/icons-material/ImportExportOutlined';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import DoctorPrescriptionCard from '../../components/cards/doctor-prescriptions';
 import FloatingButton from '../../components/buttons/floating-button';
-import FavoriteIcon from '@mui/icons-material/Favorite'
 import PrescriptionMobileNavBar from '../../components/navigation/prescriptions-mobile-nav-bar';
 import PrescriptionsBottomNavigationBar from '../../components/navigation/doctors-bottom-bar';
 import { serverRequest } from '../../components/API/request';
 import { useSelector } from 'react-redux/es/exports';
 import { TailSpin } from 'react-loader-spinner'
+import { isRolesValid } from '../../utils/roles';
+import { useNavigate } from 'react-router-dom';
 
+const DoctorPrescriptionsPage = ({ roles }) => {
 
-const DoctorPrescriptionsPage = () => {
+    const navigate = useNavigate()
 
     const user = useSelector(state => state.user.user)
     const [isLoading, setIsLoading] = useState(false)
@@ -33,6 +33,10 @@ const DoctorPrescriptionsPage = () => {
         setSearchPrescriptions(prescriptions.filter(prescription => checkSearchValue(prescription, value.toLowerCase())))
     }
 
+    useEffect(() => {
+        scroll(0, 0)
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
+    }, [])
 
     useEffect(() => {
 

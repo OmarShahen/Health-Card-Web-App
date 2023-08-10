@@ -3,24 +3,48 @@ import './patient.css'
 import CardDate from './components/date'
 import CardActions from './components/actions'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
-import { useNavigate } from 'react-router-dom'
 import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
 import { TailSpin } from 'react-loader-spinner'
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
 import DoNotDisturbAltOutlinedIcon from '@mui/icons-material/DoNotDisturbAltOutlined'
 import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined'
+import CardTransition from '../transitions/card-transitions'
+import { capitalizeFirstLetter } from '../../utils/formatString'
+import translations from '../../i18n'
+import { useSelector } from 'react-redux'
 
+const ClinicRequestCard = ({ 
+    request, 
+    reload, 
+    setReload, 
+    isReceiverView, 
+    isShowClinic,
+    setIsShowDeleteModal, 
+    setTargetRequest 
+}) => {
 
-const ClinicRequestCard = ({ request, reload, setReload }) => {
+    const lang = useSelector(state => state.lang.lang)
 
-    const navigate = useNavigate()
+    const name = !isShowClinic ? request?.user?.firstName + ' ' + request?.user?.lastName : request?.clinic?.name
+    const contact = !isShowClinic ? request?.user?.email : `#${request?.clinic?.clinicId}`
+
     const [isLoading, setIsLoading] = useState(false)
-
 
     const updateClinicRequestStatus = (status) => {
         setIsLoading(true)
-        serverRequest.patch(`/v1/clinics-requests/${request._id}`, { status })
+
+        let endpointURL = ''
+
+        if(request.role === 'STAFF') {
+            endpointURL = `/v1/clinics-requests/${request._id}/staffs`
+        } else if(request.role === 'DOCTOR') {
+            endpointURL = `/v1/clinics-requests/${request._id}/doctors`
+        } else if(request.role === 'OWNER') {
+            endpointURL = `/v1/clinics-requests/${request._id}/owners`
+        }
+
+        serverRequest.patch(endpointURL, { status })
         .then(response => {
             setIsLoading(false)
             setReload(reload + 1)
@@ -34,9 +58,10 @@ const ClinicRequestCard = ({ request, reload, setReload }) => {
         })
     }
 
-    const cardActionsList = [
+
+    const userCardActionsList = [
         {
-            name: 'Accept',
+            name: translations[lang]['Accept'],
             icon: <CheckCircleOutlineOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -44,7 +69,7 @@ const ClinicRequestCard = ({ request, reload, setReload }) => {
             }
         },
         {
-            name: 'Decline',
+            name: translations[lang]['Decline'],
             icon: <DoNotDisturbAltOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -52,7 +77,7 @@ const ClinicRequestCard = ({ request, reload, setReload }) => {
             }
         },
         {
-            name: 'Pending',
+            name: translations[lang]['Pending'],
             icon: <HourglassEmptyOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -61,44 +86,79 @@ const ClinicRequestCard = ({ request, reload, setReload }) => {
         },
      ]
 
-    return <div onClick={e => navigate(`/patients/${patient.patient._id}/medical-profile`)} className="patient-card-container disable-hover">
+     if(request.role === 'STAFF') {
+        userCardActionsList.push({
+            name: translations[lang]['Delete Request'],
+            icon: <DeleteOutlineOutlinedIcon />,
+            onAction: (e) => {
+                e.stopPropagation()
+                setTargetRequest(request)
+                setIsShowDeleteModal(true)
+            }
+        })
+     }
+
+     const ownerCardActionsList = [
+        {
+            name: translations[lang]['Delete Request'],
+            icon: <DeleteOutlineOutlinedIcon />,
+            onAction: (e) => {
+                e.stopPropagation()
+                setTargetRequest(request)
+                setIsShowDeleteModal(true)
+            }
+        },
+     ]
+
+     const cardActionsList = !isReceiverView ? ownerCardActionsList : userCardActionsList
+
+    return <CardTransition>
+    <div className="patient-card-container disable-hover body-text">
         <div className="patient-card-header">
             <div className="patient-image-info-container">
-                <img src={`https://avatars.dicebear.com/api/initials/${request.clinic.name}.svg`} alt="patient-image" />
+                <img src={`https://avatars.dicebear.com/api/initials/${name}.svg`} alt="patient-image" />
                 <div>
-                    <strong>{request.clinic.name}</strong>
-                    <span className="grey-text">#{request.clinic.clinicId}</span>
+                    <strong>{name}</strong>
+                    <span className="grey-text">{contact}</span>
                 </div>
             </div>
             <CardActions actions={cardActionsList} />
         </div>
         <div className="patient-card-body">
             <ul>
+                {
+                    isShowClinic ?
+                    <li>
+                        <strong>{translations[lang]['Inviter']}</strong>
+                        <span>{request.user.firstName + ' ' + request.user.lastName}</span>
+                    </li>
+                    :
+                    <li>
+                        <strong>{translations[lang]['Clinic']}</strong>
+                        <span>{request.clinic.name}</span>
+                    </li>
+                }
                 <li>
-                    <strong>Phone</strong>
-                    <span>{`+${request.clinic.countryCode}${request.clinic.phone}`}</span>
+                    <strong>{translations[lang]['Country']}</strong>
+                    <span>{capitalizeFirstLetter(request.clinic.country)}</span>
                 </li>
                 <li>
-                    <strong>Country</strong>
-                    <span>{request.clinic.country}</span>
+                    <strong>{translations[lang]['City']}</strong>
+                    <span>{capitalizeFirstLetter(request.clinic.city)}</span>
                 </li>
                 <li>
-                    <strong>City</strong>
-                    <span>{request.clinic.city}</span>
+                    <strong>{translations[lang]['Role']}</strong>
+                    <span>{translations[lang][capitalizeFirstLetter(request.role)]}</span>
                 </li>
                 <li>
-                    <strong>Address</strong>
-                    <span>{request.clinic.address}</span>
-                </li>
-                <li>
-                    <strong>Status</strong>
-                    { request.status === 'PENDING' ? <span className="status-btn pending bold-text">{request.status}</span> : null }
-                    { request.status === 'ACCEPTED' ? <span className="status-btn done bold-text">{request.status}</span> : null }
-                    { request.status === 'REJECTED' ? <span className="status-btn declined bold-text">{request.status}</span> : null }
+                    <strong>{translations[lang]['Status']}</strong>
+                    { request.status === 'PENDING' ? <span className="status-btn pending bold-text">{translations[lang]['Pending']}</span> : null }
+                    { request.status === 'ACCEPTED' ? <span className="status-btn done bold-text">{translations[lang]['Accepted']}</span> : null }
+                    { request.status === 'REJECTED' ? <span className="status-btn declined bold-text">{translations[lang]['Rejected']}</span> : null }
                 </li>
             </ul>
         </div>
-        {
+        { isReceiverView ?
             request.status === 'PENDING' ?
             isLoading ?
             <div className="container-center"> 
@@ -110,15 +170,26 @@ const ClinicRequestCard = ({ request, reload, setReload }) => {
             </div>
             :
             <div className="card-buttons-container">
-                <button onClick={e => updateClinicRequestStatus('ACCEPTED')} className="normal-button action-color-bg white-text">Accept</button>
-                <button onClick={e => updateClinicRequestStatus('REJECTED')} className="normal-button cancel-button">Decline</button>
+                <button 
+                onClick={e => updateClinicRequestStatus('ACCEPTED')} 
+                className="normal-button action-color-bg white-text">
+                    {translations[lang]['Accept']}
+                </button>
+                <button 
+                onClick={e => updateClinicRequestStatus('REJECTED')} 
+                className="normal-button cancel-button">
+                    {translations[lang]['Decline']}
+                </button>
             </div>
+            :
+            null
             :
             null
         }
         <CardDate creationDate={request.createdAt} />
 
     </div>
+    </CardTransition>
 }
 
 export default ClinicRequestCard

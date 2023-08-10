@@ -3,7 +3,7 @@
     align-items: center;
     justify-content: space-between;
     padding: .5rem 0rem .5rem 0rem;
-    border-bottom: 1px solid #eee;    
+    border-bottom: 1px solid #eee;
 }
 
 .navigation-bar-search-container {
@@ -31,6 +31,14 @@
     align-items: center;
     justify-content: space-between;
     width: 5rem;
+}
+
+.navigation-bar-options-container .create-btn svg {
+    color: #4c83ee;
+}
+
+.navigation-bar-container .create-btn:hover svg {
+    color: #FFF;
 }
 
 .navigation-map-container {
@@ -91,3 +99,22 @@
 .quick-form-container {
     position: relative;
 }
+
+.app-navigation-bar-container ul {
+    display: flex;
+    align-items: center;
+    padding: .5rem 0;
+    border-bottom: 1px solid #F2F2F2;
+}
+
+.app-navigation-bar-container ul li {
+    list-style-type: none;
+    margin-right: 1.7rem;
+}
+
+.app-navigation-bar-container ul li a {
+    color: #1A1B25;
+    font-weight: 600;
+    font-size: .8rem;
+}
+

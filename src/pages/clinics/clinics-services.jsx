@@ -10,12 +10,19 @@ import { searchServices } from '../../utils/searches/search-services'
 import PageHeader from '../../components/sections/page-header'
 import ServiceCard from '../../components/cards/service'
 import ServiceFormModal from '../../components/modals/service-form'
-
-
+import ServiceDeleteConfirmationModal from '../../components/modals/confirmation/service-delete-confirmation-modal'
+import { isRolesValid } from '../../utils/roles'
+import Card from '../../components/cards/card'
+import { formatNumber } from '../../utils/numbers'
+import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
+import FloatingButton from '../../components/buttons/floating-button'
+import translations from '../../i18n'
 
 const ClinicsServicesPage = ({ roles }) => {
 
     const navigate = useNavigate()
+
+    const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
 
     const [isShowForm, setIsShowForm] = useState(false)
     const [reload, setReload] = useState(1)
@@ -24,14 +31,13 @@ const ClinicsServicesPage = ({ roles }) => {
     const [clinics, setClinics] = useState([])
     const [targetService, setTargetService] = useState()
     const [searchedServices, setSearchedServices] = useState([])
+
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     useEffect(() => {
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
 
     useEffect(() => {
@@ -63,20 +69,47 @@ const ClinicsServicesPage = ({ roles }) => {
 
     return <div className="page-container">
         <PageHeader 
-        pageName="Services" 
-        addBtnText={'Add Service'} 
+        pageName={translations[lang]["Services"]} 
+        addBtnText={translations[lang]['Add Service']} 
         isHideBackButton={true}
         setShow
         setShowModalForm={setIsShowForm} 
         />
+        {
+            user.roles.includes('OWNER') ?
+            <div className="show-mobile">
+                <FloatingButton setIsShowForm={setIsShowForm} />
+            </div>
+            :
+            null
+        }
+        <div className="cards-list-wrapper margin-bottom-1">
+            <Card 
+            icon={<NumbersOutlinedIcon />}
+            cardHeader={translations[lang]['Services']}
+            number={formatNumber(services.length)}
+            iconColor={'#5C60F5'}
+            />
+        </div>
         { 
         isShowForm ? 
         <ServiceFormModal 
         setShowFormModal={setIsShowForm} 
         reload={reload} 
-        setReload={setReload} 
+        setReload={setReload}
         service={targetService}
         setService={setTargetService}
+        /> 
+        : 
+        null 
+        }
+        { 
+        isShowDeleteModal ? 
+        <ServiceDeleteConfirmationModal 
+        service={targetService}
+        reload={reload}
+        setReload={setReload} 
+        setIsShowModal={setIsShowDeleteModal}
         /> 
         : 
         null 
@@ -106,6 +139,7 @@ const ClinicsServicesPage = ({ roles }) => {
                          setReload={setReload} 
                          reload={reload}
                          setIsShowForm={setIsShowForm}
+                         setIsShowDeleteModal={setIsShowDeleteModal}
                          />)}
                     </div>
                     :

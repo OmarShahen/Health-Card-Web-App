@@ -5,6 +5,7 @@ import NavigationBar from '../../components/navigation/navigation-bar'
 import PageHeader from '../sections/page-header'
 import { setPatient } from '../../redux/slices/patientSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import translations from '../../i18n'
 
 const PatientProfileLayout = () => {
 
@@ -12,6 +13,8 @@ const PatientProfileLayout = () => {
     const patientId = pagePath.split('/')[2]
 
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
+
     const dispatch = useDispatch()
     const [isLoading, setIsLoading] = useState(true)
     const [patientProfile, setPatientProfile] = useState({})
@@ -35,7 +38,7 @@ const PatientProfileLayout = () => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={'Medical Profile'} />
+        <NavigationBar pageName={translations[lang]['Medical Profile']} />
         <div className="padded-container">
             <PageHeader 
             pageName={`${patientProfile.firstName} ${patientProfile.lastName}`}
@@ -43,14 +46,14 @@ const PatientProfileLayout = () => {
             />
             <div className="mini-page-navigator-container">
                 <ul>
-                    <li><NavLink to={`/patients/${patientId}/medical-profile`}>Profile</NavLink></li> 
-                    <li><NavLink to={`/patients/${patientId}/emergency-contacts`}>Contacts</NavLink></li>
-                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/doctors`}>Doctors</NavLink></li> }
-                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/encounters`}>Encounters</NavLink></li> }
-                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/symptoms`}>Symptoms</NavLink></li> }
-                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/diagnosis`}>Diagnosis</NavLink></li> }
-                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/prescriptions`}>Prescriptions</NavLink></li> }
-                    { user.role === 'STAFF' ? null : <li><NavLink to={`/patients/${patientId}/drugs`}>Drugs</NavLink></li> }
+                    <li><NavLink to={`/patients/${patientId}/medical-profile`}>{translations[lang]['Profile']}</NavLink></li> 
+                    <li><NavLink to={`/patients/${patientId}/emergency-contacts`}>{translations[lang]['Emergency Contacts']}</NavLink></li>
+                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/doctors`}>{translations[lang]['Past Doctors']}</NavLink></li> }
+                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/encounters`}>{translations[lang]['Encounters']}</NavLink></li> }
+                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/symptoms`}>{translations[lang]['Symptoms']}</NavLink></li> }
+                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/diagnosis`}>{translations[lang]['Diagnosis']}</NavLink></li> }
+                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/prescriptions`}>{translations[lang]['Prescriptions']}</NavLink></li> }
+                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/drugs`}>{translations[lang]['Drugs']}</NavLink></li> }
                 </ul>
             </div>
             <Outlet />

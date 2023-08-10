@@ -35,10 +35,11 @@
     margin-right: .2rem;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 950px) {
     .page-footer-container {
         font-size: .9rem !important;
-        align-items: flex-start;
+        align-items: center;
+        justify-content: center;
         padding-top: .5rem;
     }
 

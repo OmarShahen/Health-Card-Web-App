@@ -1,15 +1,19 @@
+import translations from '../../../i18n'
+import { useSelector } from 'react-redux'
 
 const PatientChronicDiseasesForm = (props) => {
 
-    return <div className="patient-form-wrapper">
+    const lang = useSelector(state => state.lang.lang)
+
+    return <div className="patient-form-wrapper" id="chronic-section">
         <div className="patient-form-header">
             <h2>
-                Chronic Diseases
+                {translations[lang]['Chronic Diseases']}
             </h2>
         </div>
         <div className="cards-2-list-wrapper">
             <div>
-                <h3>High Pressure</h3>
+                <h3>{translations[lang]['High Pressure']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -17,7 +21,7 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsHighBloodPressure(true)}
                     name="blood-pressure"
                     />
-                    <label for="blood-pressure">Yes</label>
+                    <label for="blood-pressure">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -26,11 +30,11 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsHighBloodPressure(false)}
                     name="blood-pressure"
                     />
-                    <label for="blood-pressure">No</label>
+                    <label for="blood-pressure">{translations[lang]['No']}</label>
                 </div>
             </div>
             <div>
-                <h3>Diabetes</h3>
+                <h3>{translations[lang]['Diabetes']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -38,7 +42,7 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsDiabetic(true)}
                     name="diabetes"
                     />
-                    <label for="diabetes">Yes</label>
+                    <label for="diabetes">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -47,11 +51,11 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsDiabetic(false)} 
                     name="diabetes"
                     />
-                    <label for="diabetes">No</label>
+                    <label for="diabetes">{translations[lang]['No']}</label>
                 </div>
             </div>
             <div>
-                <h3>Heart Diseases</h3>
+                <h3>{translations[lang]['Heart Diseases']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -59,7 +63,7 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsChronicHeart(true)}
                     name="heart"
                     />
-                    <label for="heart">Yes</label>
+                    <label for="heart">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -68,11 +72,11 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsChronicHeart(false)}
                     name="heart"
                     />
-                    <label for="heart">No</label>
+                    <label for="heart">{translations[lang]['No']}</label>
                 </div>
             </div>
             <div>
-                <h3>Neurological Diseases</h3>
+                <h3>{translations[lang]['Neurological Diseases']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -80,7 +84,7 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsChronicNeurological(true)}
                     name="neurons"
                     />
-                    <label for="neurons">Yes</label>
+                    <label for="neurons">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -89,11 +93,11 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsChronicNeurological(false)}
                     name="neurons"
                     />
-                    <label for="neurons">No</label>
+                    <label for="neurons">{translations[lang]['No']}</label>
                 </div>
             </div>
             <div>
-                <h3>Liver Diseases</h3>
+                <h3>{translations[lang]['Liver Diseases']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -101,7 +105,7 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsChronicLiver(true)}
                     name="liver"
                     />
-                    <label for="liver">Yes</label>
+                    <label for="liver">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -110,11 +114,11 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsChronicLiver(false)}
                     name="liver"
                     />
-                    <label for="liver">No</label>
+                    <label for="liver">{translations[lang]['No']}</label>
                 </div>
             </div>
             <div>
-                <h3>Kidney Diseases</h3>
+                <h3>{translations[lang]['Kidney Diseases']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -122,7 +126,7 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsChronicKidney(true)}
                     name="kidney"
                     />
-                    <label for="kidney">Yes</label>
+                    <label for="kidney">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -131,7 +135,7 @@ const PatientChronicDiseasesForm = (props) => {
                     onChange={e => props.setIsChronicKidney(false)}
                     name="kidney"
                     />
-                    <label for="kidney">No</label>
+                    <label for="kidney">{translations[lang]['No']}</label>
                 </div>
             </div>
         </div>

@@ -1,10 +1,10 @@
 import { TailSpin } from "react-loader-spinner"
 import './loadings.css'
 
-const CircularLoading = () => {
+const CircularLoading = ({ width="50", height="50" }) => {
 
     return <div className="loading-container">
-        <TailSpin width="50" height="50" color="#4c83ee" />
+        <TailSpin width={width} height={height} color="#4c83ee" />
     </div>
 }
 

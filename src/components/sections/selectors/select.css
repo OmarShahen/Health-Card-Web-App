@@ -1,0 +1,55 @@
+.select-export-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 1rem 0;
+}
+
+.select-export-container div button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    margin-left: 1rem;
+}
+
+.select-export-container div button svg {
+    margin-right: .5rem;
+    font-size: 1.2rem;
+}
+
+.export-section-container {
+    display: flex;
+    align-items: center;
+}
+
+.select-section-container {
+    display: flex;
+    align-items: center;
+}
+
+.select-section-container span {
+    display: flex;
+    align-items: center;
+}
+
+.select-section-container svg {
+    color: #414552;
+    font-size: 1.4rem;
+    margin-right: .2rem;
+}
+
+.select-button {
+    display: flex;
+    align-items: center;
+}
+
+.select-button svg {
+    font-size: 1rem;
+    margin-right: .4rem;
+}
+
+.select-options-container {
+    display: flex;
+}
+

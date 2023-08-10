@@ -1,15 +1,19 @@
+import translations from "../../../i18n"
+import { useSelector } from "react-redux"
 
 const PatientBadHabitsForm = (props) => {
 
-    return <div className="patient-form-wrapper">
+    const lang = useSelector(state => state.lang.lang)
+
+    return <div className="patient-form-wrapper" id="bad-habits-section">
         <div className="patient-form-header">
             <h2>
-                Habits
+                {translations[lang]['Bad Habits']}
             </h2>
         </div>
         <div className="cards-2-list-wrapper">
             <div>
-                <h3>Smoking Past</h3>
+                <h3>{translations[lang]['Smoking Past']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -17,7 +21,7 @@ const PatientBadHabitsForm = (props) => {
                     id="smoke-past"
                     onChange={e => props.setIsSmokingPast(true)}
                     />
-                    <label for="smoke-past">Yes</label>
+                    <label for="smoke-past">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -26,11 +30,11 @@ const PatientBadHabitsForm = (props) => {
                     id="smoke-past"
                     onChange={e => props.setIsSmokingPast(false)}
                     />
-                    <label for="smoke-past">No</label>
+                    <label for="smoke-past">{translations[lang]['No']}</label>
                 </div>
             </div>
             <div>
-                <h3>Smoking Present</h3>
+                <h3>{translations[lang]['Smoking Present']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -38,7 +42,7 @@ const PatientBadHabitsForm = (props) => {
                     id="smoke-present"
                     onChange={e => props.setIsSmokingPresent(true)}
                     />
-                    <label for="smoke-present">Yes</label>
+                    <label for="smoke-present">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -47,11 +51,11 @@ const PatientBadHabitsForm = (props) => {
                     id="smoke-present"
                     onChange={e => props.setIsSmokingPresent(false)}
                     />
-                    <label for="smoke-present">No</label>
+                    <label for="smoke-present">{translations[lang]['No']}</label>
                 </div>
             </div>
             <div>
-                <h3>Alcohol Past</h3>
+                <h3>{translations[lang]['Alcohol Past']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -59,7 +63,7 @@ const PatientBadHabitsForm = (props) => {
                     id="alcohol-past"
                     onChange={e => props.setIsAlcoholPast(true)}
                     />
-                    <label for="alcohol-past">Yes</label>
+                    <label for="alcohol-past">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -68,11 +72,11 @@ const PatientBadHabitsForm = (props) => {
                     id="alcohol-past"
                     onChange={e => props.setIsAlcoholPast(false)}
                     />
-                    <label for="alcohol-past">No</label>
+                    <label for="alcohol-past">{translations[lang]['No']}</label>
                 </div>
             </div>
             <div>
-                <h3>Alcohol Present</h3>
+                <h3>{translations[lang]['Alcohol Present']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -80,7 +84,7 @@ const PatientBadHabitsForm = (props) => {
                     id="alcohol-present"
                     onChange={e => props.setIsAlcoholPresent(true)}
                     />
-                    <label for="alcohol-present">Yes</label>
+                    <label for="alcohol-present">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -89,7 +93,7 @@ const PatientBadHabitsForm = (props) => {
                     id="alcohol-present"
                     onChange={e => props.setIsAlcoholPresent(false)}
                     />
-                    <label for="alcohol-present">No</label>
+                    <label for="alcohol-present">{translations[lang]['No']}</label>
                 </div>
             </div>
         </div>

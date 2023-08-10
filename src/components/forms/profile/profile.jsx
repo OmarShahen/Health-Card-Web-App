@@ -4,9 +4,17 @@ import { serverRequest } from "../../API/request"
 import { toast } from "react-hot-toast"
 import { TailSpin } from "react-loader-spinner"
 import format from "date-fns/format"
+import { useDispatch, useSelector } from "react-redux"
+import { setUserDetails } from "../../../redux/slices/userSlice"
+import { capitalizeFirstLetter } from "../../../utils/formatString"
+import translations from "../../../i18n"
+import { setLang } from "../../../redux/slices/langSlice"
 
 const ProfileForm = ({ profile, reload, setReload }) => {
 
+    const dispatch = useDispatch()
+
+    const lang = useSelector(state => state.lang.lang)
 
     const [isSubmit, setIsSubmit] = useState(false)
     const [firstName, setFirstName] = useState(profile.firstName)
@@ -24,13 +32,13 @@ const ProfileForm = ({ profile, reload, setReload }) => {
     const handleUpdate = (e) => {
         e.preventDefault()
 
-        if(!firstName) return setFirstNameError('First name is required')
+        if(!firstName) return setFirstNameError(translations[lang]['first name is required'])
 
-        if(!lastName) return setLastNameError('Last number is required')
+        if(!lastName) return setLastNameError(translations[lang]['last name is required'])
         
-        if(!gender) return setGenderError('Gender is required')
+        if(!gender) return setGenderError(translations[lang]['gender is required'])
 
-        if(!dateOfBirth) return setDateOfBirthError('Date of birth is required')
+        if(!dateOfBirth) return setDateOfBirthError(translations[lang]['date of birth is required'])
 
         const updatedData = { 
             firstName, 
@@ -44,6 +52,13 @@ const ProfileForm = ({ profile, reload, setReload }) => {
         .then(response => {
             setIsSubmit(false)
             const data = response.data
+            const newUserData = {
+                firstName: data.user.firstName,
+                lastName: data.user.lastName,
+                gender: data.user.gender,
+                dateOfBirth: data.user.dateOfBirth
+            }
+            dispatch(setUserDetails(newUserData))
             setReload(reload+1)
             toast.success(data.message, { position: 'top-right', duration: 3000 })
         })
@@ -68,94 +83,108 @@ const ProfileForm = ({ profile, reload, setReload }) => {
         })
     }
 
-    const resetForm  = () => {
-
-        setFirstName('')
-        setLastName('')
-        setCountryCode(20)
-        setGender("MALE")
-        setAge(0)
-        setCardId('')
-
-        setFirstNameError()
-        setLastNameError()
-        setCountryCodeError()
-        setGenderError()
-        setAgeError()
-        setCardIdError()
-    }
 
     return <div className="profile-form-container">
         <div className="profile-form-wrapper">
-            <form id="profile-form" className="body-text">
+            <form id="profile-form" className="body-text cards-2-list-wrapper">
                 <div>
-                    <label>Account First Name</label>
-                    <div className="form-input-button-container">
-                        <input 
-                        type="text" 
-                        className="form-input" 
-                        value={firstName}
-                        onChange={e => setFirstName(e.target.value)}
-                        onClick={e => setFirstNameError()}
-                        />
+                    <div>
+                        <label>{translations[lang]['Account First Name']}</label>
+                        <div className="form-input-button-container">
+                            <input 
+                            type="text" 
+                            className="form-input" 
+                            value={firstName}
+                            onChange={e => setFirstName(e.target.value)}
+                            onClick={e => setFirstNameError()}
+                            />
+                        </div>
+                        <span className="red">{firstNameError}</span>
                     </div>
-                    <span className="red">{firstNameError}</span>
+                    <div>
+                        <label>{translations[lang]['Account Last Name']}</label>
+                        <div className="form-input-button-container">
+                            <input 
+                            type="text" 
+                            className="form-input" 
+                            value={lastName}
+                            onChange={e => setLastName(e.target.value)}
+                            onClick={e => setLastNameError()}
+                            />
+                        </div>
+                        <span className="red">{lastNameError}</span>
+                    </div>
+                    <div>
+                        <label>{translations[lang]['Account Gender']}</label>
+                        <div className="form-input-button-container">
+                            <select 
+                            name="gender" 
+                            id="gender"
+                            className="form-input"
+                            onChange={e => setGender(e.target.value)}
+                            onClick={e => setGenderError()}
+                            >
+                                { gender === 'MALE' ? <option value="MALE" selected>{translations[lang]['Male']}</option> : <option value="MALE">{translations[lang]['Male']}</option> }
+                                { gender === 'FEMALE' ? <option value="FEMALE" selected>{translations[lang]['Female']}</option> : <option value="FEMALE">{translations[lang]['Female']}</option> }
+                            </select>
+                        </div>
+                        <span className="red">{genderError}</span>
+                    </div>
+                    <div>
+                        <label>{translations[lang]['Roles']}</label>
+                        <div className="codes-container">
+                            {profile.roles.map(role => <span className="status-btn grey-bg">{capitalizeFirstLetter(role)}</span>)}
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <label>Account Last Name</label>
-                    <div className="form-input-button-container">
-                        <input 
-                        type="text" 
-                        className="form-input" 
-                        value={lastName}
-                        onChange={e => setLastName(e.target.value)}
-                        onClick={e => setLastNameError()}
-                        />
+                    <div>
+                        <label>{translations[lang]['Account Email']}</label>
+                        <div className="form-input-button-container">
+                            <input type="email" className="form-input" value={email} disabled />
+                        </div>
+                        <span className="red">{emailError}</span>
                     </div>
-                    <span className="red">{lastNameError}</span>
-                </div>
-                <div>
-                    <label>Account Email</label>
-                    <div className="form-input-button-container">
-                        <input type="email" className="form-input" value={email} disabled />
+                    <div>
+                        <label>{translations[lang]['Account ID']}</label>
+                        <div className="form-input-button-container">
+                            <input type="number" className="form-input" value={profile.userId} disabled />
+                        </div>
+                        <span className="red"></span>
                     </div>
-                    <span className="red">{emailError}</span>
-                </div>
-                <div>
-                    <label>Account Gender</label>
-                    <div className="form-input-button-container">
-                        <select 
-                        name="gender" 
-                        id="gender"
-                        onChange={e => setGender(e.target.value)}
-                        onClick={e => setGenderError()}
-                        >
-                            { gender === 'MALE' ? <option value="MALE" selected>Male</option> : <option value="MALE">Male</option> }
-                            { gender === 'FEMALE' ? <option value="FEMALE" selected>Female</option> : <option value="FEMALE">Female</option> }
-                        </select>
+                    <div>
+                        <label>{translations[lang]['Date of Birth']}</label>
+                        <div className="form-input-button-container">
+                            <input 
+                            type="date" 
+                            className="form-input" 
+                            value={dateOfBirth}
+                            onClick={e => setDateOfBirthError()} 
+                            onChange={e => setDateOfBirth(e.target.value)}
+                            />
+                        </div>
+                        <span className="red">{dateOfBirthError}</span>
                     </div>
-                    <span className="red">{genderError}</span>
-                </div>
-                <div>
-                    <label>Date Of Birth</label>
-                    <div className="form-input-button-container">
-                        <input 
-                        type="date" 
-                        className="form-input" 
-                        value={dateOfBirth}
-                        onClick={e => setDateOfBirthError()} 
-                        onChange={e => setDateOfBirth(e.target.value)}
-                        />
+                    <div>
+                        <label>{translations[lang]['Language']}</label>
+                        <div className="form-input-button-container">
+                            <select 
+                            className="form-input"
+                            onChange={e => dispatch(setLang(e.target.value))}
+                            >
+                               { lang === 'en' ? <option value="en" selected>English</option> : <option value="en">English</option> }
+                               { lang === 'ar' ? <option value="ar" selected>عربي</option> : <option value="ar">عربي</option> }
+                            </select>
+                        </div>
                     </div>
-                    <span className="red">{dateOfBirthError}</span>
-                </div>
+                </div>  
                 <div>
                     {
                         isSubmit ?
                         <TailSpin width="30" height="30" color="#22D172" />
                         :
                         <button onClick={handleUpdate} className="update-btn">
-                            Update
+                            {translations[lang]['Update']}
                         </button>
                     }
                 </div>

@@ -47,20 +47,25 @@
 }
 
 .prescription-form-wrapper {
-    /*box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.1);*/
-    margin: 1rem 0;
+    margin: 0;
+    padding: .5rem;
+    background-color: #FFF;
+}
+
+.prescription-form-header {
+    padding: 0 1rem;
+    margin: .5rem 0;
+    border-bottom: 1px solid #F2F2F2;
 }
 
 .prescription-form-container {
     background-color: #FFF;
-    padding: 1rem;
-    /*box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.1);*/
+    padding: 0rem;
 }
 
 .symptoms-diagnosis-form-container {
     background-color: #FFF;
-    padding: .5rem 1rem;
-    box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.1);
+    padding: .5rem 0rem;
 }
 
 .drug-list-container {
@@ -93,7 +98,7 @@
 }
 
 .drug-instructions-container {
-    padding: 2rem 0;
+    padding: 1rem 0;
 }
 
 .symptoms-diagnosis-tags-container {

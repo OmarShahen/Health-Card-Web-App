@@ -3,11 +3,16 @@ import './modals.css'
 import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
 import { TailSpin } from 'react-loader-spinner'
+import translations from '../../i18n'
+import { useSelector } from 'react-redux'
+import { capitalizeFirstLetter } from '../../utils/formatString'
 
 const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, setMode, contact }) => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+
+    const lang = useSelector(state => state.lang.lang)
 
     const [isSubmit, setIsSubmit] = useState(false)
     const [name, setName] = useState(mode === 'EDITE' ? contact.name : '')
@@ -31,17 +36,17 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
     const handleAddSubmit = (e) => {
         e.preventDefault()
 
-        if(!name) return setNameError('name is required')
+        if(!name) return setNameError(translations[lang]['name is required'])
 
-        if(!relative) return setRelativeError('relative is required')
+        if(!relative) return setRelativeError(translations[lang]['relation is required'])
         
-        if(!countryCode) return setCountryCodeError('Country code is required')
+        if(!countryCode) return setCountryCodeError(translations[lang]['country code is required'])
 
-        if(!phone) return setPhoneError('Phone is required')
+        if(!phone) return setPhoneError(translations[lang]['phone is required'])
 
         const contactData = { 
             name, 
-            countryCode: Number.parseInt(countryCode), 
+            countryCode: 20, 
             phone: Number.parseInt(phone), 
             relation: relative 
         }
@@ -81,19 +86,19 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
     const handleUpdateSubmit = (e) => {
         e.preventDefault()
 
-        if(!name) return setNameError('name is required')
+        if(!name) return setNameError(translations[lang]['name is required'])
 
-        if(!relative) return setRelativeError('relative is required')
+        if(!relative) return setRelativeError(translations[lang]['relation is required'])
         
-        if(!countryCode) return setCountryCodeError('Country code is required')
+        if(!countryCode) return setCountryCodeError(translations[lang]['country code is required'])
 
-        if(!phone) return setPhoneError('Phone is required')
+        if(!phone) return setPhoneError(translations[lang]['phone is required'])
 
         const contactData = { 
             name, 
             countryCode: Number.parseInt(countryCode), 
             phone: Number.parseInt(phone), 
-            relation: relative 
+            relation: relative.toUpperCase()
         }
 
         setIsSubmit(true)
@@ -134,9 +139,9 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
             <div className="modal-header">
                 {
                     mode === 'EDITE' ?
-                    <h2>Update Emergency Contact</h2>
+                    <h2>{translations[lang]['Update Emergency Contact']}</h2>
                     :
-                    <h2>Add Emergency Contact</h2>
+                    <h2>{translations[lang]['Add Emergency Contact']}</h2>
                 }
             </div>
             <div className="modal-body-container">
@@ -146,7 +151,7 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
                 onSubmit={mode === 'EDITE' ? handleUpdateSubmit : handleAddSubmit}
                 >
                     <div className="form-input-container">
-                        <label>Name*</label>
+                        <label>{translations[lang]['Name']}</label>
                         <input 
                         type="text" 
                         className="form-input" 
@@ -158,10 +163,11 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
                         <span className="red">{nameError}</span>
                     </div>
                     <div className="form-input-container">
-                        <label>Relative*</label>
+                        <label>{translations[lang]['Relation']}</label>
                         <select 
                         name="relative" 
                         id="relative"
+                        className="form-input"
                         onChange={e => {
                             setRelative(e.target.value)
                             setRelativeError()
@@ -171,32 +177,19 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
                             mode === 'EDITE' ? 
                             relativity.map(relativeDegree => {
                                 if(contact.relation === relativeDegree) {
-                                    return <option value={relativeDegree} selected>{relativeDegree}</option>
+                                    return <option value={relativeDegree} selected>{translations[lang][capitalizeFirstLetter(relativeDegree)]}</option>
                                 }
 
-                                return <option value={relativeDegree}>{relativeDegree}</option>
+                                return <option value={relativeDegree}>{translations[lang][capitalizeFirstLetter(relativeDegree)]}</option>
                             })
                             :
-                            relativity.map(relativeDegree => <option value={relativeDegree}>{relativeDegree}</option>)  
+                            relativity.map(relativeDegree => <option value={relativeDegree}>{translations[lang][capitalizeFirstLetter(relativeDegree)]}</option>)  
                             }
                         </select>
                         <span className="red">{relativeError}</span>
                     </div>
                     <div className="form-input-container">
-                        <label>Country Code*</label>
-                        <input 
-                        type="number"
-                        min="0"
-                        className="form-input" 
-                        placeholder=""
-                        value={countryCode} 
-                        onChange={e => setCountryCode(e.target.value)}
-                        onClick={e => setCountryCodeError()}
-                        />
-                        <span className="red">{countryCodeError}</span>
-                    </div>
-                    <div className="form-input-container">
-                        <label>Phone*</label>
+                        <label>{translations[lang]['Phone']}</label>
                         <input 
                         type="tel"
                         className="form-input" 
@@ -218,7 +211,7 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
                         <button 
                         form="contact-form"
                         className="normal-button white-text action-color-bg"
-                        >{ mode === 'EDITE' ? 'Update' : 'Add' }</button>
+                        >{ mode === 'EDITE' ? translations[lang]['Update'] : translations[lang]['Add'] }</button>
                     }
                 </div>
                 <div>
@@ -228,7 +221,7 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
                         setMode('')
                         setShowModalForm(false)
                     }}
-                    >Close</button>
+                    >{translations[lang]['Close']}</button>
                 </div>
             </div>
         </div>

@@ -5,11 +5,15 @@ import { TailSpin } from 'react-loader-spinner'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from '../../redux/slices/userSlice'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import PageTransition from '../../components/transitions/page-transitions'
+import logo from '../../assets/khatab.png'
+import translations from '../../i18n'
 
 const SignUpEmailVerificationCodePage = () => {
 
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
+
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -22,16 +26,18 @@ const SignUpEmailVerificationCodePage = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if(!verificationCode) return setVerificationCodeError('verification code is required')
+        if(!verificationCode) return setVerificationCodeError(translations[lang]['verification code is required'])
 
         setIsSubmit(true)
         serverRequest.post(`/v1/auth/verify/users/${user._id}/verification-codes/${verificationCode}`)
         .then(response => {
             setIsSubmit(false)
-            const data = response.data
-            sessionStorage.setItem('user', JSON.stringify({ ...data.user, isLogged: true }))
-            dispatch(setUser({ ...data.user, isLogged: true }))
-            navigate('/patients')
+            let data = response.data
+            data.user.accessToken = data.token
+            const isLogged = user.roles.includes('STAFF') ? false : true
+            sessionStorage.setItem('user', JSON.stringify({ ...data.user, isLogged, isCelebrate: true }))
+            dispatch(setUser({ ...data.user, isLogged, isCelebrate: true }))
+            user.roles.includes('STAFF') ? navigate('/signup/staffs/clinics') : navigate('/patients')
         })
         .catch(error => {
             setIsSubmit(false)
@@ -61,17 +67,19 @@ const SignUpEmailVerificationCodePage = () => {
         })
     }
 
-    return <div className="form-page-center">
+    return <PageTransition>
+    <div className="form-page-center">
             <form className="login-form-container" onSubmit={handleSubmit}>
                 <div className="login-form-header-container subheader-text">
-                    <h3>
-                        Email Verification Code
-                    </h3>
-                    <h6 className="grey">Type in the code we sent to <strong>{user.email}.</strong></h6>
+                <div className="center">
+                        <img src={logo} style={{ height: "4rem"  }} />
+                    </div>
+                    
+                    <h6 className="grey body-text">{translations[lang]['Type in the code we sent to']} <strong>{user.email}.</strong></h6>
                 </div>
                 <div className="login-form-body-container body-text">
                     <div className="form-input-container">
-                        <label>Verification Code</label>
+                        <label>{translations[lang]['Verification Code']}</label>
                         <input 
                         type="text" 
                         className="form-input"
@@ -82,7 +90,7 @@ const SignUpEmailVerificationCodePage = () => {
                     </div>
                     <div>
                         <div className="policy-container">
-                            Your verification code will expire in <span className="">2</span> minutes
+                            {translations[lang]['Your verification code will expire in']} <span className="">2</span> {translations[lang]['minutes']}
                         </div>
                     </div>
                     <div className="submit-btn-container">
@@ -96,16 +104,20 @@ const SignUpEmailVerificationCodePage = () => {
                                 {/*<div className="mail-success-message-container green">
                                     <CheckCircleIcon /> Email sent successfully!
                                 </div>*/}
-                                <input type="submit" className="action-color-bg white-text" value="Continue" />
+                                <input type="submit" className="action-color-bg white-text" value={translations[lang]["Continue"]} />
                             </div>
                         }
                     </div>
                     <div className="form-note-container">
-                        <span>Didn't receive the code? <strong  onClick={e => sendEmailVerificationCode()} className="action-color-text hover">Send again</strong></span>
+                        <span>{translations[lang]["Didn't receive the code?"]} <strong  onClick={e => sendEmailVerificationCode()} className="action-color-text hover">{translations[lang]['Send again']}</strong></span>
                     </div>
+                    <div className="center margin-top-1">
+                            <span onClick={e => navigate(-1)} className="grey bold-text signup-back-button-container">{translations[lang]['Back']}</span>
+                        </div>
                 </div>
             </form>
     </div>
+    </PageTransition>
 }
 
 export default SignUpEmailVerificationCodePage

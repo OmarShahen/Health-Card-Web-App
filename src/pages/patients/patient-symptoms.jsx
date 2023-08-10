@@ -11,7 +11,11 @@ import { searchSymptoms } from '../../utils/searches/search-symptoms'
 import PageHeader from '../../components/sections/page-header'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-
+import { isRolesValid } from '../../utils/roles'
+import Card from '../../components/cards/card'
+import { formatNumber } from '../../utils/numbers'
+import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
+import translations from '../../i18n'
 
 const PatientSymptomsPage = ({ roles }) => {
 
@@ -22,6 +26,7 @@ const PatientSymptomsPage = ({ roles }) => {
 
     const patientProfile = useSelector(state => state.patient.patient)
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     const [statsQuery, setStatsQuery] = useState({})
     const [reload, setReload] = useState(0)
@@ -44,11 +49,7 @@ const PatientSymptomsPage = ({ roles }) => {
 
     useEffect(() => {
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
-
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
 
     useEffect(() => {
@@ -71,12 +72,20 @@ const PatientSymptomsPage = ({ roles }) => {
 
     return <div>
         <PageHeader 
-        pageName={"Symptoms"} 
-        addBtnText={'Add Encounter'} 
+        pageName={translations[lang]["Symptoms"]} 
+        addBtnText={translations[lang]['Add Encounter']} 
         formURL={`/encounters/form?cardId=${patientProfile.cardId}`}
         isHideBackButton={true}
         isHideRefresh={true}
         />
+        <div className="cards-list-wrapper margin-bottom-1">
+            <Card 
+            icon={<NumbersOutlinedIcon />}
+            cardHeader={translations[lang]['Symptoms']}
+            number={formatNumber(symptoms.length)}
+            iconColor={'#5C60F5'}
+            />
+        </div>
         <div className="show-mobile">
             <FloatingButton url={`/encounters/form?cardId=${patientProfile.cardId}`} />
         </div>
@@ -88,6 +97,8 @@ const PatientSymptomsPage = ({ roles }) => {
                     rows={symptoms} 
                     setRows={setSearchedSymptoms}
                     searchRows={searchSymptoms}
+                    isHideSpeciality={false}
+                    isHideClinics={true}
                     />
                 </div>
                 <div>

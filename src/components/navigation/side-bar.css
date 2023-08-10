@@ -1,44 +1,90 @@
 .side-bar-container {
-    box-shadow: var(--box-shadow);
+    box-shadow: var(--box-shadow-line);
     width: 15vw;
-    height: 100vh;
+    min-height: 100vh;
     background-color: #1a2e44;
-    position: fixed;
-    z-index: 1;
+    position:fixed;
+    z-index: 4;
     top: 0;
     left: 0;
     transition: 0.5s; 
 }
 
+.side-bar-logo-container {
+    padding: 1rem 0 1rem 0;
+}
+
+.side-bar-logo-container img {
+    width: 10rem;
+}
+
 .side-bar-container ul {
     padding: 0;
+    max-height: 80vh;
+}
+
+.side-bar-container ul:hover {
+    overflow-y: scroll;
 }
 
 .side-bar-container ul li {
     list-style-type: none;
 }
 
+.side-bar-number-container {
+    background-color: #4c83ee;
+    color: #FFF;
+    border-radius: 5px;
+    padding: 0rem .3rem;
+}
+
 .side-bar-container ul li a {
     font-size: .9rem;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     color: #a3abb4;
+    font-weight: normal;
     text-decoration: none;
-    padding: 1rem .5rem 1rem 1rem;
+    padding: 0rem .5rem 1rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.side-bar-container ul li .active {
+.side-bar-container ul li a span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/*.side-bar-container ul li .active {
     color: #FFF !important;
-    background-color: #38445e;
+    font-weight: 500;
     border-left: 3px solid #4c83ee;
+    background-color: #38445e;
+}*/
+
+/*.side-bar-container ul li .active svg {
+    color: #FFF;
+}*/
+
+.side-bar-nested-list li a {
+    padding: .3rem .5rem !important;
+    color: #ADB5BD !important;
+    font-weight: normal !important;
+}
+
+.nested-list-container .active {
+    background-color: #1a2e44 !important;
+    border-left: 0 !important;
 }
 
 
-.side-bar-container ul li a:hover {
+/*.side-bar-container ul li a:hover {
     color: #FFF;
     background-color: #38445e;
     border-left: 3px solid #4c83ee;
-}
+}*/
 
 .side-bar-container ul li svg {
     margin-right: .7rem;
@@ -59,8 +105,20 @@
     color: #4c83ee;
 }
 
-@media only screen and (max-width: 600px) {
+.upgrade-container {
+    padding: .5rem 1.7rem;
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+}
+
+.upgrade-container svg {
+    margin-right: .1rem;
+    font-size: 1.2rem;
+}
+
+@media only screen and (max-width: 700px) {
     .side-bar-container {
-      width: 45vw;
+      width: 45vw !important;
     }
 }

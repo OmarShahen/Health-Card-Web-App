@@ -11,6 +11,11 @@ import { searchEncounters } from '../../utils/searches/search-encounters'
 import PageHeader from '../../components/sections/page-header'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { isRolesValid } from '../../utils/roles'
+import Card from '../../components/cards/card'
+import { formatNumber } from '../../utils/numbers'
+import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
+import translations from '../../i18n'
 
 const PatientEncountersPage = ({ roles }) => {
 
@@ -21,6 +26,7 @@ const PatientEncountersPage = ({ roles }) => {
 
     const patient = useSelector(state => state.patient.patient)
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     const [reload, setReload] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
@@ -31,11 +37,7 @@ const PatientEncountersPage = ({ roles }) => {
 
     useEffect(() => {
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
-
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
     useEffect(() => {
         setIsLoading(true)
@@ -54,12 +56,20 @@ const PatientEncountersPage = ({ roles }) => {
 
     return <div>
         <PageHeader 
-        pageName={"Encounters"} 
-        addBtnText={'Add Encounter'} 
+        pageName={translations[lang]["Encounters"]} 
+        addBtnText={translations[lang]['Add Encounter']} 
         formURL={`/encounters/form?cardId=${patient.cardId}`}
         isHideBackButton={true}
         isHideRefresh={true}
         />
+        <div className="cards-list-wrapper margin-bottom-1">
+            <Card 
+            icon={<NumbersOutlinedIcon />}
+            cardHeader={translations[lang]['Encounters']}
+            number={formatNumber(encounters.length)}
+            iconColor={'#5C60F5'}
+            />
+        </div>
         <div className="show-mobile">
             <FloatingButton url={`/encounters/form?cardId=${patient.cardId}`} />
         </div>
@@ -75,6 +85,7 @@ const PatientEncountersPage = ({ roles }) => {
                     rows={encounters} 
                     setRows={setSearchedEncounters}
                     searchRows={searchEncounters}
+                    isHideSpeciality={false}
                     />
                 </div>
                 <div>

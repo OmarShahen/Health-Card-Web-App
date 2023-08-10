@@ -2,13 +2,28 @@ import { useEffect, useState } from 'react'
 import { serverRequest } from '../API/request'
 import SearchIcon from '@mui/icons-material/Search'
 import './input.css'
-import DocumentsSizes from '../sections/sizes/documents-size'
 import { useSelector } from 'react-redux'
+import { toast } from 'react-hot-toast'
+import translations from '../../i18n'
 
-const SearchInput = ({ rows, setRows, searchRows, isCustomClincis, customClinics=[], isHideClinics }) => { 
+const SearchInput = ({ 
+    rows, 
+    setRows, 
+    searchRows, 
+    isCustomClincis=false, 
+    customClinics=[], 
+    isHideClinics, 
+    isHideSpeciality=true,
+    isSpecialityNested=true,
+    isShowInsuranceCompanies=false,
+}) => { 
 
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
+
     const [clinics, setClinics] = useState(customClinics)
+    const [specialities, setSpecialities] = useState([])
+    const [insuranceCompanies, setInsuranceCompanies] = useState([])
 
     useEffect(() => {
         if(isCustomClincis) {
@@ -22,7 +37,13 @@ const SearchInput = ({ rows, setRows, searchRows, isCustomClincis, customClinics
             return
         }
 
-        serverRequest.get(`/v1/clinics/doctors/${user._id}`)
+        let endpointURL = `/v1/clinics/doctors/${user._id}`
+
+        if(user.roles.includes('OWNER') && !user.roles.includes('DOCTOR')) {
+            endpointURL = `/v1/clinics-owners/owners/${user._id}`
+        }
+
+        serverRequest.get(endpointURL)
         .then(response => {
             const data = response.data
             setClinics(data.clinics)
@@ -30,6 +51,43 @@ const SearchInput = ({ rows, setRows, searchRows, isCustomClincis, customClinics
         .catch(error => {
             console.error(error)
             toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+        })
+
+    }, [])
+
+    useEffect(() => {
+
+        if(isHideSpeciality) {
+            return
+        } 
+
+        serverRequest.get(`/v1/specialities`)
+        .then(response => {
+            const data = response.data
+            setSpecialities(data.specialities)
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+        })
+
+    }, [])
+
+    useEffect(() => {
+        
+        if(!isShowInsuranceCompanies) {
+            return
+        }
+
+        const endpointURL = user.roles.includes('STAFF') ? `/v1/insurances/clinics/${user.clinicId}` : `/v1/insurances/owners/${user._id}`
+
+        serverRequest.get(endpointURL)
+        .then(response => {
+            setInsuranceCompanies(response.data.insurances)
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(error.response.data.message, { duration: 3000, position: 'top-right'})
         })
 
     }, [])
@@ -42,16 +100,17 @@ const SearchInput = ({ rows, setRows, searchRows, isCustomClincis, customClinics
             <input 
             type="text" 
             className="form-input"
-            placeholder="Search..."
+            placeholder={translations[lang]["Search..."]}
             onChange={e => setRows(rows.filter(row => searchRows(row, e.target.value)))}
             />
         </div>
         {
             isHideClinics ?
-            <div></div>
+            null
             :
             <div className="form-input-container">
                 <select
+                className="form-input"
                 onChange={e => {
                     if(e.target.value === 'ALL') {
                         setRows(rows)
@@ -61,15 +120,76 @@ const SearchInput = ({ rows, setRows, searchRows, isCustomClincis, customClinics
                     setRows(rows.filter(row => row.clinicId === e.target.value))
                 }}
                 >
-                    <option selected disabled>Select clinic</option>
-                    <option value={'ALL'}>All</option>
+                    <option selected disabled>{translations[lang]['Select clinic']}</option>
+                    <option value={'ALL'}>{translations[lang]['All']}</option>
                     {clinics.map(clinic => <option value={clinic?.clinic?._id}>{clinic?.clinic?.name}</option>)}
                 </select>
             </div>
-        }      
-        <div className="search-input-result-size-container">
+        }
+        {
+            isHideSpeciality ?
+            null
+            :
+            <div className="form-input-container">
+                <select
+                className="form-input"
+                onChange={e => {
+                    if(e.target.value === 'ALL') {
+                        setRows(rows)
+                        return
+                    }
+
+                    isSpecialityNested ?
+                    setRows(rows.filter(row => row?.doctor?.speciality.includes(e.target.value)))
+                    :
+                    setRows(rows.filter(row => row?.speciality?.includes(e.target.value)))
+                }}
+                >
+                    <option selected disabled>{translations[lang]['Select Speciality']}</option>
+                    <option value={'ALL'}>{translations[lang]['All']}</option>
+                    {specialities.map(special => <option value={special._id}>{special.name}</option>)}
+                </select>
+            </div> 
+        }
+
+        {
+            isShowInsuranceCompanies ?
+            <div className="form-input-container">
+                <select
+                className="form-input"
+                onChange={e => {
+                    if(e.target.value === 'ALL') {
+                        setRows(rows)
+                        return
+                    }
+
+                    if(e.target.value === 'NO-INSURANCE') {
+                        setRows(rows.filter(row => !row.insuranceCompanyId))
+                        return
+                    }
+
+                    if(e.target.value === 'INSURANCED') {
+                        setRows(rows.filter(row => row.insuranceCompanyId))
+                        return
+                    }
+
+                    setRows(rows.filter(row => row.insuranceCompanyId === e.target.value))
+                }}
+                >
+                    <option selected disabled>Select Insurance Company</option>
+                    <option value="ALL">All</option>
+                    <option value="NO-INSURANCE">No Insurance</option>
+                    <option value="INSURANCED">Insuranced Only</option>
+                    {insuranceCompanies.map(company => <option value={company?._id}>{company?.name}</option>)}
+                </select>
+            </div>
+            :
+            null
+        }
+         
+        {/*<div className="search-input-result-size-container">
             <DocumentsSizes size={rows.length} />
-        </div>
+    </div>*/}
     </div>
 }
 

@@ -4,10 +4,12 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { format } from 'date-fns'
 import translations from '../../i18n';
+import CardTransition from '../transitions/card-transitions';
 
 const DoctorPrescriptionCard = ({ prescription }) => {
 
-    return <div className="prescription-card-container">
+    return <CardTransition>
+    <div className="prescription-card-container body-text">
         <div className="prescription-card-header">
             <div className="small-description-text">
                 <span>{format(new Date(prescription.createdAt), 'dd MMM yyyy')}</span>
@@ -51,6 +53,7 @@ const DoctorPrescriptionCard = ({ prescription }) => {
             </div>
         </div>
     </div>
+    </CardTransition>
 }
 
 export default DoctorPrescriptionCard

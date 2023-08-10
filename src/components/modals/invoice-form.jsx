@@ -5,20 +5,22 @@ import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { TailSpin } from 'react-loader-spinner'
 import { useSelector, useDispatch } from 'react-redux'
-import { setIsActive, setInvoice } from '../../redux/slices/invoiceSlice'
-
+import { setIsActive, setInvoice, closeInvoice } from '../../redux/slices/invoiceSlice'
+import { setIsShowModal, setIsShowRenewModal } from '../../redux/slices/modalSlice'
+import translations from '../../i18n'
 
 const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
 
     const navigate = useNavigate()
 
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
     const dispatch = useDispatch()
 
     const [isSubmit, setIsSubmit] = useState(false)
     const [isClinicsLoading, setIsClinicsLoading] = useState(false)
     const [cardId, setCardId] = useState()
-    const [clinic, setClinic] = useState()
+    const [clinic, setClinic] = useState(user.roles.includes('STAFF') ? user.clinicId : '')
     const [clinics, setClinics] = useState([])
 
     const [cardIdError, setCardIdError] = useState()
@@ -26,7 +28,7 @@ const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
 
     useEffect(() => {
 
-        if(user.role === 'STAFF') {
+        if(user.roles.includes('STAFF')) {
             return
         }
         
@@ -47,21 +49,14 @@ const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if(!cardId) return setCardIdError('Card number is required')
+        if(!cardId) return setCardIdError(translations[lang]['card number is required'])
 
-        if(user.role === 'DOCTOR' && !clinic) return setClinicError('Clinic is required')
+        if(user.roles.includes('DOCTOR') && !clinic) return setClinicError(translations[lang]['clinic is required'])
 
         const invoiceData = { 
             cardId: Number.parseInt(cardId),
             status: 'DRAFT',
-        }
-
-        if(user.role === 'DOCTOR') {
-            invoiceData.clinicId = clinic
-        }
-
-        if(user.role === 'STAFF') {
-            invoiceData.clinicId = user.clinicId
+            clinicId: clinic
         }
 
         setIsSubmit(true)
@@ -69,6 +64,9 @@ const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
         .then(response => {
             setIsSubmit(false)
             const data = response.data
+
+            data.invoice.patientCardId = invoiceData.cardId
+            dispatch(closeInvoice())
             dispatch(setIsActive({ isActive: true }))
             dispatch(setInvoice({ invoice: data.invoice }))
             navigate('/services')
@@ -84,6 +82,18 @@ const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
 
                 if(errorResponse.field === 'clinicId') return setClinicError(errorResponse.message)
 
+                if(errorResponse.field === 'mode') { 
+                    setShowModalForm(false)
+                    dispatch(setIsShowModal(true))
+                    return
+                }
+
+                if(errorResponse.field === 'activeUntilDate') {
+                    setShowModalForm(false)
+                    dispatch(setIsShowRenewModal(true))
+                    return
+                }
+
                 toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
 
             } catch(error) {}
@@ -94,12 +104,12 @@ const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
     return <div className="modal">
         <div className="modal-container body-text">
             <div className="modal-header">
-                <h2>Create Invoice</h2>
+                <h2>{translations[lang]['Create Invoice']}</h2>
             </div>
             <div className="modal-body-container">
                 <form id="patient-card-form" className="modal-form-container responsive-form body-text" onSubmit={handleSubmit}>
                     <div className="form-input-container">
-                        <label>Patient Card Number</label>
+                        <label>{translations[lang]['Patient Card Number']}</label>
                         <input 
                         type="text" 
                         className="form-input" 
@@ -111,16 +121,16 @@ const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
                         <span className="red">{cardIdError}</span>
                     </div>
                     {
-                            user.role === 'STAFF' ?
+                            user.roles.includes('STAFF') ?
                             null
                             :
                             <div className="form-input-container">
-                                <label>Select Clinic</label>
+                                <label>{translations[lang]['Select Clinic']}</label>
                                 <select
                                 onChange={e => setClinic(e.target.value)}
                                 onClick={e => setClinicError()}
                                 >
-                                    <option selected disabled>select clinic</option>
+                                    <option selected disabled>{translations[lang]['Select Clinic']}</option>
                                     {clinics.map(clinic => <option value={clinic.clinic._id}>
                                         {clinic.clinic.name}
                                     </option>)}
@@ -138,7 +148,7 @@ const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
                                 form="patient-card-form"
                                 className="normal-button white-text action-color-bg"
                                 >
-                                    Next
+                                    {translations[lang]['Next']}
                                 </button>
                                 :
                                 <TailSpin width="25" height="25" color="#4c83ee" />
@@ -151,7 +161,7 @@ const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
                                 e.preventDefault()
                                 setShowModalForm(false)
                             }}
-                            >Close</button>
+                            >{translations[lang]['Close']}</button>
                         </div>
                     </div>
         </div>

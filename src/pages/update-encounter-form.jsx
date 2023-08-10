@@ -12,11 +12,15 @@ import NavigationBar from '../components/navigation/navigation-bar'
 import EmptySection from '../components/sections/empty/empty'
 import CircularLoading from '../components/loadings/circular'
 import { useSelector } from 'react-redux'
+import { isRolesValid } from '../utils/roles'
+import translations from '../i18n'
+
 
 const UpdateEncountersFormPage = ({ roles }) => {
 
     const navigate = useNavigate()
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     const pagePath = window.location.pathname
     const encounterId = pagePath.split('/')[2]
@@ -38,10 +42,7 @@ const UpdateEncountersFormPage = ({ roles }) => {
 
     useEffect(() => {
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
 
     useEffect(() => {
@@ -77,9 +78,9 @@ const UpdateEncountersFormPage = ({ roles }) => {
 
     const handleEncounter = () => {
         
-        if(symptoms.length === 0) return setSymptomsError('patient symptoms is required') 
+        if(symptoms.length === 0) return setSymptomsError(translations[lang]['patient symptoms is required'])
 
-        if(diagnosis.length === 0) return setDiagnosisError('patient diagnose is required')
+        if(diagnosis.length === 0) return setDiagnosisError(translations[lang]['patient diagnose is required'])
 
         const encounterData = { 
             symptoms, 
@@ -98,23 +99,13 @@ const UpdateEncountersFormPage = ({ roles }) => {
         .catch(error => {
             setIsSubmit(false)
             console.error(error)
+            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
         })
         
     }
 
-    const resetForm = () => {
-
-        setSymptoms([])
-        setDiagnosis([])
-        setNotes([])
-
-        setSymptomsError()
-        setDiagnosisError()
-        setNotesError()
-    }
-
     return <div className="page-container">
-        <NavigationBar pageName={"Encounter Form"} />
+        <NavigationBar pageName={translations[lang]["Encounter"]} />
 
         {
             showFormModal ?
@@ -128,72 +119,74 @@ const UpdateEncountersFormPage = ({ roles }) => {
         }
 
         <div className="padded-container">
-            <PageHeader pageName={'Update Encounter'} />
+            <PageHeader pageName={translations[lang]['Update Encounter']} />
             {
                 !isLoading ?
                     encounter ?
-                    <div className="prescription-form-wrapper left">
-                        <SymptomsDiagnosisForm
-                        symptoms={symptoms}
-                        setSymptoms={setSymptoms}
-                        diagnosis={diagnosis}
-                        setDiagnosis={setDiagnosis} 
-                        symptomsError={symptomsError}
-                        setSymptomsError={setSymptomsError}
-                        diagnosisError={diagnosisError}
-                        setDiagnosisError={setDiagnosisError}
-                        />
-                    <div className="cards-2-list-wrapper box-shadow margin-top-1">
-                        <div className="prescription-form-notes-container">
-                            <strong>Notes</strong>
-                            <div className="form-input-container">
-                                <input 
-                                type="text" 
-                                className="form-input" 
-                                placeholder="notes"
-                                onKeyDown={handleNotesKeyDown} 
+                    <div>
+                        <div className="cards-grey-container">
+                            <div className="prescription-form-wrapper box-shadow left">
+                                <SymptomsDiagnosisForm
+                                symptoms={symptoms}
+                                setSymptoms={setSymptoms}
+                                diagnosis={diagnosis}
+                                setDiagnosis={setDiagnosis} 
+                                symptomsError={symptomsError}
+                                setSymptomsError={setSymptomsError}
+                                diagnosisError={diagnosisError}
+                                setDiagnosisError={setDiagnosisError}
                                 />
-                            </div>
-                            <span className="red">{notesError}</span>
-                            <div className="symptoms-diagnosis-tags-container">
-                                <div className="drug-instruction-list-container">
-                                    {notes.map((note, index) =>                 
-                                    <span 
-                                    className="status-btn pending"
-                                    >
-                                        {note}
-                                        <span onClick={e => setNotes(notes.filter((savedNote, savedIndex) => savedIndex !== index))}>
-                                            <CancelIcon />
-                                        </span>
-                                    </span>) 
-                                    }
+                            <div className="cards-2-list-wrapper margin-top-1">
+                                <div className="prescription-form-notes-container">
+                                    <strong>{translations[lang]['Notes']} <span className="grey-text span-text">{translations[lang]['(press enter to register note)']}</span></strong>
+                                    <div className="form-input-container">
+                                        <input 
+                                        type="text" 
+                                        className="form-input" 
+                                        placeholder={translations[lang]["notes"]}
+                                        onKeyDown={handleNotesKeyDown} 
+                                        />
+                                    </div>
+                                    <span className="red">{notesError}</span>
+                                    <div className="symptoms-diagnosis-tags-container">
+                                        <div className="drug-instruction-list-container">
+                                            {notes.map((note, index) =>                 
+                                            <span 
+                                            className="status-btn pending"
+                                            >
+                                                {note}
+                                                <span onClick={e => setNotes(notes.filter((savedNote, savedIndex) => savedIndex !== index))}>
+                                                    <CancelIcon />
+                                                </span>
+                                            </span>) 
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>  
+                                
                             </div>
                         </div>
-                    </div>  
-                    <div className="margin-top-1">
+                        <div className="margin-top-1">
                         {
                             isSubmit ?
-                            <button className="send-btn center full-width-button">
+                            <div className="flex-right">
                                 <TailSpin
                                 height="30"
                                 width="40"
-                                color="#FFF"
+                                color="dodgerblue"
                                 />
-                            </button>
+                            </div>
                             :
-                            <button className="full-width-button action-color-bg white-text" onClick={e => handleEncounter()}>
-                                Update Encounter
-                            </button>
+                            <div className="flex-right">
+                                <button className="normal-button action-color-bg white-text" onClick={e => handleEncounter()}>
+                                    {translations[lang]['Update']}
+                                </button>
+                            </div>
                         }
-                        <br />
-                        <button 
-                        className="full-width-button grey-bg black box-shadow" 
-                        onClick={e => resetForm()}>
-                            Reset
-                        </button>
                     </div>
-                    </div>
+                </div>
+                    
                     :
                     <EmptySection />
                 :

@@ -6,7 +6,9 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from '../../redux/slices/userSlice'
 import CancelIcon from '@mui/icons-material/Cancel'
-
+import PageTransition from '../../components/transitions/page-transitions'
+import logo from '../../assets/khatab.png'
+import translations from '../../i18n'
 
 const SignUpSpecialityPage = () => {
 
@@ -14,18 +16,15 @@ const SignUpSpecialityPage = () => {
     const dispatch = useDispatch()
 
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     const [isSubmit, setIsSubmit] = useState(false)
 
     const [doctorsSpecialities, setDoctorSpecialities] = useState([])
 
-    const [title, setTitle] = useState()
-    const [description, setDescription] = useState()
     const [specialities, setSpecialities] = useState([])
     const [chosenSpecialities, setChosenSpecialities] = useState([])
 
-    const [titleError, setTitleError] = useState()
-    const [descriptionError, setDescriptionError] = useState()
     const [specialitiesError, setSpecialitiesError] = useState()
 
     useEffect(() => {
@@ -41,15 +40,9 @@ const SignUpSpecialityPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if(!title) return setTitleError('title is required')
-
-        if(!description) return setDescriptionError('description is required')
-
-        if(chosenSpecialities.length === 0) return setSpecialitiesError('specialities is required') 
+        if(chosenSpecialities.length === 0) return setSpecialitiesError(translations[lang]['specialities is required']) 
 
         const verifyData = {
-            title,
-            description,
             speciality: chosenSpecialities.map(special => special._id)
         }
 
@@ -66,10 +59,6 @@ const SignUpSpecialityPage = () => {
             try {
 
                 const errorData = error.response.data
-
-                if(errorData.field === 'title') return setTitleError(errorData.message)
-
-                if(errorData.field === 'description') return setDescriptionError(errorData.message)
 
                 if(errorData.field === 'speciality') return setSpecialitiesError(errorData.message)
 
@@ -90,43 +79,28 @@ const SignUpSpecialityPage = () => {
         setChosenSpecialities([...chosenSpecialities, chosenSpeciality[0]])
     }
 
-    return <div className="form-page-center">
+    return <PageTransition>
+    <div className="form-page-center">
             <form className="login-form-container" onSubmit={handleSubmit}>
                 <div className="login-form-header-container subheader-text">
-                    <h3>
-                        Speciality Account
-                    </h3>
+                <div className="center">
+                        <img src={logo} style={{ height: "4rem"  }} />
+                    </div>
+                    <span className="body-text center margin-top-1 grey-text">
+                        {translations[lang]['Choose your speciality']}
+                    </span>
                 </div>
                 <div className="login-form-body-container body-text">
                     <div className="form-input-container">
-                        <label>Title</label>
-                        <input 
-                        type="text" 
-                        className="form-input"
-                        onChange={e => setTitle(e.target.value)}
-                        onClick={e => setTitleError()}
-                        />
-                        <span className="red">{titleError}</span>
-                    </div>
-                    <div className="form-input-container">
-                        <label>Description</label>
-                        <textarea 
-                        className="form-input"
-                        onChange={e => setDescription(e.target.value)}
-                        onClick={e => setDescriptionError()}
-                        ></textarea>
-                        <span className="red">{descriptionError}</span>
-                    </div>
-                    
-                    <div className="form-input-container">
                         <div className="password-and-forgot-password-container">
-                            <label>Speciality</label>
+                            <label>{translations[lang]['Speciality']}</label>
                         </div>
                         <select 
+                        className="form-input"
                         onChange={e => addSpeciality(e.target.value)}
                         onClick={e => setSpecialitiesError()}
                         >
-                            <option selected disabled>Select Specialities</option>
+                            <option selected disabled>{translations[lang]['Select Specialities']}</option>
                             {doctorsSpecialities.map(special => <option value={special.name}>{special.name}</option>)}
                         </select>
                         <span className="red">{specialitiesError}</span>
@@ -147,12 +121,16 @@ const SignUpSpecialityPage = () => {
                                 <TailSpin width="40" height="40" color="#4c83ee" />
                             </div>
                             :
-                            <input type="submit" className="action-color-bg white-text" value="Continue" />
+                            <input type="submit" className="action-color-bg white-text" value={translations[lang]["Continue"]} />
                         }
+                        <div className="center margin-top-1">
+                            <span onClick={e => navigate(-1)} className="grey bold-text signup-back-button-container">{translations[lang]['Back']}</span>
+                        </div>
                     </div>
                 </div>
             </form>
-    </div>
+        </div>
+    </PageTransition>
 }
 
 export default SignUpSpecialityPage

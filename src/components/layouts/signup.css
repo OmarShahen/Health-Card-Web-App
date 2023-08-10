@@ -14,3 +14,7 @@
 .signup-form-navigator-container ul li {
     list-style-type: none;
 }
+
+.signup-back-button-container:hover {
+    cursor: pointer;
+}

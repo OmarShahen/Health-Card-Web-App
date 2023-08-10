@@ -2,8 +2,12 @@ import { useState } from 'react'
 import { format } from 'date-fns'
 import './filters.css'
 import PickDateFormModal from '../../modals/pick-date-form'
+import { useSelector } from 'react-redux'
+import translations from '../../../i18n'
 
 const FiltersSection = ({ statsQuery, setStatsQuery, isShowUpcomingDates, defaultValue }) => {
+
+    const lang = useSelector(state => state.lang.lang)
 
     const selectOptions = [
         {
@@ -87,7 +91,9 @@ const FiltersSection = ({ statsQuery, setStatsQuery, isShowUpcomingDates, defaul
 
         if(0 > daysPeriod) {
 
-            const formattedToDate = format(todayDate, 'yyyy-MM-dd')
+            const afterTodayDate = new Date()
+            afterTodayDate.setDate(afterTodayDate.getDate() + 1)
+            const formattedToDate = format(afterTodayDate, 'yyyy-MM-dd')
             rangeDate.setDate(rangeDate.getDate() + daysPeriod)
             const formattedFromDate = format(rangeDate, 'yyyy-MM-dd')
 
@@ -105,29 +111,30 @@ const FiltersSection = ({ statsQuery, setStatsQuery, isShowUpcomingDates, defaul
     return <div className="filters-section-container">
         { isShowForm ? <PickDateFormModal setDatePeriod={setDatePeriod} setStatsQuery={setStatsQuery} setShowModalForm={setIsShowForm} /> : null }
         <div>
-            <label>Period</label>
+            <label>{translations[lang]['Period']}</label>
             <select
+            className="form-input"
             onChange={e => getstatsDate(e.target.value)}
             >
-                <option selected disabled>select period</option>
+                <option selected disabled>{translations[lang]['Select Period']}</option>
                 {selectOptions.map((option, index) => {
                     if(!isShowUpcomingDates && index <= 3) {
                         return
                     }
 
                     if(option.value === defaultValue) {
-                        return <option value={option.value} selected>{option.name}</option>
+                        return <option value={option.value} selected>{translations[lang][option.name]}</option>
                     }
 
-                    return <option value={option.value}>{option.name}</option>
+                    return <option value={option.value}>{translations[lang][option.name]}</option>
                 })}
-                <option value="CUSTOM">Custom</option>
+                <option value="CUSTOM">{translations[lang]['Custom']}</option>
             </select>
         </div>
         {
             datePeriod === 'CUSTOM' && statsQuery?.from ?
             <div>
-                <label>From</label>
+                <label>{translations[lang]['From']}</label>
                 <input 
                 type="date" 
                 className="form-input"
@@ -144,7 +151,7 @@ const FiltersSection = ({ statsQuery, setStatsQuery, isShowUpcomingDates, defaul
         {
             datePeriod === 'CUSTOM' && statsQuery?.to ?
             <div>
-                <label>To</label>
+                <label>{translations[lang]['To']}</label>
                 <input 
                 type="date" 
                 className="form-input"
@@ -161,7 +168,7 @@ const FiltersSection = ({ statsQuery, setStatsQuery, isShowUpcomingDates, defaul
         {
             datePeriod === 'CUSTOM' && statsQuery?.specific ?
             <div>
-                <label>Specific</label>
+                <label>{translations[lang]['Specific']}</label>
                 <input 
                 type="date" 
                 className="form-input"
@@ -177,7 +184,7 @@ const FiltersSection = ({ statsQuery, setStatsQuery, isShowUpcomingDates, defaul
         {
             datePeriod === 'CUSTOM' && statsQuery?.until ?
             <div>
-                <label>Until</label>
+                <label>{translations[lang]['Until']}</label>
                 <input 
                 type="date" 
                 className="form-input"

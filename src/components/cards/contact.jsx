@@ -3,39 +3,35 @@ import CardDate from './components/date'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
 import CardActions from './components/actions'
-import { serverRequest } from '../API/request'
-import { toast } from 'react-hot-toast'
+import CardTransition from '../transitions/card-transitions'
+import { capitalizeFirstLetter } from '../../utils/formatString'
+import translations from '../../i18n'
+import { useSelector } from 'react-redux'
 
-
-const ContactCard = ({ contact, reload, setReload, patientId, setFormMode, setUpdateContact, setIsShowForm }) => {
+const ContactCard = ({ 
+    contact, 
+    setFormMode, 
+    setUpdateContact, 
+    setIsShowForm,
+    setIsShowDeleteModal
+}) => {
 
     const contactPhone = `+${contact.countryCode}${contact.phone}`
 
-    const deleteContact = (contact, patientId) => {
-
-        serverRequest.delete(`/v1/patients/${patientId}/emergency-contacts/country-codes/${contact.countryCode}/phones/${contact.phone}`)
-        .then(response => {
-            const data = response.data
-            setReload(reload+1)
-            toast.success(data.message, { position: 'top-right', duration: 3000 })
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-    }
+    const lang = useSelector(state => state.lang.lang)
 
     const cardActionsList = [
         {
-            name: 'Delete Contact',
+            name: translations[lang]['Delete Contact'],
             icon: <DeleteOutlineOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                deleteContact(contact, patientId)
+                setUpdateContact(contact)
+                setIsShowDeleteModal(true)
             }
         },
         {
-            name: 'Update Contact',
+            name: translations[lang]['Update Contact'],
             icon: <CreateOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -46,7 +42,8 @@ const ContactCard = ({ contact, reload, setReload, patientId, setFormMode, setUp
         },
      ]
 
-    return <div className="patient-card-container disable-hover">
+    return <CardTransition>
+    <div className="patient-card-container disable-hover body-text">
         <div className="patient-card-header">
             <div className="patient-image-info-container">
                 <img src={`https://avatars.dicebear.com/api/initials/${contact.name}.svg`} alt="patient-image" />
@@ -60,21 +57,22 @@ const ContactCard = ({ contact, reload, setReload, patientId, setFormMode, setUp
         <div className="patient-card-body">
             <ul>
                 <li>
-                    <strong>Name</strong>
+                    <strong>{translations[lang]['Name']}</strong>
                     <span>{contact.name}</span>
                 </li>
                 <li>
-                    <strong>Phone</strong>
+                    <strong>{translations[lang]['Phone']}</strong>
                     <span>{contactPhone}</span>
                 </li>
                 <li>
-                    <strong>Relation</strong>
-                    <span>{contact.relation}</span>
+                    <strong>{translations[lang]['Relation']}</strong>
+                    <span>{translations[lang][capitalizeFirstLetter(contact?.relation)]}</span>
                 </li>
             </ul>
         </div>
         { contact.createdAt ? <CardDate creationDate={contact.createdAt} /> : null }
     </div>
+    </CardTransition>
 }
 
 export default ContactCard

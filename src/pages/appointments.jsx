@@ -22,8 +22,22 @@ import SearchInput from '../components/inputs/search'
 import { searchAppointments } from '../utils/searches/search-appointments'
 import { format } from 'date-fns'
 import { formatNumber } from '../utils/numbers'
+import AppointmentDeleteConfirmationModal from '../components/modals/confirmation/appointment-delete-confirmation-modal'
+import AppointmentStatusConfirmationModal from '../components/modals/confirmation/appointment-status-confirmation-modal'
+import { isRolesValid } from '../utils/roles'
+import { useNavigate } from 'react-router-dom'
+import translations from '../i18n'
 
-const AppointmentsPage = () => {
+
+const AppointmentsPage = ({ roles }) => {
+
+    const navigate = useNavigate()
+
+    const [targetAppointment, setTargetAppointment] = useState({})
+    const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
+    const [isShowUpdateModal, setIsShowUpdateModal] = useState(false)
+    const [status, setStatus] = useState()
+
 
     const [isLoading, setIsLoading] = useState(true)
     const [reload, setReload] = useState(1)
@@ -31,7 +45,9 @@ const AppointmentsPage = () => {
     const [appointments, setAppointments] = useState([])
     const [searchedAppointments, setSearchedAppointments] = useState([])
     const [viewStatus, setViewStatus] = useState('ALL')
+
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     const activeElementColor = { border: '2px solid #4c83ee', color: '#4c83ee' }
 
@@ -39,11 +55,14 @@ const AppointmentsPage = () => {
 
     const [statsQuery, setStatsQuery] = useState({ specific: format(todayDate, 'yyyy-MM-dd') })
 
-    useEffect(() => scroll(0,0), [])
+    useEffect(() => { 
+        scroll(0,0) 
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
+    }, [])
 
     useEffect(() => {
         setIsLoading(true)
-        const endpointURL = user.role === 'STAFF' ?
+        const endpointURL = user.roles.includes('STAFF') ?
         `/v1/appointments/clinics/${user.clinicId}`
         :
         `/v1/appointments/doctors/${user._id}`
@@ -61,12 +80,18 @@ const AppointmentsPage = () => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={'Appointments'} />
-        <div className="show-mobile">
-            <FloatingButton setIsShowForm={setShowModalForm} />
-        </div>
+        <NavigationBar pageName={translations[lang]['Appointments']} />
+        {
+            user.roles.includes('STAFF') ?
+            <div className="show-mobile">
+                <FloatingButton setIsShowForm={setShowModalForm} />
+            </div>
+            :
+            null
+        }
+        
         { 
-            showModalForm ? 
+            showModalForm && user.roles.includes('STAFF') ? 
             <AppointmentFormModal 
             reload={reload} 
             setReload={setReload} 
@@ -75,54 +100,79 @@ const AppointmentsPage = () => {
             : 
             null 
          }
+         { 
+        isShowDeleteModal ? 
+        <AppointmentDeleteConfirmationModal 
+        appointment={targetAppointment}
+        reload={reload}
+        setReload={setReload} 
+        setIsShowModal={setIsShowDeleteModal}
+        setViewStatus={setViewStatus}
+        /> 
+        : 
+        null 
+        }
+        { 
+        isShowUpdateModal ? 
+        <AppointmentStatusConfirmationModal 
+        appointment={targetAppointment}
+        reload={reload}
+        setReload={setReload} 
+        setIsShowModal={setIsShowUpdateModal}
+        status={status}
+        setViewStatus={setViewStatus}
+        /> 
+        : 
+        null 
+        }
         <div className="padded-container">
             <PageHeader 
-            pageName="Appointments" 
+            pageName={translations[lang]["Appointments"]} 
             setShowModalForm={setShowModalForm} 
-            addBtnText={'Add Appointment'}
+            addBtnText={user.roles.includes('STAFF') ? translations[lang]['Add Appointment'] : null}
             setReload={setReload}
             reload={reload}
             /> 
             <div className="cards-list-wrapper">
                 <Card 
                 icon={<CalendarMonthOutlinedIcon />}
-                cardHeader={'All'}
+                cardHeader={translations[lang]['All']}
                 number={formatNumber(appointments.length)}
                 iconColor={'#5C60F5'}
                 />
                 <Card 
                 icon={<UpcomingOutlinedIcon />}
-                cardHeader={'Upcoming'}
+                cardHeader={translations[lang]['Upcoming']}
                 number={formatNumber(appointments.filter(appointment => appointment.status === 'UPCOMING').length)}
                 iconColor={'#FF8C00'}
                 />
                 <Card 
                 icon={<HourglassEmptyOutlinedIcon />}
-                cardHeader={'Waiting'}
+                cardHeader={translations[lang]['Waiting']}
                 number={formatNumber(appointments.filter(appointment => appointment.status === 'WAITING').length)}
                 iconColor={'#5C60F5'}
                 />
                 <Card 
                 icon={<MeetingRoomOutlinedIcon />}
-                cardHeader={'Active'}
+                cardHeader={translations[lang]['Active']}
                 number={formatNumber(appointments.filter(appointment => appointment.status === 'ACTIVE').length)}
                 iconColor={'#5C60F5'}
                 />
                 <Card 
                 icon={<CheckCircleOutlineOutlinedIcon />}
-                cardHeader={'Done'}
+                cardHeader={translations[lang]['Done']}
                 number={formatNumber(appointments.filter(appointment => appointment.status === 'DONE').length)}
                 iconColor={'#00D4FF'}
                 />
                 <Card 
                 icon={<CancelOutlinedIcon />}
-                cardHeader={'Cancelled'}
+                cardHeader={translations[lang]['Cancelled']}
                 number={formatNumber(appointments.filter(appointment => appointment.status === 'CANCELLED').length)}
                 iconColor={'#FF579A'}
                 />
                 <Card 
                 icon={<TimerOffOutlinedIcon />}
-                cardHeader={'Expired'}
+                cardHeader={translations[lang]['Expired']}
                 number={formatNumber(appointments.filter(appointment => appointment.status === 'EXPIRED').length)}
                 iconColor={'#FF8C00'}
                 />
@@ -133,12 +183,12 @@ const AppointmentsPage = () => {
             isShowUpcomingDates={true}
             defaultValue={'0'}
             />
-            <div className="margin-top-1"></div>
             <div className="search-input-container">
                 <SearchInput 
                 rows={appointments} 
                 setRows={setSearchedAppointments}
                 searchRows={searchAppointments}
+                isHideClinics={user.roles.includes('STAFF') ? true : false }
                 />
             </div>
             <div className="appointments-categories-container">
@@ -146,43 +196,43 @@ const AppointmentsPage = () => {
                         setViewStatus('ALL')
                         setSearchedAppointments(appointments.filter(appointment => true))
                     }}>
-                        All
+                        {translations[lang]['All']}
                     </div>
                     <div style={ viewStatus === 'UPCOMING' ?  activeElementColor : null } onClick={e => {
                         setViewStatus('UPCOMING')
                         setSearchedAppointments(appointments.filter(appointment => appointment.status === 'UPCOMING'))
                     }}>
-                        Upcoming
+                        {translations[lang]['Upcoming']}
                     </div>
                     <div style={ viewStatus === 'WAITING' ?  activeElementColor : null } onClick={e => {
                         setViewStatus('WAITING')
                         setSearchedAppointments(appointments.filter(appointment => appointment.status === 'WAITING'))
                     }}>
-                        Waiting
+                        {translations[lang]['Waiting']}
                     </div>
                     <div style={ viewStatus === 'ACTIVE' ? activeElementColor : null } onClick={e => {
                         setViewStatus('ACTIVE')
                         setSearchedAppointments(appointments.filter(appointment => appointment.status === 'ACTIVE'))
                     }}>
-                        Active
+                        {translations[lang]['Active']}
                     </div>
                     <div style={ viewStatus === 'DONE' ? activeElementColor : null } onClick={e => {
                         setViewStatus('DONE')
                         setSearchedAppointments(appointments.filter(appointment => appointment.status === 'DONE'))
                     }}>
-                        Done
+                        {translations[lang]['Done']}
                     </div>
                     <div style={ viewStatus === 'CANCELLED' ? activeElementColor : null } onClick={e => {
                         setViewStatus('CANCELLED')
                         setSearchedAppointments(appointments.filter(appointment => appointment.status === 'CANCELLED'))
                     }}>
-                        Cancelled
+                        {translations[lang]['Cancelled']}
                     </div>
                     <div style={ viewStatus === 'EXPIRED' ? activeElementColor : null } onClick={e => {
                         setViewStatus('EXPIRED')
                         setSearchedAppointments(appointments.filter(appointment => appointment.status === 'EXPIRED'))
                     }}>
-                        Expired
+                        {translations[lang]['Expired']}
                     </div>
                 </div>
             {
@@ -195,6 +245,10 @@ const AppointmentsPage = () => {
                         appointment={appointment} 
                         reload={reload} 
                         setReload={setReload} 
+                        setIsShowDeleteModal={setIsShowDeleteModal}
+                        setIsShowStatusModal={setIsShowUpdateModal}
+                        setTargetAppointment={setTargetAppointment}
+                        setStatus={setStatus}
                         />)}                    
                 </div>
                 :

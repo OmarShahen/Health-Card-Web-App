@@ -9,16 +9,21 @@ import UserProfileMenu from '../menus/profile/profile'
 import QuickFormMenu from '../menus/quick-forms/quick-forms'
 import PatientFormModal from '../modals/patient-form'
 import AppointmentFormModal from '../modals/appointment-form'
+import InvoiceFormModal from '../modals/invoice-form'
 import PatientCardJoinFormModal from '../modals/patient-card-join-form'
+import InsuranceFormModal from '../modals/insurance-form'
 import { useSelector, useDispatch } from 'react-redux'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { setIsShowSidebar } from '../../redux/slices/sidebarSlice'
+import HeadsetMicOutlinedIcon from '@mui/icons-material/HeadsetMicOutlined'
+import translations from '../../i18n'
 
 const NavigationBar = ({ pageName }) => {
 
     const navigate = useNavigate()
     const user = useSelector(state => state.user.user)
     const sidebar = useSelector(state => state.sidebar)
+    const lang = useSelector(state => state.lang.lang)
     const dispatch = useDispatch()
 
     const [showUserProfileMenu, setShowUserProfileMenu] = useState(false)
@@ -27,10 +32,16 @@ const NavigationBar = ({ pageName }) => {
     const [showPatientForm, setShowPatientForm] = useState(false)
     const [showPatientCardForm, setShowPatientCardForm] = useState(false)
     const [showAppointmentForm, setShowAppointmentForm] = useState(false)
+    const [showInvoiceForm, setShowInvoiceForm] = useState(false)
+    const [showInsuranceCompanyForm, setShowInsuranceCompanyForm] = useState(false)
 
     useEffect(() => {
         if(!user.isLogged) {
             navigate('/login')
+        }
+
+        if(user.roles.includes('STAFF') && !user.clinicId) {
+            navigate('/users/pending')
         }
 
         const windowWidth = window.innerWidth
@@ -47,6 +58,8 @@ const NavigationBar = ({ pageName }) => {
             { showPatientForm ? <PatientFormModal setShowModalForm={setShowPatientForm} /> : null }
             { showPatientCardForm ? <PatientCardJoinFormModal setShowModalForm={setShowPatientCardForm} /> : null }
             { showAppointmentForm ? <AppointmentFormModal setShowFormModal={setShowAppointmentForm} /> : null }
+            { showInvoiceForm ? <InvoiceFormModal setShowModalForm={setShowInvoiceForm}/> : null }
+            { showInsuranceCompanyForm ? <InsuranceFormModal setShowFormModal={setShowInsuranceCompanyForm} /> : null }
 
             <div className="navigation-map-container">
                     <span onClick={e => dispatch(setIsShowSidebar(!sidebar.isShowSidebar))}>
@@ -60,7 +73,7 @@ const NavigationBar = ({ pageName }) => {
                     className="create-btn" 
                     onClick={e => setShowQuickFormsMenu(!showQuickFormsMenu)}
                     >
-                        Create
+                        {translations[lang]['Create']}
                         <KeyboardArrowDownOutlinedIcon />
                     </button>
                     { showQuickFormsMenu ?
@@ -68,6 +81,8 @@ const NavigationBar = ({ pageName }) => {
                     setShowPatientForm={setShowPatientForm}
                     setShowPatientCardForm={setShowPatientCardForm}
                     setShowAppointmentForm={setShowAppointmentForm}
+                    setShowInvoiceForm={setShowInvoiceForm}
+                    setShowInsuranceCompanyForm={setShowInsuranceCompanyForm}
                     /> 
                     : 
                     null 

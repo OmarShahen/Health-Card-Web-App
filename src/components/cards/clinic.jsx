@@ -1,48 +1,48 @@
 import './patient.css'
-import { getAge } from '../../utils/age-calculator'
 import CardDate from './components/date'
 import CardActions from './components/actions'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
-import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
 import { useNavigate } from 'react-router-dom'
-import { serverRequest } from '../API/request'
-import { toast } from 'react-hot-toast'
+import CardTransition from '../transitions/card-transitions'
+import { capitalizeFirstLetter } from '../../utils/formatString'
+import { format } from 'date-fns'
+import translations from '../../i18n'
+import { useSelector } from 'react-redux'
 
 
-const ClinicCard = ({ clinic, reload, setReload }) => {
+const ClinicCard = ({ clinic, isOwner, setIsShowDeleteModal, setTargetClinic, isShowRenew, disableOnClickView }) => {
 
     const navigate = useNavigate()
+    const lang = useSelector(state => state.lang.lang)
 
-    const deleteClinic = (clinic) => {
-        serverRequest.delete(`/v1/clinics-doctors/${clinic._id}`)
-        .then(response => {
-            setReload(reload + 1)
-            toast.success(response.data.message, { position: 'top-right', duration: 3000 })
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-    }
+    const _id = isOwner ? clinic._id : clinic.clinic._id
+    const clinicId = isOwner ? clinic?.clinicId : clinic?.clinic?.clinicId
+    const name = isOwner ? clinic?.name : clinic?.clinic?.name
+    const phone = isOwner ? `+${clinic?.countryCode}${clinic?.phone}` : `+${clinic?.clinic?.countryCode}${clinic?.clinic?.phone}`
+    const city = isOwner ? clinic?.city : clinic?.clinic?.city
+    const country = isOwner ? clinic?.country : clinic?.clinic?.country
+    const mode = isOwner ? clinic?.mode : clinic?.clinic?.mode
 
     const cardActionsList = [
         {
-            name: 'Delete clinic',
+            name: translations[lang]['Delete Clinic'],
             icon: <DeleteOutlineOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                deleteClinic(clinic)
+                setTargetClinic(clinic)
+                setIsShowDeleteModal(true)
             }
         },
      ]
 
-    return <div onClick={e => navigate(`/patients/${patient.patient._id}/medical-profile`)} className="patient-card-container disable-hover">
+    return <CardTransition>
+    <div onClick={e => disableOnClickView ? null : navigate(`/clinics/${_id}/profile`)} className={`patient-card-container body-text`}>
         <div className="patient-card-header">
             <div className="patient-image-info-container">
-                <img src={`https://avatars.dicebear.com/api/initials/${clinic.clinic.name}.svg`} alt="patient-image" />
+                <img src={`https://avatars.dicebear.com/api/initials/${name}.svg`} alt="patient-image" />
                 <div>
-                    <strong>{clinic.clinic.name}</strong>
-                    <span className="grey-text">#{clinic.clinic.clinicId}</span>
+                    <strong>{name}</strong>
+                    <span className="grey-text">#{clinicId}</span>
                 </div>
             </div>
             <CardActions actions={cardActionsList} />
@@ -50,25 +50,40 @@ const ClinicCard = ({ clinic, reload, setReload }) => {
         <div className="patient-card-body">
             <ul>
                 <li>
-                    <strong>Phone</strong>
-                    <span>{`+${clinic.clinic.countryCode}${clinic.clinic.phone}`}</span>
+                    <strong>{translations[lang]['Country']}</strong>
+                    <span>{capitalizeFirstLetter(country)}</span>
                 </li>
                 <li>
-                    <strong>Country</strong>
-                    <span>{clinic.clinic.country}</span>
+                    <strong>{translations[lang]['City']}</strong>
+                    <span>{capitalizeFirstLetter(city)}</span>
                 </li>
                 <li>
-                    <strong>City</strong>
-                    <span>{clinic.clinic.city}</span>
+                    <strong>{translations[lang]['Mode']}</strong>
+                    {
+                        mode === 'TEST' ?
+                        <span className="status-btn pending bold-text">{mode ? translations[lang][capitalizeFirstLetter(mode)] : ''}</span>
+                        :
+                        <span className="status-btn done bold-text">{mode ? translations[lang][capitalizeFirstLetter(mode)] : ''}</span>
+
+                    }
                 </li>
-                <li>
-                    <strong>Address</strong>
-                    <span>{clinic.clinic.address}</span>
-                </li>
+                {
+                    isShowRenew ?
+                    <li>
+                        <strong>{translations[lang]['Renew Date']}</strong>
+                        { clinic?.clinic?.activeUntilDate ? 
+                        <span>{format(new Date(clinic?.clinic?.activeUntilDate), lang === 'en' ? 'dd MMMM yyyy' : 'dd/MM/yyyy')}</span> 
+                        : 
+                        translations[lang]['Not Registered'] }
+                    </li>
+                    :
+                    null
+                }
             </ul>
         </div>
         <CardDate creationDate={clinic.createdAt} />
     </div>
+    </CardTransition>
 }
 
 export default ClinicCard

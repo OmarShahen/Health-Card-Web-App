@@ -158,8 +158,12 @@
 .card-container {
     padding: 1rem;
     border-radius: .25rem;
-    box-shadow: var(--box-shadow);
-    background-color: #FFF;
+    box-shadow: var(--box-shadow-line);
+    background-color: #F8F8F8;
+}
+
+.card-white-bg {
+    background-color: #FFF !important;
 }
 
 .card-container:hover {
@@ -377,4 +381,13 @@
 .appointment-card-body ul li span {
     color: #4c83ee;
     font-weight: bold;
+}
+
+@media only screen and (max-width: 950px) {
+    .card-date-container {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-direction: column;
+    }
 }

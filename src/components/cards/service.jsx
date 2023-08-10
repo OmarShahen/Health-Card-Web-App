@@ -3,29 +3,18 @@ import CardDate from './components/date'
 import CardActions from './components/actions'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
-import { serverRequest } from '../API/request'
-import { toast } from 'react-hot-toast'
 import { formatNumber, formatMoney } from '../../utils/numbers'
 import { useSelector, useDispatch } from 'react-redux'
 import { addService, removeService } from '../../redux/slices/invoiceSlice'
+import CardTransition from '../transitions/card-transitions'
+import translations from '../../i18n'
 
+const ServiceCard = ({ service, setTargetService, setIsShowForm, setIsShowDeleteModal }) => {
 
-const ServiceCard = ({ service, reload, setReload, setTargetService, setIsShowForm }) => {
-
+    const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
     const invoice = useSelector(state => state.invoice)
     const dispatch = useDispatch()
-
-    const deleteService = (service) => {
-        serverRequest.delete(`/v1/services/${service._id}`)
-        .then(response => {
-            setReload(reload + 1)
-            toast.success(response.data.message, { position: 'top-right', duration: 3000 })
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-    }
 
     const addServiceToInvoice = () => {
         dispatch(addService(service))
@@ -37,15 +26,16 @@ const ServiceCard = ({ service, reload, setReload, setTargetService, setIsShowFo
 
     const cardActionsList = [
         {
-            name: 'Delete service',
+            name: translations[lang]['Delete Service'],
             icon: <DeleteOutlineOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                deleteService(service)
+                setTargetService(service)
+                setIsShowDeleteModal(true)
             }
         },
         {
-            name: 'Update service',
+            name: translations[lang]['Update Service'],
             icon: <CreateOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -55,7 +45,8 @@ const ServiceCard = ({ service, reload, setReload, setTargetService, setIsShowFo
         },
      ]
 
-    return <div className="patient-card-container disable-hover">
+    return <CardTransition>
+    <div className="patient-card-container disable-hover body-text">
         <div className="patient-card-header">
             <div className="patient-image-info-container">
                 <img src={`https://avatars.dicebear.com/api/initials/${service.clinic.name}.svg`} alt="patient-image" />
@@ -64,16 +55,17 @@ const ServiceCard = ({ service, reload, setReload, setTargetService, setIsShowFo
                     <span className="grey-text">#{service.clinic.clinicId}</span>
                 </div>
             </div>
-            <CardActions actions={cardActionsList} />
+            { user.roles.includes('OWNER') ? <CardActions actions={cardActionsList} /> : null }
+            
         </div>
         <div className="patient-card-body">
             <ul>
                 <li>
-                    <strong>Service</strong>
+                    <strong>{translations[lang]['Service']}</strong>
                     <span>{service.name}</span>
                 </li>
                 <li>
-                    <strong>Cost</strong>
+                    <strong>{translations[lang]['Cost']}</strong>
                     <span>{formatMoney(service.cost)}</span>
                 </li>
             </ul>
@@ -84,11 +76,11 @@ const ServiceCard = ({ service, reload, setReload, setTargetService, setIsShowFo
                 <button 
                 className="normal-button action-color-bg white-text"
                 onClick={e => addServiceToInvoice()}
-                >Add</button>
+                >{translations[lang]['Add']}</button>
                 <button 
                 className="normal-button cancel-button"
                 onClick={e => removeServiceFromInvoice()}
-                >Remove</button>
+                >{translations[lang]['Remove']}</button>
 
             </div>
             :
@@ -96,6 +88,7 @@ const ServiceCard = ({ service, reload, setReload, setTargetService, setIsShowFo
         }
         <CardDate creationDate={service.createdAt} />
     </div>
+    </CardTransition>
 }
 
 export default ServiceCard

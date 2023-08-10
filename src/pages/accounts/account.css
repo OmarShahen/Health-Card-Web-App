@@ -1,0 +1,10 @@
+.pending-page-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+}
+
+.pending-page-container div {
+    text-align: center;
+}

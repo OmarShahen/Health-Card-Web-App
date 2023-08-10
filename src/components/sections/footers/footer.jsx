@@ -1,23 +1,26 @@
 import { NavLink } from "react-router-dom"
 import './footer.css'
 import CopyrightOutlinedIcon from '@mui/icons-material/CopyrightOutlined'
-
+import translations from '../../../i18n'
+import { useSelector } from 'react-redux'
 
 const FooterSection = () => {
 
+    const lang = useSelector(state => state.lang.lang)
+
     return <div className="page-footer-container body-text">
-        <ul>
-            <li>
-                <NavLink to="/support">Support</NavLink>
+        <ul className="show-large">
+            <li className="show-large">
+                <NavLink to="/support">{translations[lang]['Support']}</NavLink>
             </li>
             <li className="show-large">
-                <NavLink>Help Center</NavLink>
+                <NavLink>{translations[lang]['Help Center']}</NavLink>
             </li>
             <li className="show-large">
-                <NavLink>Privacy</NavLink>
+                <NavLink>{translations[lang]['Privacy']}</NavLink>
             </li>
             <li className="show-large">
-                <NavLink>Terms of service</NavLink>
+                <NavLink>{translations[lang]['Terms of service']}</NavLink>
             </li>
         </ul>
         <div className="copy-right-container">

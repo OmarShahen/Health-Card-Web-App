@@ -1,0 +1,41 @@
+
+.success-modal-container {
+    padding: 1rem !important;
+}
+
+.success-modal-header {
+    display: flex;
+}
+
+.success-modal-header img {
+    width: 2rem;
+    height: 2rem;
+    margin-left: 1rem;
+}
+
+.success-modal-header h1 {
+    font-size: 1.7rem;
+    padding: 0 0 1rem 0;
+    margin: 0;
+}
+
+.success-modal-list-container ul li {
+    list-style-type: none;
+    display: flex;
+    padding: .5rem 0;
+}
+
+.success-modal-button-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.success-modal-button-container button {
+    margin-left: .7rem;
+}
+
+.success-modal-list-container ul li svg {
+    margin-right: .5rem;
+    font-size: 1.1rem;
+    color: #3bb077;
+}

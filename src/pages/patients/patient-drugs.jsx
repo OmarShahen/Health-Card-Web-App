@@ -11,7 +11,11 @@ import { searchDrugs } from '../../utils/searches/search-drugs'
 import PageHeader from '../../components/sections/page-header'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-
+import { isRolesValid } from '../../utils/roles'
+import Card from '../../components/cards/card'
+import { formatNumber } from '../../utils/numbers'
+import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
+import translations from '../../i18n'
 
 const PatientDrugsPage = ({ roles }) => {
 
@@ -22,6 +26,7 @@ const PatientDrugsPage = ({ roles }) => {
 
     const patient = useSelector(state => state.patient.patient)
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
 
     const [statsQuery, setStatsQuery] = useState({})
     const [reload, setReload] = useState(0)
@@ -31,11 +36,7 @@ const PatientDrugsPage = ({ roles }) => {
 
     useEffect(() => {
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
-
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
     useEffect(() => {
 
@@ -56,12 +57,20 @@ const PatientDrugsPage = ({ roles }) => {
 
     return <div>
         <PageHeader 
-        pageName={"Drugs"} 
-        addBtnText={'Add Prescription'} 
+        pageName={translations[lang]["Drugs"]} 
+        addBtnText={translations[lang]['Add Prescription']} 
         formURL={`/prescriptions/form?cardId=${patient.cardId}`}
         isHideBackButton={true}
         isHideRefresh={true}
         />
+        <div className="cards-list-wrapper margin-bottom-1">
+            <Card 
+            icon={<NumbersOutlinedIcon />}
+            cardHeader={translations[lang]['Drugs']}
+            number={formatNumber(drugs.length)}
+            iconColor={'#5C60F5'}
+            />
+        </div>
         <div className="show-mobile">
             <FloatingButton url={`/prescriptions/form?cardId=${patient.cardId}`} />
         </div>
@@ -73,6 +82,7 @@ const PatientDrugsPage = ({ roles }) => {
                     rows={drugs} 
                     setRows={setSearchedDrugs}
                     searchRows={searchDrugs}
+                    isHideClinics={true}
                     />
                 </div>
                 <div>

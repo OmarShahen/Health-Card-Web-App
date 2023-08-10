@@ -135,21 +135,28 @@
     padding: .5rem 0;
     color: #687385;
     font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .mini-page-navigator-container ul li a span {
+    margin-left: .4rem;
   }
 
   .mini-page-navigator-container ul li .active {
-    color: #2a7ade;
+    color: #1a2e44;
+    font-weight: 600;
     cursor: pointer;
-    border-bottom: 2px solid #2a7ade;
+    border-bottom: 3px solid #2a7ade;
   }
   
   .mini-page-navigator-container ul li a:hover {
-    color: #2a7ade;
+    color: #1a2e44;
+    font-weight: 600;
     cursor: pointer;
-    border-bottom: 2px solid #2a7ade;
+    border-bottom: 3px solid #2a7ade;
   }
 
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 900px) {
     .mini-page-navigator-container ul li a {
         color: #000;
         background-color: var(--light-grey);

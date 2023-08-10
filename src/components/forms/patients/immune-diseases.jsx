@@ -1,15 +1,19 @@
+import { useSelector } from "react-redux"
+import translations from "../../../i18n"
 
 const PatientImmuneDiseasesForm = (props) => {
 
-    return <div className="patient-form-wrapper">
+    const lang = useSelector(state => state.lang.lang)
+
+    return <div className="patient-form-wrapper" id="immune-section">
         <div className="patient-form-header">
             <h2>
-                Immune Diseases
+                {translations[lang]['Immune Diseases']}
             </h2>
         </div>
         <div className="cards-2-list-wrapper">
             <div>
-                <h3>Immune diseases</h3>
+                <h3>{translations[lang]['Immune Diseases']}</h3>
                 <div>
                     <input 
                     type="radio" 
@@ -17,7 +21,7 @@ const PatientImmuneDiseasesForm = (props) => {
                     id="immune"
                     onChange={e => props.setIsImmuneDiseases(true)}
                     />
-                    <label for="immune">Yes</label>
+                    <label for="immune">{translations[lang]['Yes']}</label>
                 </div>
                 <div>
                     <input 
@@ -26,7 +30,7 @@ const PatientImmuneDiseasesForm = (props) => {
                     id="immune"
                     onChange={e => props.setIsImmuneDiseases(false)}
                     />
-                    <label for="immune">No</label>
+                    <label for="immune">{translations[lang]['No']}</label>
                 </div>
             </div>
         </div>

@@ -1,54 +1,41 @@
 import './patient.css'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import CardDate from './components/date'
+import CardTransition from '../transitions/card-transitions'
 
 
 const DoctorCard = ({ doctor }) => {
 
-    const doctorName = `${doctor.doctor.firstName} ${doctor.doctor.lastName}`
-    const doctorPhone = `+${doctor.doctor.countryCode}${doctor.doctor.phone}`
+    const doctorName = `${doctor?.firstName} ${doctor?.lastName}`
 
-    return <div className="patient-card-container disable-hover">
+    return <CardTransition>
+    <div className="patient-card-container disable-hover body-text">
         <div className="patient-card-header">
             <div className="patient-image-info-container">
                 <img src={`https://avatars.dicebear.com/api/initials/${doctorName}.svg`} alt="patient-image" />
                 <div>
                     <strong>{doctorName}</strong>
-                    <span className="grey-text">{doctorPhone}</span>
+                    <span className="grey-text">{doctor?.email}</span>
                 </div>
             </div>
             <div>
-                <MoreHorizIcon />
             </div>
         </div>
         <div className="patient-card-body">
             <ul>
                 <li>
-                    <strong>Clinic</strong>
-                    <span>{doctor.clinic.name}</span>
-                </li>
-                <li>
-                    <strong>Name</strong>
-                    <span>{doctorName}</span>
-                </li>
-                <li>
-                    <strong>Phone</strong>
-                    <span>{doctorPhone}</span>
-                </li>
-                <li>
                     <div>
                         <div className="card-list-header body-text">
-                            <strong>Speciality</strong>
                         </div>
                         <div className="codes-container">
-                            {doctor.doctor.speciality.map(special => <span className="status-btn grey-bg">{special}</span>)}
+                            {doctor.specialities.map(special => <span className="status-btn grey-bg">{special.name}</span>)}
                         </div>
                     </div>
                 </li>
             </ul>
         </div>
-        <CardDate creationDate={doctor.createdAt} />
     </div>
+    </CardTransition>
 }
 
 export default DoctorCard

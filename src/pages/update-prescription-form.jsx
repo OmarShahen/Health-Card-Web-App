@@ -10,12 +10,18 @@ import NavigationBar from '../components/navigation/navigation-bar'
 import DrugCard from '../components/cards/drug'
 import CircularLoading from '../components/loadings/circular'
 import EmptySection from '../components/sections/empty/empty'
-import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux'
+import { isRolesValid } from '../utils/roles'
+import CancelIcon from '@mui/icons-material/Cancel'
+import translations from '../i18n';
 
 const UpdatePrescriptionsFormPage = ({ roles }) => {
 
     const navigate = useNavigate()
+
     const user = useSelector(state => state.user.user)
+    const lang = useSelector(state => state.lang.lang)
+
     const pagePath = window.location.pathname
     const prescriptionId = pagePath.split('/')[2]
 
@@ -28,15 +34,14 @@ const UpdatePrescriptionsFormPage = ({ roles }) => {
 
     const [prescription, setPrescription] = useState()
     const [drugs, setDrugs] = useState([])
+    const [notes, setNotes] = useState([])
 
     const [drugsError, setDrugsError] = useState()
+    const [notesError, setNotesError] = useState()
 
     useEffect(() => {
         scroll(0,0)
-
-        if(!roles.includes(user.role)) {
-            navigate('/login')
-        }
+        isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
 
     useEffect(() => {
@@ -46,6 +51,7 @@ const UpdatePrescriptionsFormPage = ({ roles }) => {
             const data = response.data
             setPrescription(data.prescription)
             setDrugs(data.prescription.medicines)
+            setNotes(data.prescription.notes)
         })
         .catch(error => {
             setIsLoading(false)
@@ -70,10 +76,11 @@ const UpdatePrescriptionsFormPage = ({ roles }) => {
 
     const handlePrescription = () => {
         
-        if(drugs.length === 0) return setDrugsError('No drug is registered in the prescription')
+        if(drugs.length === 0) return setDrugsError(translations[lang]['no drug is registered in the prescription'])
 
         const medicalData = {
-            medicines: drugs
+            medicines: drugs,
+            notes
         }
 
         setIsSubmit(true)
@@ -81,23 +88,20 @@ const UpdatePrescriptionsFormPage = ({ roles }) => {
         .then(response => {
             setIsSubmit(false)
             const data = response.data
-            toast.success(data.message, { duration: 5000, position: 'top-center' })
+            toast.success(data.message, { duration: 5000, position: 'top-right' })
             navigate(`/prescriptions/${prescriptionId}/view`)
         })
         .catch(error => {
             setIsSubmit(false)
             console.error(error)
+            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
         })
         
     }
 
-    const resetForm = () => {
-        setDrugs([])
-        setDrugsError()
-    }
 
     return <div className="page-container">
-        <NavigationBar pageName="Prescription Form" />
+        <NavigationBar pageName={translations[lang]["Prescription"]} />
         {
             showFormModal ?
             <DrugFormModal 
@@ -111,67 +115,96 @@ const UpdatePrescriptionsFormPage = ({ roles }) => {
             null
         }
         <div className="padded-container">
-            <PageHeader pageName={'Update Prescription'} />
+            <PageHeader pageName={translations[lang]['Update Prescription']} />
             {
                 !isLoading ?
                 prescription ?  
-                <div className="prescription-form-wrapper left">
-                <div className="prescription-form-notes-container box-shadow margin-top-1">
-                    <div className="prescription-header-container">
-                        <div>
-                            <h3>Medications</h3>
-                            <span className="red">{drugsError}</span>
-                        </div>
-                        <button 
-                        className="normal-button white-text action-color-bg" 
-                        onClick={e => {
-                            setDrugsError()
-                            setShowFormModal(true)
-                        }}
-                        >
-                        Add Drug
-                        </button>
-                    </div>
+                <div>
+                <div className="cards-grey-container">
+                    <div className="prescription-form-wrapper left box-shadow">
+                        <div className="prescription-form-notes-container">
+                            <div className="prescription-header-container">
+                                <div>
+                                    <h3>{translations[lang]['Medications']}</h3>
+                                    <span className="red">{drugsError}</span>
+                                </div>
+                                <button 
+                                className="normal-button white-text action-color-bg" 
+                                onClick={e => {
+                                    setDrugsError()
+                                    setShowFormModal(true)
+                                }}
+                                >
+                                {translations[lang]['Add Drug']}
+                                </button>
+                            </div>
                     
+                            {
+                                prescription ?
+                                <div className="cards-grey-container cards-3-list-wrapper">
+                                    {drugs.map((drug, index) =>
+                                        <DrugCard 
+                                        drug={drug} 
+                                        isShowDelete={true} 
+                                        drugs={drugs} 
+                                        setDrugs={setDrugs} 
+                                        drugIndex={index}
+                                        />)}
+                                </div>
+                                :
+                                null
+                            }
+                            <div className="cards-2-list-wrapper margin-top-1">
+                                <div className="prescription-form-notes-container">
+                                    <strong>{translations[lang]['Notes']} <span className="grey-text span-text">{translations[lang]['(press enter to register note)']}</span></strong>
+                                    <div className="form-input-container">
+                                        <input 
+                                        type="text" 
+                                        className="form-input" 
+                                        placeholder={translations[lang]["notes"]}
+                                        onKeyDown={handleNotesKeyDown} 
+                                        />
+                                    </div>
+                                    <span className="red">{notesError}</span>
+                                    <div className="symptoms-diagnosis-tags-container">
+                                        <div className="drug-instruction-list-container">
+                                            {notes.map((note, index) =>                 
+                                            <span 
+                                            className="status-btn pending"
+                                            >
+                                                {note}
+                                                <span onClick={e => setNotes(notes.filter((savedNote, savedIndex) => savedIndex !== index))}>
+                                                    <CancelIcon />
+                                                </span>
+                                            </span>) 
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+                
+                        </div>
+                        
+                    </div>
+                </div>
+                    <div className="margin-top-1">
                     {
-                        prescription ?
-                        <div className="cards-grey-container cards-3-list-wrapper">
-                            {drugs.map((drug, index) =>
-                                <DrugCard 
-                                drug={drug} 
-                                isShowDelete={true} 
-                                drugs={drugs} 
-                                setDrugs={setDrugs} 
-                                drugIndex={index}
-                                />)}
+                        isSubmit ?
+                        <div className="flex-right">
+                            <TailSpin
+                            height="30"
+                            width="40"
+                            color="dodgerblue"
+                            />
                         </div>
                         :
-                        null
+                        <div className="flex-right">
+                            <button className="normal-button action-color-bg white-text" onClick={e => handlePrescription()}>
+                                {translations[lang]['Update']}
+                            </button>
+                        </div>
                     }
-                
-                </div>
-                <div className="margin-top-1">
-                    
-                        {
-                            isSubmit ?
-                            <button className="send-btn center full-width-button action-color-bg">
-                                <TailSpin
-                                height="30"
-                                width="40"
-                                color="#FFF"
-                                />
-                            </button>
-                            :
-                            <button className="full-width-button action-color-bg white-text" onClick={e => handlePrescription()}>
-                                Update Prescription
-                            </button>
-                        }
-                        <br />
-                        <button 
-                        className="full-width-button grey-bg black box-shadow" 
-                        onClick={e => resetForm()}>
-                            Reset
-                        </button>
+                        
                 </div>
                 </div>
                 :
