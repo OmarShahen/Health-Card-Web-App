@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit"
 const initialState = {
     isActive: false,
     invoice: {},
-    services: []
+    services: [],
+    patientId: null,
 }
 
 export const invoiceSlice = createSlice({
@@ -15,6 +16,9 @@ export const invoiceSlice = createSlice({
         },
         setInvoice: (state, action) => {
             state.invoice = action.payload.invoice
+        },
+        setInvoicePatientId: (state, action) => {
+            state.patientId = action.payload
         },
         addService: (state, action) => {
             state.services = [action.payload, ...state.services]
@@ -43,6 +47,6 @@ export const invoiceSlice = createSlice({
 
 const { actions, reducer } = invoiceSlice
 
-export const { setIsActive, setInvoice, addService, removeService, closeInvoice } = actions
+export const { setIsActive, setInvoicePatientId, setInvoice, addService, removeService, closeInvoice } = actions
 
 export default reducer

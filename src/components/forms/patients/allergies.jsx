@@ -27,6 +27,7 @@ const PatientAllergiesForm = (props) => {
                     id="allergies"
                     name="allergies"
                     onChange={e => props.setIsAllergic(true)}
+                    checked={props.isAllergic}
                     />
                     <label for="allergies">{translations[lang]['Yes']}</label>
                 </div>
@@ -36,6 +37,7 @@ const PatientAllergiesForm = (props) => {
                     id="allergies"
                     name="allergies"
                     onChange={e => props.setIsAllergic(false)}
+                    checked={props.isAllergic === false}
                     />
                     <label for="allergies">{translations[lang]['No']}</label>
                 </div>

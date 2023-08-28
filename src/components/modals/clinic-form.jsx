@@ -145,7 +145,7 @@ const ClinicFormModal = ({ setShowFormModal, setReload, reload, setIsShowService
                                 </div>
                                 <div className="form-input-container">
                                     <label>{translations[lang]['Country']}</label>
-                                    <input type="text" className="form-input" value="Egypt" disabled />
+                                    <input type="text" className="form-input" value={translations[lang]["Egypt"]} disabled />
                                         
                                 </div>  
                                 <div className="form-input-container">

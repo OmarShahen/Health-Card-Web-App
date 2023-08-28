@@ -176,10 +176,10 @@ const SearchInput = ({
                     setRows(rows.filter(row => row.insuranceCompanyId === e.target.value))
                 }}
                 >
-                    <option selected disabled>Select Insurance Company</option>
-                    <option value="ALL">All</option>
-                    <option value="NO-INSURANCE">No Insurance</option>
-                    <option value="INSURANCED">Insuranced Only</option>
+                    <option selected disabled>{translations[lang]['Select Insurance Company']}</option>
+                    <option value="ALL">{translations[lang]['All']}</option>
+                    <option value="NO-INSURANCE">{translations[lang]['No Insurance']}</option>
+                    <option value="INSURANCED">{translations[lang]['Insuranced Only']}</option>
                     {insuranceCompanies.map(company => <option value={company?._id}>{company?.name}</option>)}
                 </select>
             </div>

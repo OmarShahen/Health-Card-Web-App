@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { serverRequest } from "../../components/API/request"
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import PageHeader from '../../components/sections/page-header'
-import NavigationBar from '../../components/navigation/navigation-bar';
 import CircularLoading from '../../components/loadings/circular';
 import FiltersSection from '../../components/sections/filters/filters'
 import FloatingButton from '../../components/buttons/floating-button'
@@ -16,18 +15,26 @@ import PayDebtFormModal from '../../components/modals/pay-debt-form'
 import InvoiceDeleteConfirmationModal from '../../components/modals/confirmation/invoice-delete-confirmation-modal';
 import InvoiceRefundConfirmationModal from '../../components/modals/confirmation/invoice-refund-confirmation-modal';
 import { isRolesValid } from '../../utils/roles';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { formatNumber, formatMoney } from '../../utils/numbers'
 import Card from '../../components/cards/card'
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined'
 import translations from '../../i18n'
-import SelectSection from '../../components/sections/selectors/select';
-import PrintInvoices from '../../components/prints/invoices/print-invoices';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import CachedIcon from '@mui/icons-material/Cached'
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
+import { closeInvoice, setInvoicePatientId, setIsActive } from '../../redux/slices/invoiceSlice';
 
-const InvoicesPage = ({ roles }) => {
+
+
+const PatientInvoicesPage = ({ roles }) => {
 
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const pagePath = window.location.pathname
+    const patientId = pagePath.split('/')[2]
 
     const [isShowForm, setIsShowForm] = useState(false)
     const [isShowPayDebtForm, setIsShowPayDebtForm] = useState(false)
@@ -49,9 +56,7 @@ const InvoicesPage = ({ roles }) => {
 
     const activeElementColor = { border: '2px solid #4c83ee', color: '#4c83ee' }
 
-    const todayDate = new Date()
-
-    const [statsQuery, setStatsQuery] = useState({ specific: format(todayDate, 'yyyy-MM-dd') })
+    const [statsQuery, setStatsQuery] = useState({})
 
     useEffect(() => { 
         //scroll(0,0)
@@ -60,13 +65,7 @@ const InvoicesPage = ({ roles }) => {
 
     useEffect(() => {
 
-        let endpointURL = ''
-
-        if(user.roles.includes('STAFF')) {
-            endpointURL = `/v1/invoices/clinics/${user.clinicId}`
-        } else {
-            endpointURL = `/v1/invoices/owners/${user._id}`
-        }
+        let endpointURL = `/v1/invoices/patients/${patientId}`
 
         setIsLoading(true)
         serverRequest.get(endpointURL, { params: statsQuery })
@@ -125,9 +124,15 @@ const InvoicesPage = ({ roles }) => {
         return total
     }
 
+    const initInvoice = () => {
+        dispatch(closeInvoice())
+        dispatch(setIsActive({ isActive: true }))
+        dispatch(setInvoicePatientId(patientId))
+        navigate('/services')
+    }
+
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Invoices']} />
         { 
         isShowDeleteModal ? 
         <InvoiceDeleteConfirmationModal 
@@ -166,18 +171,43 @@ const InvoicesPage = ({ roles }) => {
         {
             user.roles.includes('STAFF') ?
             <div className="show-mobile">
-                <FloatingButton setIsShowForm={setIsShowForm} />
+                <FloatingButton 
+                onClickFunction={initInvoice}
+                />
             </div>
             :
             null
         }
         
         <div className="padded-container">
-            <PageHeader 
-            pageName={translations[lang]["Invoices"]} 
-            setReload={setReload}
-            reload={reload}
-            /> 
+            <div className="page-header-wrapper">
+                    <div className="page-header-container">
+                        <div>
+                            <h1>
+                                {translations[lang]['Invoices']}
+                            </h1>
+                        </div>
+                        <div 
+                        className="btns-container subheader-text">
+                            { 
+                                user.roles.includes('STAFF') ? 
+                                <button
+                                onClick={e => initInvoice()}
+                                >
+                                    <AddOutlinedIcon />
+                                    <strong>{translations[lang]['Add Invoice']}</strong>
+                                </button> 
+                                : 
+                                null 
+                            }
+                        </div>
+                        <div className="header-mobile-icons-container">
+                            <div onClick={e => setReload(reload + 1)}>
+                                <CachedIcon />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <div className="cards-4-list-wrapper">
                 <Card 
                 icon={<NumbersOutlinedIcon />}
@@ -239,7 +269,7 @@ const InvoicesPage = ({ roles }) => {
             statsQuery={statsQuery} 
             setStatsQuery={setStatsQuery} 
             isShowUpcomingDates={false}
-            defaultValue={'0'}
+            defaultValue={'LIFETIME'}
             />
             <div className="search-input-container">
                 <SearchInput 
@@ -247,10 +277,6 @@ const InvoicesPage = ({ roles }) => {
                 setRows={setSearchedInvoices}
                 searchRows={searchInvoices}
                 isHideClinics={user.roles.includes('STAFF') ? true : false}
-                isShowInsuranceCompanies={user.roles.includes('STAFF') || user.roles.includes('OWNER') ? true : false}
-                isShowItemSelection={true}
-                setSelectedItems={setSelectedInvoices}
-                selectedItems={selectedInvoices}
                 />
             </div>
             <div className="appointments-categories-container">
@@ -325,4 +351,4 @@ const InvoicesPage = ({ roles }) => {
     </div>
 }
 
-export default InvoicesPage
+export default PatientInvoicesPage

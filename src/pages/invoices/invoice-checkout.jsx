@@ -14,6 +14,7 @@ import { toast } from 'react-hot-toast'
 import CardTransition from '../../components/transitions/card-transitions';
 import { isRolesValid } from '../../utils/roles';
 import translations from '../../i18n';
+import { setPatient } from '../../redux/slices/patientSlice';
 
 const InvoiceCheckoutPage = ({ roles }) => {
 
@@ -37,6 +38,9 @@ const InvoiceCheckoutPage = ({ roles }) => {
         }
     }
 
+    const pagePath = window.location.pathname
+    const patientId = pagePath.split('/')[2]
+
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -44,14 +48,19 @@ const InvoiceCheckoutPage = ({ roles }) => {
     const lang = useSelector(state => state.lang.lang)
     const invoice = useSelector(state => state.invoice)
 
-    const insuranceCoveragePercentage = invoice?.invoice?.insuranceCoveragePercentage ? invoice?.invoice?.insurancePolicy?.coveragePercentage / 100 : 1
-    const totalAmount = getTotal(invoice.services)
-    const totalAmountRemaining = invoice?.invoice?.insuranceCoveragePercentage ? totalAmount - (totalAmount * insuranceCoveragePercentage) : 0
 
+    const [calculatorCounter, setCalculatorCounter] = useState(1)
+
+    const [patient, setPatient] = useState({})
+    const [insurancePolicy, setInsurancePolicy] = useState()
+    const [insuranceCoverageAmount, setInsuranceCoverageAmount] = useState(0)
+    const [insuranceCoveragePercentage, setInsuranceCoveragePercentage] = useState(0)
+    const [totalAmount, setTotalAmount] = useState(getTotal(invoice.services))
+    const [totalAmountRemaining, setTotalAmountRemaining] = useState(getTotal(invoice.services))
 
     const [dueDate, setDueDate] = useState()
     const [invoiceDate, setInvoiceDate] = useState(new Date())
-    const [payAmount, setPayAmount] = useState(invoice.invoice.insuranceCoveragePercentage ? totalAmountRemaining : totalAmount)
+    const [payAmount, setPayAmount] = useState(getTotal(invoice.services))
     const [paymentMethod, setPaymentMethod] = useState('CASH')
 
     const [isPayInvoiceLoading, setIsPayInvoiceLoading] = useState(false)
@@ -61,12 +70,68 @@ const InvoiceCheckoutPage = ({ roles }) => {
     const [invoiceDateError, setInvoiceDateError] = useState()
     const [payAmountError, setPayAmountError] = useState()
 
-
-
     useEffect(() => {
         scroll(0,0)
         isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
+
+    useEffect(() => {
+        serverRequest.get(`/v1/patients/${invoice.patientId}`)
+        .then(response => {
+            const data = response.data
+            setPatient(data.patient)
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
+        })
+    }, [])
+
+    useEffect(() => {
+        serverRequest.get(`/v1/insurance-policies/patients/${invoice.patientId}/clinics/${user.clinicId}`)
+        .then(response => {
+            const data = response.data
+            const insurancePolicyList = data.insurancePolicy
+            if(insurancePolicyList.length === 0) {
+                return
+            }
+
+            const insurancePolicy = insurancePolicyList[0]
+            setInsurancePolicy(insurancePolicy)
+            const totalCost = getTotal(invoice.services)
+            setInsuranceCoverageAmount(totalCost - (totalCost * (insurancePolicy.coveragePercentage / 100)))
+            setInsuranceCoveragePercentage(insurancePolicy.coveragePercentage ? insurancePolicy.coveragePercentage / 100 : 1)
+            setTotalAmount(totalCost)
+
+            const amountRemainingWithInsurance = insurancePolicy.coveragePercentage ? totalCost - (totalCost * (insurancePolicy.coveragePercentage / 100)) : 0
+            
+            setTotalAmountRemaining(amountRemainingWithInsurance)
+            setPayAmount(insurancePolicy?.coveragePercentage ? amountRemainingWithInsurance : totalCost)
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
+        })
+    }, [])
+
+
+    useEffect(() => {
+
+        if(!insurancePolicy) {
+            return
+        }
+
+        const totalCost = getTotal(invoice.services)
+        setInsuranceCoverageAmount(totalCost - (totalCost * (insurancePolicy.coveragePercentage / 100)))
+        setInsuranceCoveragePercentage(insurancePolicy.coveragePercentage ? insurancePolicy.coveragePercentage / 100 : 1)
+        setTotalAmount(totalCost)
+
+        const amountRemainingWithInsurance = insurancePolicy.coveragePercentage ? totalCost - (totalCost * (insurancePolicy.coveragePercentage / 100)) : 0
+        
+        setTotalAmountRemaining(amountRemainingWithInsurance)
+        setPayAmount(insurancePolicy?.coveragePercentage ? amountRemainingWithInsurance : totalCost)
+
+    }, [calculatorCounter])
 
 
     const payInvoice = () => {
@@ -76,6 +141,8 @@ const InvoiceCheckoutPage = ({ roles }) => {
         if(payAmount > getTotal(invoice.services)) return setPayAmountError('Amount paid is more than the total cost')
 
         const invoiceData = {
+            patientId: invoice.patientId,
+            clinicId: user.clinicId,
             services: invoice.services.map(service => service._id),
             invoiceDate: invoiceDate ? format(invoiceDate, 'yyyy-MM-dd HH:MM:ss') : format(new Date(), 'yyyy-MM-dd HH:MM:ss'),
             paidAmount: payAmount ? Number.parseFloat(payAmount) : 0,
@@ -84,12 +151,12 @@ const InvoiceCheckoutPage = ({ roles }) => {
         }
 
         setIsPayInvoiceLoading(true)
-        serverRequest.post(`/v1/invoices/${invoice.invoice._id}/checkout`, invoiceData)
+        serverRequest.post(`/v1/invoices`, invoiceData)
         .then(response => {
             setIsPayInvoiceLoading(false)
             dispatch(closeInvoice())
             toast.success(response.data.message, { duration: 3000, position: 'top-right'})
-            navigate('/invoices')
+            navigate(`/invoices/${response.data.invoice._id}`)
         })
         .catch(error => {
             setIsPayInvoiceLoading(false)
@@ -114,20 +181,8 @@ const InvoiceCheckoutPage = ({ roles }) => {
     }
 
     const deleteInvoice = () => {
-
-        setIsDeleteInvoiceLoading(true)
-        serverRequest.delete(`/v1/invoices/${invoice.invoice._id}`)
-        .then(response => {
-            setIsDeleteInvoiceLoading(false)
-            dispatch(closeInvoice())
-            toast.success(response.data.message, { duration: 3000, position: 'top-right'})
-            navigate('/invoices')
-        })
-        .catch(error => {
-            setIsDeleteInvoiceLoading(false)
-            console.error(error)
-        })
-
+        dispatch(closeInvoice())
+        navigate(`/patients/${invoice.patientId}/invoices`)
     }
 
     return <div className="page-container">
@@ -147,7 +202,10 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                 <span>{service.name}</span>
                                 <span className="invoice-price-container">
                                     {formatMoney(service.cost)}
-                                    <span onClick={e => dispatch(removeService(service))}>
+                                    <span onClick={e => { 
+                                        dispatch(removeService(service))
+                                        setCalculatorCounter(calculatorCounter + 1)
+                                    }}>
                                         <DeleteOutlineOutlinedIcon />
                                     </span>
                                 </span>
@@ -157,12 +215,12 @@ const InvoiceCheckoutPage = ({ roles }) => {
                         <ul className="invoice-total-container">
                             <li>
                                 <span className="bold-text">{translations[lang]['Total Amount']}</span>
-                                <span className="bold-text">{formatMoney(totalAmount)}</span>
+                                <span className="bold-text">{formatMoney(getTotal(invoice.services))}</span>
                             </li>
                             {
-                                invoice.invoice.insuranceCoveragePercentage ?
+                                insurancePolicy?.coveragePercentage ?
                                 <li>
-                                    <span>{'Insurance Coverage'} {`(${invoice?.invoice?.insurancePolicy?.coveragePercentage}%)`}</span>
+                                    <span>{translations[lang]['Insurance Coverage']} {`(${insurancePolicy.coveragePercentage}%)`}</span>
                                     <span>
                                         {formatMoney(getTotal(invoice.services) * insuranceCoveragePercentage)}
                                     </span>
@@ -171,19 +229,19 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                 null
                             }
                             <li>
-                                <span>{translations[lang]['Amount Paid']}</span>
-                                <span>{payAmount ? formatMoney(payAmount) : formatMoney(0)}</span>
+                                <span className="bold-text">{translations[lang]['Receive Amount']}</span>
+                                <span className="bold-text">{formatMoney(totalAmountRemaining)}</span>
                             </li>
                             <li>
-                                <span className="bold-text">Receive Amount</span>
-                                <span className="bold-text">{formatMoney(totalAmountRemaining)}</span>
+                                <span>{translations[lang]['Amount Paid']}</span>
+                                <span>{payAmount ? formatMoney(payAmount) : formatMoney(0)}</span>
                             </li>
                             <li>
                                 <span>{translations[lang]['Amount Remaining']}</span>
                                 <span>
                                     {
                                     payAmount ? 
-                                    invoice.invoice.insuranceCoveragePercentage ? 
+                                    insurancePolicy?.coveragePercentage ? 
                                     formatMoney(totalAmountRemaining - payAmount) 
                                     :
                                     formatMoney(totalAmount - payAmount)
@@ -212,16 +270,16 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                 <ul>
                                     <li>
                                         <span>{translations[lang]['To']}</span>
-                                        <input className="form-input" type="number" value={invoice?.invoice?.patientCardId} disabled/>
+                                        <input className="form-input" type="text" value={patient?.firstName + ' ' + patient?.lastName} disabled/>
                                     </li>
                                     <li>
                                         <span>{translations[lang]['From']}</span>
-                                        <input className="form-input" type="text" value={invoice?.invoice?.clinic?.name} disabled/>
+                                        <input className="form-input" type="text" value={'Test Clinic'} disabled/>
                                     </li>
                                     {
                                         invoice?.invoice?.insuranceCompany ?
                                         <li>
-                                            <span>Insurance Company</span>
+                                            <span>{translations[lang]['Insurance Company']}</span>
                                             <input
                                             className="form-input"
                                             type="text" 
@@ -240,9 +298,9 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                         value={payAmount}
                                         min="0"
                                         onChange={e => {
-                                            if(invoice?.invoice?.insuranceCoveragePercentage && Number.parseFloat(e.target.value) > totalAmountRemaining) {
+                                            if(insurancePolicy.coveragePercentage && Number.parseFloat(e.target.value) > totalAmountRemaining) {
                                                 return
-                                            } else if(!invoice?.invoice?.insuranceCoveragePercentage && totalAmount < Number.parseFloat(e.target.value)) {
+                                            } else if(!insurancePolicy.coveragePercentage && totalAmount < Number.parseFloat(e.target.value)) {
                                                 return
                                             }
 
@@ -314,7 +372,7 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                     :
                                     <button 
                                     onClick={e => deleteInvoice()}
-                                    className="full-width-button cancel-button">{translations[lang]['Delete Invoice']}</button>
+                                    className="full-width-button cancel-button">{translations[lang]['Cancel']}</button>
 
                                 }                     
                             </div>

@@ -60,8 +60,8 @@ const PatientEmergencyContactsPage = ({ roles }) => {
     return <div>
 
         <PageHeader 
-        pageName={translations[lang]["Emergency Contacts"]} 
-        addBtnText={!user.roles.includes('STAFF') ? null : translations[lang]['Add Emergency Contact']} 
+        pageName={translations[lang]['Emergency Contacts']}
+        addBtnText={translations[lang]['Add Emergency Contact']}
         setShowModalForm={setIsShowForm}
         isHideBackButton={true}
         isHideRefresh={true}

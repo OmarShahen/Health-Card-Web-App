@@ -43,7 +43,7 @@ const InsurancePolicyStatusConfirmationModal = ({ insurancePolicy, reload, setRe
             </div>   
             <div className="body-text confirmation-modal-body">
                 <p>
-                    {"You're about to update this insurance policy status"}
+                    {translations[lang]["You're about to update this insurance policy status"]}
                 </p>
                 <p>
                     {translations[lang]["If you're not sure, you can resolve or close it instead"]}

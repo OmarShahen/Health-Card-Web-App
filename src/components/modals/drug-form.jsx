@@ -39,7 +39,7 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
         if(!drugName) return setDrugNameError(translations[lang]['drug name is required'])
 
         if(!amountNumber) return setAmountNumberError(translations[lang]['amount number is required'])
-        
+
         if(!amountUnit) return setAmountUnitError(translations[lang]['amount unit is required'])
 
         if(!frequencyNumber) return setFrequencyNumberError(translations[lang]['frequency number is required'])
@@ -47,9 +47,8 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
         if(!frequencyTime) return setFrequencyTimeError(translations[lang]['frequency time is required'])
 
         if(!periodNumber) return setPeriodNumberError(translations[lang]['period number is required'])
-        
-        if(!periodTime) return setPeriodTimeError(translations[lang]['period time is required'])
 
+        if(!periodTime) return setPeriodTimeError(translations[lang]['period time is required'])
 
         const newDrug = {
             name: drugName,
@@ -124,7 +123,7 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
                         id="dosage-types"
                         className="form-input"
                         onChange={e => setAmountUnit(e.target.value)}
-                        onClick={e => amountUnitError()}
+                        onClick={e => setAmountUnitError()}
                         >
                             {
                                 mode === 'EDITE' ?

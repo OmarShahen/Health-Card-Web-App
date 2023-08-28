@@ -20,6 +20,9 @@ const EncountersFormPage = ({ roles }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
+    const pagePath = window.location.pathname
+    const patientId = pagePath.split('/')[2]
+
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
@@ -37,6 +40,8 @@ const EncountersFormPage = ({ roles }) => {
     const [notes, setNotes] = useState([])
     const [drugs, setDrugs] = useState([])
     const [clinic, setClinic] = useState()
+
+    const [newNote, setNewNote] = useState()
 
     const [patientCardIdError, setPatientCardIdError] = useState()
     const [symptomsError, setSymptomsError] = useState()
@@ -66,29 +71,40 @@ const EncountersFormPage = ({ roles }) => {
 
         if(e.key !== 'Enter') return 
 
-        const value = e.target.value
+        if(!newNote) return setNotesError('no note is added')
+
+        const value = newNote
 
         if(!value.trim()) return
 
         setNotes([...notes, value])
 
-        e.target.value = ''
+        setNewNote('')
     }
 
     const handleEncounter = () => {
-        
-        if(!patientCardId) return setPatientCardIdError(translations[lang]['patient card ID is required'])
+      
+        if(!clinic) {
+            toast.error(translations[lang]['clinic is required'], { duration: 3000, position: 'top-right' })
+            setClinicError(translations[lang]['clinic is required'])
+            return
+        }
 
-        if(isNaN(Number.parseInt(patientCardId))) return setPatientCardIdError(translations[lang]['patient card ID must be a number'])
+        if(symptoms.length === 0) {
+            toast.error(translations[lang]['patient symptoms is required'], { duration: 3000, position: 'top-right' })
+            setSymptomsError(translations[lang]['patient symptoms is required']) 
+            return
+        }
 
-        if(!clinic) return setClinicError(translations[lang]['clinic is required'])
-
-        if(symptoms.length === 0) return setSymptomsError(translations[lang]['patient symptoms is required']) 
-
-        if(diagnosis.length === 0) return setDiagnosisError(translations[lang]['patient diagnose is required'])
+        if(diagnosis.length === 0) {
+            toast.error(translations[lang]['patient diagnose is required'], { duration: 3000, position: 'top-right' })
+            setDiagnosisError(translations[lang]['patient diagnose is required'])
+            return
+        }
 
         const medicalData = {
             doctorId: user._id,
+            patientId,
             clinicId: clinic,
             symptoms,
             diagnosis,
@@ -100,12 +116,12 @@ const EncountersFormPage = ({ roles }) => {
         }
 
         setIsSubmit(true)
-        serverRequest.post(`/v1/encounters/cardsId/${patientCardId}`, medicalData)
+        serverRequest.post(`/v1/encounters`, medicalData)
         .then(response => {
             setIsSubmit(false)
             const data = response.data
             toast.success(data.message, { duration: 5000, position: 'top-right' })
-            drugs.length === 0 ? navigate(`/encounters`) : navigate(`/prescriptions/${data.prescription._id}/view`)
+            drugs.length === 0 ? navigate(`/patients/${patientId}/encounters`) : navigate(`/prescriptions/${data.prescription._id}/view`)
         })
         .catch(error => {
             setIsSubmit(false)
@@ -158,20 +174,6 @@ const EncountersFormPage = ({ roles }) => {
                 <div className="prescription-form-wrapper box-shadow-line left">
                     <div className="cards-2-list-wrapper">
                         <div className="prescription-form-notes-container">
-                            <strong>{translations[lang]['Patient Card ID']}</strong>
-                            <div className="form-input-container">
-                                <input 
-                                type="text" 
-                                className="form-input" 
-                                placeholder={translations[lang]["Patient Card ID"]}
-                                onClick={e => setPatientCardIdError()}
-                                onChange={e => setPatientCardId(e.target.value)}
-                                value={cardId}
-                                />
-                            </div>
-                            <span className="red">{patientCardIdError}</span>
-                        </div>
-                        <div className="prescription-form-notes-container">
                             <div className="form-input-container">
                                 <strong>{translations[lang]['Clinic']}</strong>
                                 <select
@@ -206,9 +208,25 @@ const EncountersFormPage = ({ roles }) => {
                                 className="form-input" 
                                 placeholder={translations[lang]["notes"]}
                                 onKeyDown={handleNotesKeyDown} 
+                                onClick={e => setNotesError()}
+                                onChange={e => setNewNote(e.target.value)}
+                                value={newNote}
                                 />
                             </div>
                             <span className="red">{notesError}</span>
+                            <div className="padding-top-bottom right">
+                                <button 
+                                className="normal-button action-color-bg white-text show-mobile"
+                                onClick={e => {
+                                    if(!newNote) return setNotesError('no note is added')
+                                    if(!newNote.trim()) return
+                                    setNotes([...notes, newNote])
+                                    setNewNote('')
+                                }}
+                                >
+                                    Add
+                                </button>
+                            </div>
                             <div className="symptoms-diagnosis-tags-container">
                                 <div className="drug-instruction-list-container">
                                     {notes.map((note, index) =>                 
@@ -256,7 +274,9 @@ const EncountersFormPage = ({ roles }) => {
                         color="dodgerblue"
                         />
                     :
-                    <button className="normal-button action-color-bg white-text" onClick={e => handleEncounter()}>
+                    <button 
+                    className="normal-button action-color-bg white-text" 
+                    onClick={e => handleEncounter()}>
                         {translations[lang]['Create']}
                     </button>
                 }

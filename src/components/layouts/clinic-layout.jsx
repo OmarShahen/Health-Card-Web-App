@@ -60,7 +60,6 @@ const ClinicsLayout = ({ roles }) => {
                             : 
                             null 
                         }
-                        { user.roles.includes('OWNER') ? <li><NavLink to={`/clinics/services`}>{translations[lang]['Services']}</NavLink></li> : null }
                     </ul>
                 </div>
                 <Outlet />

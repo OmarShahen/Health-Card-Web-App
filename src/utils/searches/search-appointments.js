@@ -1,8 +1,9 @@
 export const searchAppointments = (appointment, value) => {
 
     value = value.toLowerCase()
-    const patientName = appointment.patientName.toLowerCase()
-    const patientPhone = `${appointment.patientCountryCode}${appointment.patientPhone}`
+    
+    const patientName = `${appointment.patient.firstName} ${appointment.patient.lastName}`.toLowerCase()
+    const patientPhone = `${appointment.patient.countryCode}${appointment.patient.phone}`
     const doctorName = `${appointment.doctor.firstName} ${appointment.doctor.lastName}`.toLowerCase()
     const doctorPhone = `${appointment.doctor.countryCode}${appointment.doctor.phone}`
 

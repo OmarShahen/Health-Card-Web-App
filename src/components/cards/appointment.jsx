@@ -112,19 +112,23 @@ const AppointmentCard = ({
     <div className="patient-card-container disable-hover body-text">
         <div className="patient-card-header">
             <div className="patient-image-info-container">
-                <img src={`https://avatars.dicebear.com/api/initials/${appointment?.patientName}.svg`} alt="patient-image" />
+                <img src={`https://avatars.dicebear.com/api/initials/${appointment?.patient?.firstName + ' ' + appointment?.patient?.lastName}.svg`} alt="patient-image" />
                 <div>
-                    <strong>{appointment?.patientName}</strong>
-                    <span className="grey-text">{`+${String(appointment?.patientCountryCode) + String(appointment?.patientPhone)}`}</span>
+                    <strong>{appointment?.patient?.firstName + ' ' + appointment?.patient?.lastName}</strong>
+                    <span 
+                    className="grey-text"
+                    >
+                        {`+${String(appointment?.patient?.countryCode) + String(appointment?.patient?.phone)}`}
+                    </span>
                 </div>
             </div>
-            { !user.roles.includes('STAFF') ? null : <CardActions actions={cardActionsList} /> }
+            { user.roles.includes('STAFF') || user.roles.includes('DOCTOR') ? <CardActions actions={cardActionsList} /> : null }
         </div>
         <div className="patient-card-body">
         
             <ul>
                 {
-                    !user.roles.includes('DOCTOR') ?
+                    user.roles.includes('DOCTOR') || user.roles.includes('OWNER') ?
                     <li>
                         <strong>
                             {translations[lang]['Clinic']}
@@ -140,7 +144,7 @@ const AppointmentCard = ({
                 </li>
                 <li>
                     <strong>{translations[lang]['Date']}</strong>
-                    <span>{format(new Date(appointment?.reservationTime), 'dd MMM yyyy')}</span>
+                    <span>{format(new Date(appointment?.reservationTime), lang === 'en' ? 'dd MMM yyyy' : 'MM/dd/yyyy')}</span>
                 </li>
                 <li>
                     <strong>{translations[lang]['Time']}</strong>
@@ -148,17 +152,17 @@ const AppointmentCard = ({
                 </li>
                 <li>
                     <strong>{translations[lang]['Service']}</strong>
-                    <span>{appointment?.service ? appointment.service.name : 'Not Registered'}</span>
+                    <span>{appointment?.service ? appointment.service.name : translations[lang]['Not Registered']}</span>
                 </li>
-                {
+                {/*
                     !user.roles.includes('DOCTOR') ?
                     <li>
                         <strong>{translations[lang]['Cost']}</strong>
-                        <span>{appointment?.service ? formatMoney(appointment.service.cost) : 'Not Registered'}</span>
+                        <span>{appointment?.service ? formatMoney(appointment.service.cost) : translations[lang]['Not Registered']}</span>
                     </li>
                     :
                     null
-                }
+                */}
                 <li>
                     <strong>{translations[lang]['Status']}</strong>
                     {renderAppointmentStatus(appointment?.status)}

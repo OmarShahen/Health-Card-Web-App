@@ -9,7 +9,7 @@ import PatientMedicalPage from './pages/patients/patient-medical'
 import AppointmentsPage from './pages/appointments'
 import ClinicsOwnedPage from './pages/clinics/clinics-owned'
 import ClinicsInvitationsPage from './pages/clinics/clinics-invitations'
-import ClinicsServicesPage from './pages/clinics/clinics-services'
+import ClinicsServicesPage from './pages/clinics-services'
 import ClinicsJoinRequestsPage from './pages/clinics/clinics-requests'
 import ClinicsRegisteredPage from './pages/clinics/clinics-registered'
 import SettingsPage from './pages/settings'
@@ -36,6 +36,9 @@ import PatientSymptomsPage from './pages/patients/patient-symptoms'
 import PatientDiagnosisPage from './pages/patients/patient-diagnosis'
 import PatientPrescriptionsPage from './pages/patients/patient-prescriptions'
 import PatientDrugsPage from './pages/patients/patient-drugs'
+import PatientAppointmentsPage from './pages/patients/patient-appointments'
+import PatientInvoicesPage from './pages/patients/patient-invoices'
+import PatientInsurancePoliciesPage from './pages/patients/patient-insurance-policies'
 import UpdateEncountersFormPage from './pages/update-encounter-form'
 import UpdatePrescriptionsFormPage from './pages/update-prescription-form'
 import PatientFormPage from './pages/patient-form'
@@ -78,11 +81,13 @@ import InsuranceCompanyPoliciesPage from './pages/insurances/insurance-company-p
 
 import { useSelector } from 'react-redux'
 import { BrowserRouter as Router, Routes, Route, Navigate  } from 'react-router-dom'
+import { Login } from '@mui/icons-material'
 
 
 function App() {
 
   const modal = useSelector(state => state.modal)
+  const user = useSelector(state => state.user.user)
 
   return (
     <div className="App">
@@ -95,7 +100,7 @@ function App() {
 
           <Route path="/" element={<Navigate to="/login" />} />
 
-          <Route element={<MainLayout />}>
+          <Route element={user.isLogged ? <MainLayout /> : <LoginPage />}>
             <Route path="/doctors" element={<DoctorsPage roles={['OWNER', 'STAFF']} />} />
             <Route path="/staffs" element={<StaffsPage roles={['OWNER']} />} />
             <Route path="/invoices" element={<InvoicesPage roles={['OWNER', 'STAFF']} />} />
@@ -104,9 +109,10 @@ function App() {
             <Route path="/encounters" element={<EncountersPage roles={['DOCTOR']} />} />
             <Route path="/appointments" element={<AppointmentsPage roles={['STAFF', 'DOCTOR', 'OWNER']} />} />
             <Route path="/prescriptions" element={<PrescriptionsPage roles={['DOCTOR', 'STAFF']} />} />
-            <Route path="/encounters/form" element={<EncountersFormPage roles={['DOCTOR']} />} />
-            <Route path="/prescriptions/form" element={<PrescriptionsFormPage roles={['DOCTOR']} />} />
-            <Route path="/patients/form" element={<PatientFormPage roles={['STAFF']}/>} />
+            <Route path="/patients/:patientId/encounters/form" element={<EncountersFormPage roles={['DOCTOR']} />} />
+            <Route path="/patients/:patientId/prescriptions/form" element={<PrescriptionsFormPage roles={['DOCTOR']} />} />
+            <Route path="/patients/form" element={<PatientFormPage roles={['STAFF', 'DOCTOR']}/>} />
+            <Route path="/patients/:patientId/form" element={<PatientFormPage roles={['STAFF', 'DOCTOR']}/>} />
             <Route path="/encounters/:id/update" element={<UpdateEncountersFormPage roles={['DOCTOR']} />} />
             <Route path="/prescriptions/:id/update" element={<UpdatePrescriptionsFormPage roles={['DOCTOR']} />} />
             <Route path="/prescriptions/doctors" element={<DoctorPrescriptionsPage roles={['DOCTOR']} />} />
@@ -117,8 +123,10 @@ function App() {
             <Route path="/billing/packages" element={<PaymentsPackagesPage roles={['DOCTOR', 'OWNER']} />} />
             <Route path="/billing/billing-data" element={<PaymentsBillingDataPage roles={['OWNER', 'DOCTOR']} />} />
 
-            <Route path="/insurance-companies" element={<InsurancesPage roles={['OWNER']} />} />
+            <Route path="/insurance-companies" element={<InsurancesPage roles={['OWNER', 'STAFF']} />} />
             <Route path="/insurance-policies" element={<InsurancePoliciesPage roles={['DOCTOR', 'STAFF']} />} />
+
+            <Route path="/clinics/services" element={<ClinicsServicesPage roles={['OWNER', 'STAFF']} />} />
 
             <Route element={<PatientProfileLayout />}>
               <Route path="/patients/:id/medical-profile" element={<PatientMedicalPage roles={['STAFF', 'DOCTOR', 'OWNER']}/>} />
@@ -129,12 +137,14 @@ function App() {
               <Route path="/patients/:id/diagnosis" element={<PatientDiagnosisPage roles={['DOCTOR']} />} />
               <Route path="/patients/:id/prescriptions" element={<PatientPrescriptionsPage roles={['DOCTOR']} />} />
               <Route path="/patients/:id/drugs" element={<PatientDrugsPage roles={['DOCTOR', 'STAFF']} />} />
+              <Route path="/patients/:id/appointments" element={<PatientAppointmentsPage roles={['DOCTOR', 'STAFF']} />} />
+              <Route path="/patients/:id/invoices" element={<PatientInvoicesPage roles={['DOCTOR', 'STAFF']} />} />
+              <Route path="/patients/:id/insurance-policies" element={<PatientInsurancePoliciesPage roles={['STAFF', 'OWNER']} />} />
             </Route>
 
             <Route element={<ClinicsLayout roles={['DOCTOR', 'OWNER']} />} >
               <Route path="/clinics/owned" element={<ClinicsOwnedPage roles={['DOCTOR', 'OWNER']} />}/>
               <Route path="/clinics/invitations" element={<ClinicsInvitationsPage roles={['DOCTOR', 'OWNER']} />} />
-              <Route path="/clinics/services" element={<ClinicsServicesPage roles={['OWNER']} />} />
               <Route path="/clinics/requests" element={<ClinicsJoinRequestsPage roles={['OWNER']}/>} />
               <Route path="/clinics/registered" element={<ClinicsRegisteredPage roles={['DOCTOR']} />} />
               <Route path="/clinics/staffs/requests" element={<ClinicsStaffsRequestsPage roles={['OWNER']} />} />

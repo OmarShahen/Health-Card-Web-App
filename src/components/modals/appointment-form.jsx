@@ -15,6 +15,9 @@ import translations from '../../i18n'
 
 const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
 
+    const pagePath = window.location.pathname
+    const patientId = pagePath.split('/')[2]
+
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -22,32 +25,58 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
     const lang = useSelector(state => state.lang.lang)
 
     const [isSubmit, setIsSubmit] = useState(false)
-    const [isServicesLoading, setIsServicesLoading] = useState(true)
-    const [isDoctorsLoading, setIsDoctorsLoading] = useState(false)
+    const [isServicesLoading, setIsServicesLoading] = useState(user.roles.includes('STAFF') ? true : false)
+    const [isDoctorsLoading, setIsDoctorsLoading] = useState(user.roles.includes('STAFF') ? true : false)
+    const [isClinicsLoading, setIsClinicsLoading] = useState(user.roles.includes('DOCTOR') ? true : false)
 
     const [servicesList, setServicesList] = useState([])
     const [doctors, setDoctors] = useState([])
+    const [clinics, setClinics] = useState([])
 
-    const [patientName, setPatientName] = useState()
-    const [patientCountryCode, setPatientCountryCode] = useState(20)
-    const [patientPhone, setPatientPhone] = useState()
+    const [status, setStatus] = useState('UPCOMING')
     const [reservationDate, setReservationDate] = useState()
     const [reservationTime, setReservationTime] = useState()
     const [service, setService] = useState()
     const [doctor, setDoctor] = useState()
+    const [clinic, setClinic] = useState()
 
     const [isSendMail, setIsSendMail] = useState(true)
 
-    const [patientNameError, setPatientNameError] = useState()
-    const [patientCountryCodeError, setPatientCountryCodeError] = useState()
-    const [patientPhoneError, setPatientPhoneError] = useState()
+    const [statusError, setStatusError] = useState()
     const [reservationDateError, setReservationDateError] = useState()
     const [reservationTimeError, setReservationTimeError] = useState()
     const [serviceError, setServiceError] = useState()
     const [doctorError, setDoctorError] = useState()
+    const [clinicError, setClinicError] = useState()
+
+    useEffect(() => {
+
+        if(user.roles.includes('STAFF')) {
+            return
+        }
+
+        setIsClinicsLoading(true)
+        serverRequest.get(`/v1/clinics/doctors/${user._id}`)
+        .then(response => {
+            setIsClinicsLoading(false)
+            const data = response.data
+            setClinics(data.clinics)
+        })
+        .catch(error => {
+            setIsClinicsLoading(false)
+            console.error(error)
+            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+        })
+
+    }, [])
 
 
     useEffect(() => {
+
+        if(!user.roles.includes('STAFF')) {
+            return
+        }
+
         setIsServicesLoading(true)
         serverRequest.get(`/v1/services/clinics/${user.clinicId}`)
         .then(response => {
@@ -64,6 +93,11 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
 
 
     useEffect(() => {
+
+        if(!user.roles.includes('STAFF')) {
+            return
+        }
+
         setIsDoctorsLoading(true)
         serverRequest.get(`/v1/doctors/clinics/${user.clinicId}`)
         .then(response => {
@@ -81,20 +115,16 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-
-        if(!patientName) return setPatientNameError(translations[lang]['patient name is required'])
-
-        if(!patientCountryCode) return setPatientCountryCodeError(translations[lang]['patient country code is required'])
         
-        if(!patientPhone) return setPatientPhoneError(translations[lang]['patient phone is required'])
-
         if(!reservationDate) return setReservationDateError(translations[lang]['reservation date is required'])
 
         if(!reservationTime) return setReservationTimeError(translations[lang]['reservation time is required'])
 
-        if(!service) return setServiceError(translations[lang]['service is required'])
+        //if(!service && user.roles.includes('STAFF')) return setServiceError(translations[lang]['service is required'])
 
-        if(!doctor) return setDoctorError(translations[lang]['doctor is required'])
+        if(!doctor && user.roles.includes('STAFF')) return setDoctorError(translations[lang]['doctor is required'])
+
+        if(!clinic && user.roles.includes('DOCTOR')) return setClinicError(translations[lang]['clinic is required'])
 
         const [year, month, day] = reservationDate.split('-').map(Number)
         const [hours, minutes] = reservationTime.split(':').map(Number)
@@ -103,14 +133,12 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
         const bookDate = new Date(year, month - 1, day, hours, minutes, seconds)
 
         const appointment = {
-            clinicId: user.clinicId,
-            doctorId: doctor,
-            patientName,
-            patientCountryCode: 20,
-            patientPhone: Number.parseInt(patientPhone),
+            patientId,
+            clinicId: user.roles.includes('DOCTOR') ? clinic : user.clinicId,
+            doctorId: user.roles.includes('STAFF') ? doctor : user._id,
             reservationTime: bookDate,
-            status: 'UPCOMING',
-            serviceId: service,
+            status,
+            serviceId: user.roles.includes('STAFF') ? service : null,
             isSendMail
         }
 
@@ -120,7 +148,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
             setIsSubmit(false)
             const data = response.data
             toast.success(data.message, { position: 'top-right', duration: 3000 })
-            reload ? setReload(reload + 1) : navigate('/appointments')
+            //reload ? setReload(reload + 1) : navigate('/appointments')
             setShowFormModal(false)
         })
         .catch(error => {
@@ -131,17 +159,13 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
 
                 const errorResponse = error.response.data
 
-                if(errorResponse.field === 'patientName') return setPatientNameError(errorResponse.message)
-
-                if(errorResponse.field === 'patientCountryCode') return setPatientCountryCodeError(errorResponse.message)
-
-                if(errorResponse.field === 'patientPhone') return setPatientPhoneError(errorResponse.message)
-
                 if(errorResponse.field === 'reservationTime') return setReservationDateError(errorResponse.message)
 
                 if(errorResponse.field === 'serviceId') return setServiceError(errorResponse.message)
 
                 if(errorResponse.field === 'doctorId') return setDoctorError(errorResponse.message)
+
+                if(errorResponse.field === 'status') return setStatusError(errorResponse.message)
 
                 if(errorResponse.field === 'mode') {
                     setShowFormModal(false)
@@ -171,36 +195,12 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                 <h2>{translations[lang]['Create Appointment']}</h2>
             </div>
             {
-                isServicesLoading || isDoctorsLoading ?
+                isServicesLoading || isDoctorsLoading || isClinicsLoading  ?
                 <CircularLoading />
                 :
                 <div>
                 <div className="modal-body-container">
                     <form id="appointment-form" className="modal-form-container responsive-form body-text" onSubmit={handleSubmit}>
-                        <div className="form-input-container">
-                            <label>{translations[lang]['Patient Name']}</label>
-                            <input 
-                            type="text" 
-                            className="form-input" 
-                            placeholder=""
-                            value={patientName}
-                            onChange={e => setPatientName(e.target.value)}
-                            onClick={e => setPatientNameError()}
-                            />
-                            <span className="red">{patientNameError}</span>
-                        </div>
-                        <div className="form-input-container">
-                            <label>{translations[lang]['Patient Phone']}</label>
-                            <input 
-                            type="tel" 
-                            className="form-input" 
-                            placeholder=""
-                            value={patientPhone}
-                            onChange={e => setPatientPhone(e.target.value)}
-                            onClick={e => setPatientPhoneError()}
-                            />
-                            <span className="red">{patientPhoneError}</span>
-                        </div>
                         <div className="form-input-container">
                             <label>{translations[lang]['Reservation Date']}  {translations[lang]['(month/day/year)']}</label>
                             <input 
@@ -223,34 +223,76 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                             />
                             <span className="red">{reservationTimeError}</span>
                         </div>
+                        {
+                            user.roles.includes('STAFF') ?
+                            <div className="form-input-container">
+                                <label>{translations[lang]['Service']}</label>
+                                <select
+                                className="form-input"
+                                onChange={e => setService(e.target.value)}
+                                onClick={e => setServiceError()}
+                                >
+                                    <option selected disabled>{translations[lang]['Select Service']}</option>
+                                    {servicesList.map(service => <option value={service._id}>
+                                        {service.name} - {formatMoney(service.cost)}
+                                    </option>)}
+                                </select>
+                                <span className="red">{serviceError}</span>
+                            </div>
+                            :
+                            null
+                        }
                         <div className="form-input-container">
-                            <label>{translations[lang]['Service']}</label>
+                            <label>{translations[lang]['Status']}</label>
                             <select
                             className="form-input"
-                            onChange={e => setService(e.target.value)}
-                            onClick={e => setServiceError()}
+                            onClick={e => setStatusError()}
+                            onChange={e => setStatus(e.target.value)}
                             >
-                                <option selected disabled>{translations[lang]['Select Service']}</option>
-                                {servicesList.map(service => <option value={service._id}>
-                                    {service.name} - {formatMoney(service.cost)}
-                                </option>)}
+                                <option value={'UPCOMING'}>{translations[lang]['Upcoming']}</option>
+                                <option value={'WAITING'}>{translations[lang]['Waiting']}</option>
+                                <option value={'ACTIVE'}>{translations[lang]['Active']}</option>
                             </select>
-                            <span className="red">{serviceError}</span>
                         </div>
-                        <div className="form-input-container">
-                            <label>{translations[lang]['Doctor']}</label>
-                            <select
-                            className="form-input"
-                            onChange={e => setDoctor(e.target.value)}
-                            onClick={e => setDoctorError()}
-                            >
-                                <option selected disabled>{translations[lang]['Select Doctor']}</option>
-                                {doctors.map(doctor => <option value={doctor?.doctor?._id}>
-                                    {`${doctor?.doctor?.firstName} ${doctor?.doctor?.lastName}`}
-                                </option>)}
-                            </select>
-                            <span className="red">{doctorError}</span>
-                        </div>
+                        {
+                            user.roles.includes('STAFF') ?
+                            <div className="form-input-container">
+                                <label>{translations[lang]['Doctor']}</label>
+                                <select
+                                className="form-input"
+                                onChange={e => setDoctor(e.target.value)}
+                                onClick={e => setDoctorError()}
+                                >
+                                    <option selected disabled>{translations[lang]['Select Doctor']}</option>
+                                    {doctors.map(doctor => <option value={doctor?.doctor?._id}>
+                                        {`${doctor?.doctor?.firstName} ${doctor?.doctor?.lastName}`}
+                                    </option>)}
+                                </select>
+                                <span className="red">{doctorError}</span>
+                            </div>
+                            :
+                            null
+                        }
+                        {
+                            user.roles.includes('DOCTOR') ?
+                            <div className="form-input-container">
+                                <label>{translations[lang]['Clinic']}</label>
+                                <select
+                                className="form-input"
+                                onChange={e => setClinic(e.target.value)}
+                                onClick={e => setClinicError()}
+                                >
+                                    <option selected disabled>{translations[lang]['Select Clinic']}</option>
+                                    {clinics.map(clinic => <option value={clinic?.clinic?._id}>
+                                        {clinic?.clinic?.name}
+                                    </option>)}
+                                </select>
+                                <span className="red">{clinicError}</span>
+                            </div>
+                            :
+                            null
+                        }
+                        <div></div>
                         <div 
                         className="modal-send-email-container body-text"
                         onClick={e => setIsSendMail(!isSendMail)}

@@ -20,6 +20,7 @@ const PatientGeneticDiseasesForm = (props) => {
                     name="cancer" 
                     id="cancer"
                     onChange={e => props.setIsCancerFamily(true)}
+                    checked={props.isCancerFamily}
                     />
                     <label for="cancer">{translations[lang]['Yes']}</label>
                 </div>
@@ -29,6 +30,7 @@ const PatientGeneticDiseasesForm = (props) => {
                     name="cancer" 
                     id="cancer"
                     onChange={e => props.setIsCancerFamily(false)}
+                    checked={props.isCancerFamily === false}
                     />
                     <label for="cancer">{translations[lang]['No']}</label>
                 </div>
@@ -41,6 +43,7 @@ const PatientGeneticDiseasesForm = (props) => {
                     id="gene"
                     name="gene"
                     onChange={e => props.setIsGeneticIssue(true)}
+                    checked={props.isGeneticIssue}
                     />
                     <label for="gene">{translations[lang]['Yes']}</label>
                 </div>
@@ -50,6 +53,7 @@ const PatientGeneticDiseasesForm = (props) => {
                     id="gene"
                     name="gene"
                     onChange={e => props.setIsGeneticIssue(false)}
+                    checked={props.isGeneticIssue === false}
                     />
                     <label for="gene">{translations[lang]['No']}</label>
                 </div>

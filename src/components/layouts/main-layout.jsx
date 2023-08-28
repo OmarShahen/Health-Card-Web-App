@@ -22,7 +22,7 @@ const MainLayout = () => {
 
     const [hideSideBar, setHideSideBar] = useState(false)
 
-    const noSidebarStyle = { padding: window.innerWidth < 700 ? '0 .3rem' : '0 2rem' }
+    const noSidebarStyle = { padding: window.innerWidth < 700 ? '0 .3rem' : '0 7rem' }
 
     useEffect(() => {
 
@@ -49,14 +49,14 @@ const MainLayout = () => {
              { 
              sidebar.isShowSidebar ? 
              <SideBar 
-             width={'15vw'}
+             width={'18vw'}
              isHideText={false} 
              setHideSideBar={setHideSideBar}
              />
              : 
              null 
              }
-            <div className="page-main-container" style={sidebar.isShowSidebar ? { marginLeft: '16vw', paddingRight: '1rem' } : noSidebarStyle}>
+            <div className="page-main-container" style={sidebar.isShowSidebar ? { marginLeft: '19vw', paddingRight: '1rem' } : noSidebarStyle}>
                 <Outlet />
                 <FooterSection />
             </div>

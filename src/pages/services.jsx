@@ -31,10 +31,6 @@ const ServicesPage = ({ roles }) => {
     const lang = useSelector(state => state.lang.lang)
     const invoice = useSelector(state => state.invoice)
 
-    const todayDate = new Date()
-
-    const [statsQuery, setStatsQuery] = useState({ specific: format(todayDate, 'yyyy-MM-dd') })
-
     useEffect(() => {
         scroll(0,0)
         isRolesValid(user.roles, roles) ? null : navigate('/login')
@@ -45,7 +41,7 @@ const ServicesPage = ({ roles }) => {
 
     useEffect(() => {
         setIsLoading(true)
-        serverRequest.get(`/v1/services/clinics/${invoice.invoice.clinicId}`, { params: statsQuery })
+        serverRequest.get(`/v1/services/clinics/${user.clinicId}`)
         .then(response => {
             setIsLoading(false)
             setServices(response.data.services)
@@ -55,7 +51,7 @@ const ServicesPage = ({ roles }) => {
             setIsLoading(false)
             console.error(error)
         })
-    }, [reload, statsQuery])
+    }, [reload])
 
 
     return <div className="page-container">

@@ -17,7 +17,6 @@ import { isRolesValid } from '../utils/roles'
 import Card from '../components/cards/card'
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
 import { formatNumber } from '../utils/numbers'
-import FloatingButton from '../components/buttons/floating-button'
 import translations from '../i18n'
 
 
@@ -81,12 +80,7 @@ const EncountersPage = ({ roles }) => {
         <div className="padded-container">
             <PageHeader
             pageName={translations[lang]['Encounters']}
-            addBtnText={translations[lang]['Add Encounter']}
-            formURL={'/encounters/form'}
             />
-            <div className="show-mobile">
-                <FloatingButton url={'/encounters/form'} />
-            </div>
             <div className="cards-list-wrapper margin-bottom-1">
                 <Card 
                 icon={<NumbersOutlinedIcon />}

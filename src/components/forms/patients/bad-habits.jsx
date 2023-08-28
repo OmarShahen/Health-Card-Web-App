@@ -19,6 +19,7 @@ const PatientBadHabitsForm = (props) => {
                     type="radio" 
                     name="smoking-past" 
                     id="smoke-past"
+                    checked={props.isSmokingPast}
                     onChange={e => props.setIsSmokingPast(true)}
                     />
                     <label for="smoke-past">{translations[lang]['Yes']}</label>
@@ -28,6 +29,7 @@ const PatientBadHabitsForm = (props) => {
                     type="radio" 
                     name="smoking-past" 
                     id="smoke-past"
+                    checked={props.isSmokingPast === false}
                     onChange={e => props.setIsSmokingPast(false)}
                     />
                     <label for="smoke-past">{translations[lang]['No']}</label>
@@ -40,6 +42,7 @@ const PatientBadHabitsForm = (props) => {
                     type="radio" 
                     name="smoking-present" 
                     id="smoke-present"
+                    checked={props.isSmokingPresent}
                     onChange={e => props.setIsSmokingPresent(true)}
                     />
                     <label for="smoke-present">{translations[lang]['Yes']}</label>
@@ -49,6 +52,7 @@ const PatientBadHabitsForm = (props) => {
                     type="radio" 
                     name="smoking-present" 
                     id="smoke-present"
+                    checked={props.isSmokingPresent === false}
                     onChange={e => props.setIsSmokingPresent(false)}
                     />
                     <label for="smoke-present">{translations[lang]['No']}</label>
@@ -61,6 +65,7 @@ const PatientBadHabitsForm = (props) => {
                     type="radio" 
                     name="alcohol-past" 
                     id="alcohol-past"
+                    checked={props.isAlcoholPast}
                     onChange={e => props.setIsAlcoholPast(true)}
                     />
                     <label for="alcohol-past">{translations[lang]['Yes']}</label>
@@ -70,6 +75,7 @@ const PatientBadHabitsForm = (props) => {
                     type="radio" 
                     name="alcohol-past" 
                     id="alcohol-past"
+                    checked={props.isAlcoholPast === false}
                     onChange={e => props.setIsAlcoholPast(false)}
                     />
                     <label for="alcohol-past">{translations[lang]['No']}</label>
@@ -82,6 +88,7 @@ const PatientBadHabitsForm = (props) => {
                     type="radio" 
                     name="alcohol-present" 
                     id="alcohol-present"
+                    checked={props.isAlcoholPresent}
                     onChange={e => props.setIsAlcoholPresent(true)}
                     />
                     <label for="alcohol-present">{translations[lang]['Yes']}</label>
@@ -91,6 +98,7 @@ const PatientBadHabitsForm = (props) => {
                     type="radio" 
                     name="alcohol-present" 
                     id="alcohol-present"
+                    checked={props.isAlcoholPresent === false}
                     onChange={e => props.setIsAlcoholPresent(false)}
                     />
                     <label for="alcohol-present">{translations[lang]['No']}</label>

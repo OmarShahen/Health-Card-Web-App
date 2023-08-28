@@ -82,8 +82,7 @@ const PatientsPage = ({ roles }) => {
         null 
         }
         <div className="show-mobile">
-            { user.roles.includes('DOCTOR') ? <FloatingButton setIsShowForm={setShowPatientIdForm} /> : null }
-            { user.roles.includes('STAFF') ? <FloatingButton url={'/patients/form'} /> : null }
+            { user.roles.includes('STAFF') || user.roles.includes('DOCTOR') ? <FloatingButton url={'/patients/form'} /> : null }
         </div>
         {
             showPatientIdForm ?
@@ -120,7 +119,7 @@ const PatientsPage = ({ roles }) => {
                         </div>
                         <div 
                         className="btns-container subheader-text">
-                            { user.roles.includes('STAFF') ? <button onClick={e => navigate('/patients/form')}><AddOutlinedIcon /><strong>{translations[lang]['Create Patient']}</strong></button> : null }
+                            { user.roles.includes('STAFF') || user.roles.includes('DOCTOR') ? <button onClick={e => navigate('/patients/form')}><AddOutlinedIcon /><strong>{translations[lang]['Create Patient']}</strong></button> : null }
                             { user.roles.includes('DOCTOR') || user.roles.includes('STAFF') ? <button onClick={e => setShowPatientIdForm(true)}><AddOutlinedIcon /><strong>{translations[lang]['Add patient by card']}</strong></button> : null }
                         </div>
                         <div className="header-mobile-icons-container">

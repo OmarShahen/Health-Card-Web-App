@@ -16,6 +16,7 @@ import Card from '../../components/cards/card'
 import { formatNumber } from '../../utils/numbers'
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
 import translations from '../../i18n'
+import EncounterDeleteConfirmationModal from '../../components/modals/confirmation/encounter-delete-confirmation-modal'
 
 const PatientEncountersPage = ({ roles }) => {
 
@@ -27,6 +28,9 @@ const PatientEncountersPage = ({ roles }) => {
     const patient = useSelector(state => state.patient.patient)
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
+
+    const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
+    const [targetEncounter, setTargetEncounter] = useState()
 
     const [reload, setReload] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
@@ -55,10 +59,21 @@ const PatientEncountersPage = ({ roles }) => {
 
 
     return <div>
+        { 
+        isShowDeleteModal ? 
+        <EncounterDeleteConfirmationModal
+        encounter={targetEncounter}
+        reload={reload}
+        setReload={setReload} 
+        setIsShowModal={setIsShowDeleteModal}
+        /> 
+        : 
+        null 
+        }
         <PageHeader 
         pageName={translations[lang]["Encounters"]} 
-        addBtnText={translations[lang]['Add Encounter']} 
-        formURL={`/encounters/form?cardId=${patient.cardId}`}
+        addBtnText={translations[lang]['Add Encounter']}
+        formURL={`/patients/${patientId}/encounters/form`}
         isHideBackButton={true}
         isHideRefresh={true}
         />
@@ -71,7 +86,7 @@ const PatientEncountersPage = ({ roles }) => {
             />
         </div>
         <div className="show-mobile">
-            <FloatingButton url={`/encounters/form?cardId=${patient.cardId}`} />
+            <FloatingButton url={`/patients/${patientId}/encounters/form`} />
         </div>
         <div>
             <div>
@@ -95,10 +110,15 @@ const PatientEncountersPage = ({ roles }) => {
                         :
                         searchedEncounters.length !== 0 ?
                         <div className="cards-grey-container cards-3-list-wrapper">
-                            {searchedEncounters.map(encounter => <EncounterCard encounter={encounter} />)}
+                            {searchedEncounters
+                            .map(encounter => <EncounterCard 
+                            encounter={encounter}
+                            setTargetEncounter={setTargetEncounter}
+                            setIsShowDeleteModal={setIsShowDeleteModal}
+                            />)}
                         </div>
                         :
-                        <EmptySection url={`/encounters/form?cardId=${patient.cardId}`} />
+                        <EmptySection />
                     }
                 </div>
             </div>

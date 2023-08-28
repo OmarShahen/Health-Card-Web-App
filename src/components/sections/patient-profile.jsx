@@ -68,7 +68,7 @@ const PatientProfileSection = ({ patient }) => {
                         {translations[lang]['Card ID']}
                     </div>
                     <div>
-                        #{patient.cardId}
+                        {patient.cardId ? `#${patient.cardId}` : translations[lang]['Not Registered']}
                     </div>
                 </li>
                 <li>
@@ -84,7 +84,7 @@ const PatientProfileSection = ({ patient }) => {
                         {translations[lang]['City']}
                     </div>
                     <div>
-                        { patient.city ? capitalizeFirstLetter(patient.city) : translations[lang]['Not Registered'] }
+                        { patient.city ? translations[lang][capitalizeFirstLetter(patient.city)] : translations[lang]['Not Registered'] }
                     </div>
                 </li>
                 <li>
@@ -100,7 +100,7 @@ const PatientProfileSection = ({ patient }) => {
                         {translations[lang]['Social Status']}
                     </div>
                     <div>
-                        {patient.socialStatus ? capitalizeFirstLetter(patient.socialStatus) : translations[lang]['Not Registered']}
+                        {patient.socialStatus ? translations[lang][capitalizeFirstLetter(patient.socialStatus)] : translations[lang]['Not Registered']}
                     </div>
                 </li>
                 <li>
@@ -443,7 +443,7 @@ const PatientProfileSection = ({ patient }) => {
                     </div>
                 </li>
                 {
-                    patient?.healthHistory?.isHospitalConfined && patient.healthHistory.hospitalConfinedReason.length !== 0 ?
+                    patient.healthHistory.hospitalConfinedReason.length !== 0 ?
                     <li className="nested-list">
                         <div className="bold-text">
                             {translations[lang]['Confine Reason']}
@@ -469,7 +469,7 @@ const PatientProfileSection = ({ patient }) => {
                     </div>
                 </li>
                 {
-                    patient?.healthHistory?.isSurgicalOperations && patient?.healthHistory?.surgicalOperationsReason.length !== 0 ?
+                    patient?.healthHistory?.surgicalOperationsReason.length !== 0 ?
                     <li className="nested-list">
                         <div className="bold-text">
                             {translations[lang]['Surgeries']} 

@@ -251,7 +251,7 @@ select {
 }
 
 .right {
-  text-align: right;
+  text-align: right !important;
 }
 
 .flex-right {
@@ -974,6 +974,10 @@ background-color: #a8bbbf;
 
   .cards-2-list-wrapper, .cards-3-list-wrapper {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .cards-4-list-wrapper {
+    grid-template-columns: 1fr;
   }
 
   .appointments-categories-container {

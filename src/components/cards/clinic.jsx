@@ -51,11 +51,11 @@ const ClinicCard = ({ clinic, isOwner, setIsShowDeleteModal, setTargetClinic, is
             <ul>
                 <li>
                     <strong>{translations[lang]['Country']}</strong>
-                    <span>{capitalizeFirstLetter(country)}</span>
+                    <span>{translations[lang][capitalizeFirstLetter(country)]}</span>
                 </li>
                 <li>
                     <strong>{translations[lang]['City']}</strong>
-                    <span>{capitalizeFirstLetter(city)}</span>
+                    <span>{translations[lang][capitalizeFirstLetter(city)]}</span>
                 </li>
                 <li>
                     <strong>{translations[lang]['Mode']}</strong>
@@ -72,7 +72,7 @@ const ClinicCard = ({ clinic, isOwner, setIsShowDeleteModal, setTargetClinic, is
                     <li>
                         <strong>{translations[lang]['Renew Date']}</strong>
                         { clinic?.clinic?.activeUntilDate ? 
-                        <span>{format(new Date(clinic?.clinic?.activeUntilDate), lang === 'en' ? 'dd MMMM yyyy' : 'dd/MM/yyyy')}</span> 
+                        <span>{format(new Date(clinic?.clinic?.activeUntilDate), lang === 'en' ? 'dd MMMM yyyy' : 'MM/dd/yyyy')}</span> 
                         : 
                         translations[lang]['Not Registered'] }
                     </li>

@@ -62,19 +62,23 @@ class PrescriptionDocument extends React.Component {
                 <div className="print-doc-table-container">
                     <PrintDrugsTable rows={prescription.medicines} />
                 </div>
+                
                 <br />
                 {
                     prescription.notes && prescription.notes.length !== 0 ?
                     <div className="print-doc-note-container">
                         <strong>{translations[lang]['Notes:']}</strong>
-                        <div className="margin-top-1"></div>
-                        <ul>
-                            {prescription.notes.map(note => <li className="grey-text">{note}.</li>)}
+                        <ul className="margin-top-1">
+                            {prescription.notes.map(note => <li className="grey-text">-{note}.</li>)}
                         </ul>
                     </div>
                     :
                     null
                 }
+            </div>
+            { prescription.notes && prescription.notes.length !== 0 ? <br /> : null }
+            <div className="padding-top-bottom">
+                <strong>{translations[lang]['Signature:']} </strong>
             </div>
             <div className="application-signature-container">
                 <span>Powered by <strong>RA'AYA</strong></span>

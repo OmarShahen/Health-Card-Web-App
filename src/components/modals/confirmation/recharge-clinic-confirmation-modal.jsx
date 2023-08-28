@@ -10,6 +10,7 @@ import translations from '../../../i18n'
 const RechargeClinicConfirmationModal = () => {
 
     const lang = useSelector(state => state.lang.lang)
+    const user = useSelector(state => state.user.user)
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -38,13 +39,19 @@ const RechargeClinicConfirmationModal = () => {
                     }
                 </div>    
                 <div className="confirmation-modal-buttons-container">
-                    <button 
-                    className="button"
-                    onClick={e => {
-                        dispatch(setIsShowRenewModal(false))
-                        navigate('/billing/packages')
-                    }}
-                    >{translations[lang]['Renew']}</button>
+                    {
+                        user.roles.includes('OWNER') ?
+                        <button 
+                        className="button"
+                        onClick={e => {
+                            dispatch(setIsShowRenewModal(false))
+                            navigate('/billing/packages')
+                        }}
+                        >{translations[lang]['Renew']}</button>
+                        :
+                        null
+                    }
+                    
                     <button 
                     className="button abort-button"
                     onClick={e => dispatch(setIsShowRenewModal(false))}

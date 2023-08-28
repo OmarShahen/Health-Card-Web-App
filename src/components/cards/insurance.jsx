@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 import CardTransition from '../transitions/card-transitions'
 import translations from '../../i18n'
 import { useNavigate } from 'react-router-dom'
-
+import { format } from 'date-fns'
 
 const InsuranceCard = ({ 
     insurance, 
@@ -25,7 +25,7 @@ const InsuranceCard = ({
 
     const cardActionsList = [
         {
-            name: 'Delete Insurance',
+            name: translations[lang]['Delete Insurance'],
             icon: <DeleteOutlineOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -34,7 +34,7 @@ const InsuranceCard = ({
             }
         },
         {
-            name: 'Update Insurance',
+            name: translations[lang]['Update Insurance'],
             icon: <CreateOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -49,7 +49,6 @@ const InsuranceCard = ({
     <div onClick={e => navigate(`/insurance-companies/${insurance._id}/invoices`)} className="patient-card-container body-text">
         <div className="patient-card-header">
             <div className="patient-image-info-container">
-                <img src={`https://avatars.dicebear.com/api/initials/${insurance.name}.svg`} alt="patient-image" />
                 <div>
                     <strong>{insurance.name}</strong>
                     <span className="grey-text">{''}</span>
@@ -60,9 +59,27 @@ const InsuranceCard = ({
         <div className="patient-card-body">
             <ul>
                 <li>
-                    <strong>Clinic</strong>
+                    <strong>{translations[lang]['Clinic']}</strong>
                     <span>{insurance.clinic.name}</span>
                 </li>
+                {
+                    insurance.startDate ?
+                    <li>
+                        <strong>{translations[lang]['Start Date']}</strong>
+                        <span>{format(new Date(insurance.startDate), lang === 'en' ? 'd MMM yyyy' : 'MM/dd/yyyy')}</span>
+                    </li>
+                    :
+                    null
+                }
+                {
+                    insurance.endDate ?
+                    <li>
+                        <strong>{translations[lang]['End Date']}</strong>
+                        <span>{format(new Date(insurance.endDate), lang === 'en' ? 'd MMM yyyy' : 'MM/dd/yyyy')}</span>
+                    </li>
+                    :
+                    null
+                }
             </ul>
         </div>
         <CardDate 

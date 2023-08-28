@@ -22,7 +22,7 @@ const InsurancePolicyCard = ({
 
     const cardActionsList = [
         {
-            name: 'Delete Insurance Policy',
+            name: translations[lang]['Delete Insurance Policy'],
             icon: <DeleteOutlineOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -31,7 +31,7 @@ const InsurancePolicyCard = ({
             }
         },
         {
-            name: insurancePolicy.status === 'ACTIVE' ? 'Deactivate Insurance Policy' : 'Activate Insurance Policy',
+            name: insurancePolicy.status === 'ACTIVE' ? translations[lang]['Deactivate Insurance Policy'] : translations[lang]['Activate Insurance Policy'],
             icon: <CreateOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
@@ -56,36 +56,36 @@ const InsurancePolicyCard = ({
         <div className="patient-card-body">
             <ul>
                 <li>
-                    <strong>Clinic</strong>
+                    <strong>{translations[lang]['Clinic']}</strong>
                     <span>{insurancePolicy.clinic.name}</span>
                 </li>
                 <li>
-                    <strong>Company</strong>
-                    <span>{insurancePolicy.insuranceCompany.name}</span>
+                    <strong>{translations[lang]['Company']}</strong>
+                    <span>{insurancePolicy?.insuranceCompany?.name}</span>
                 </li>
                 <li>
-                    <strong>Coverage</strong>
+                    <strong>{translations[lang]['Coverage']}</strong>
                     <span>{insurancePolicy.coveragePercentage}%</span>
                 </li>
                 <li>
-                    <strong>Status</strong>
+                    <strong>{translations[lang]['Status']}</strong>
                     { 
                     insurancePolicy.status === 'ACTIVE' ? 
                     new Date(insurancePolicy.endDate) > new Date() ?
-                        <span className="status-btn done bold-text">{capitalizeFirstLetter(insurancePolicy.status)}</span> 
+                        <span className="status-btn done bold-text">{translations[lang][capitalizeFirstLetter(insurancePolicy.status)]}</span> 
                         :
-                        <span className="status-btn grey-text bold-text">{'Expired'}</span>
+                        <span className="status-btn grey-text bold-text">{translations[lang]['Expired']}</span>
                     : 
-                    <span className="status-btn declined bold-text">{capitalizeFirstLetter(insurancePolicy.status)}</span> 
+                    <span className="status-btn declined bold-text">{translations[lang][capitalizeFirstLetter(insurancePolicy.status)]}</span> 
                     }
                 </li>
                 <li>
-                    <strong>Start Date</strong>
-                    <span>{format(new Date(insurancePolicy.startDate), 'd MMM yyyy')}</span>
+                    <strong>{translations[lang]['Start Date']}</strong>
+                    <span>{format(new Date(insurancePolicy.startDate), lang === 'en' ? 'd MMM yyyy' : 'MM/dd/yyyy')}</span>
                 </li>
                 <li>
-                    <strong>End Date</strong>
-                    <span>{format(new Date(insurancePolicy.endDate), 'd MMM yyyy')}</span>
+                    <strong>{translations[lang]['End Date']}</strong>
+                    <span>{format(new Date(insurancePolicy.endDate), lang === 'en' ? 'd MMM yyyy' : 'MM/dd/yyyy')}</span>
                 </li>
             </ul>
         </div>

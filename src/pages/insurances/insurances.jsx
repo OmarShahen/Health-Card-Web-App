@@ -59,6 +59,10 @@ const InsurancesPage = ({ roles }) => {
 
         let endpointURL = `/v1/insurances/owners/${user._id}`
 
+        if(user.roles.includes('STAFF')) {
+            endpointURL = `/v1/insurances/clinics/${user.clinicId}`
+        }
+
         setIsLoading(true)
         serverRequest.get(endpointURL)
         .then(response => {
@@ -74,7 +78,7 @@ const InsurancesPage = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={'Insurance Companies'} />
+        <NavigationBar pageName={translations[lang]['Insurance Companies']} />
         { 
         isShowDeleteModal ? 
         <InsuranceDeleteConfirmationModal 
@@ -114,16 +118,16 @@ const InsurancesPage = ({ roles }) => {
         
         <div className="padded-container">
             <PageHeader 
-            pageName={"Insurance Companies"} 
+            pageName={translations[lang]["Insurance Companies"]} 
             setShowModalForm={setShowFormModal} 
-            addBtnText={'Add Insurance Company'}
+            addBtnText={translations[lang]['Add Insurance Company']}
             setReload={setReload}
             reload={reload}
             /> 
             <div className="cards-list-wrapper">
                 <Card 
                 icon={<NumbersOutlinedIcon />}
-                cardHeader={'Insurance Companies'}
+                cardHeader={translations[lang]['Insurance Companies']}
                 number={formatNumber(insurances.length)}
                 iconColor={'#5C60F5'}
                 />

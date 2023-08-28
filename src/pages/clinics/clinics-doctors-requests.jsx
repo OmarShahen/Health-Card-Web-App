@@ -5,7 +5,7 @@ import CircularLoading from '../../components/loadings/circular'
 import EmptySection from '../../components/sections/empty/empty'
 import SearchInput from '../../components/inputs/search'
 import { useNavigate } from 'react-router-dom'
-import { searchClinics } from '../../utils/searches/search-clinics'
+import { searchInvitations } from '../../utils/searches/search-invitations'
 import { serverRequest } from '../../components/API/request'
 import ClinicRequestCard from '../../components/cards/clinic-request'
 import PageHeader from '../../components/sections/page-header'
@@ -127,7 +127,7 @@ const ClinicsDoctorsRequestsPage = ({ roles }) => {
                         <SearchInput 
                         rows={requests} 
                         setRows={setSearchedRequests}
-                        searchRows={searchClinics}
+                        searchRows={searchInvitations}
                         isHideClinics={true}
                         />
                     </div>

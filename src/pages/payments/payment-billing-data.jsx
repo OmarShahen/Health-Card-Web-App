@@ -57,13 +57,13 @@ const PaymentsBillingDataPage = ({ roles }) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        if(!clinic) return setClinicError('Clinic is required')
+        if(!clinic) return setClinicError(translations[lang]['clinic is required'])
 
-        if(!firstName) return setFirstNameError('First name is required')
+        if(!firstName) return setFirstNameError(translations[lang]['first name is required'])
         
-        if(!lastName) return setLastNameError('Last name is required')
+        if(!lastName) return setLastNameError(translations[lang]['last name is required'])
 
-        if(!phone) return setPhoneError('Phone is required')
+        if(!phone) return setPhoneError(translations[lang]['phone is required'])
 
         try {
 
@@ -136,7 +136,7 @@ const PaymentsBillingDataPage = ({ roles }) => {
                             onChange={e => setClinic(e.target.value)}
                             onClick={e => setClinicError()}
                             >
-                                <option selected disabled>Select Clinic</option>
+                                <option selected disabled>{translations[lang]['Select Clinic']}</option>
                                 {clinics.map(clinic => <option value={clinic.clinic._id}>{clinic.clinic.name}</option>)}
                             </select>
                         </div>
@@ -194,7 +194,11 @@ const PaymentsBillingDataPage = ({ roles }) => {
                     </div>
                     <div></div>
                     <div className="margin-top-1 billing-data-buttons-container">
-                        <button className="normal-button action-color-bg white-text">{translations[lang]['Buy Plan']}</button>
+                        <button 
+                        className="normal-button action-color-bg white-text"
+                        >
+                            {translations[lang]['Buy Plan']}
+                        </button>
                     </div>
                 </form>
             </div>

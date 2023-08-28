@@ -36,6 +36,7 @@ const PatientSurgeryForm = (props) => {
                     name="hospital-confined" 
                     id="hospital-confined"
                     onChange={e => props.setIsHospitalConfined(true)}
+                    checked={props.isHospitalConfined}
                     />
                     <label for="hospital-confined">{translations[lang]['Yes']}</label>
                 </div>
@@ -45,6 +46,7 @@ const PatientSurgeryForm = (props) => {
                     name="hospital-confined" 
                     id="hospital-confined"
                     onChange={e => props.setIsHospitalConfined(false)}
+                    checked={props.isHospitalConfined === false}
                     />
                     <label for="hospital-confined">{translations[lang]['No']}</label>
                 </div>
@@ -78,6 +80,7 @@ const PatientSurgeryForm = (props) => {
                     name="surgey" 
                     id="surgey"
                     onChange={e => props.setIsSurgicalOperations(true)}
+                    checked={props.isSurgicalOperations}
                     />
                     <label for="surgey">{translations[lang]['Yes']}</label>
                 </div>
@@ -87,6 +90,7 @@ const PatientSurgeryForm = (props) => {
                     name="surgey" 
                     id="surgey"
                     onChange={e => props.setIsSurgicalOperations(false)}
+                    checked={props.isSurgicalOperations === false}
                     />
                     <label for="surgey">{translations[lang]['No']}</label>
                 </div>

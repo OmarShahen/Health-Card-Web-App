@@ -57,7 +57,7 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
             setIsSubmit(false)
             const data = response.data
             resetForm()
-            setReload(reload+1)
+            setReload ? setReload(reload+1) : null
             setShowModalForm(false)
             toast.success(data.message, { position: 'top-right', duration: 3000 })
         })
@@ -218,7 +218,7 @@ const EmergencyContactFormModal = ({ reload, setReload, setShowModalForm, mode, 
                     <button 
                     className="normal-button cancel-button"
                     onClick={e => {
-                        setMode('')
+                        setMode ? setMode('') : null
                         setShowModalForm(false)
                     }}
                     >{translations[lang]['Close']}</button>

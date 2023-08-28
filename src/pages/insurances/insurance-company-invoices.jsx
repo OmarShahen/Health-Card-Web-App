@@ -143,7 +143,7 @@ const InsuranceInvoicesPage = ({ roles }) => {
         
         <div className="padded-container">
             <PageHeader
-            pageName={'Invoices'}
+            pageName={translations[lang]['Invoices']}
             isHideBackButton={true} 
             />
             <FiltersSection 

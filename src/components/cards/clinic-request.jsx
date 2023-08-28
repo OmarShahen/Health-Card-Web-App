@@ -140,11 +140,11 @@ const ClinicRequestCard = ({
                 }
                 <li>
                     <strong>{translations[lang]['Country']}</strong>
-                    <span>{capitalizeFirstLetter(request.clinic.country)}</span>
+                    <span>{translations[lang][capitalizeFirstLetter(request.clinic.country)]}</span>
                 </li>
                 <li>
                     <strong>{translations[lang]['City']}</strong>
-                    <span>{capitalizeFirstLetter(request.clinic.city)}</span>
+                    <span>{translations[lang][capitalizeFirstLetter(request.clinic.city)]}</span>
                 </li>
                 <li>
                     <strong>{translations[lang]['Role']}</strong>

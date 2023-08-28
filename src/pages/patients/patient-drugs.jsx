@@ -58,8 +58,6 @@ const PatientDrugsPage = ({ roles }) => {
     return <div>
         <PageHeader 
         pageName={translations[lang]["Drugs"]} 
-        addBtnText={translations[lang]['Add Prescription']} 
-        formURL={`/prescriptions/form?cardId=${patient.cardId}`}
         isHideBackButton={true}
         isHideRefresh={true}
         />

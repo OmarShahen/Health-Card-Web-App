@@ -208,8 +208,17 @@ const InvoicePage = ({ roles }) => {
                                 {
                                     invoice?.insuranceCoveragePercentage ?
                                     <li>
-                                        <span>{`Insurance Coverage (${invoice.insuranceCoveragePercentage}%)`}</span>
-                                        <span>{formatMoney(insuranceCoverageAmount)}</span>
+                                        <span>{`${translations[lang]['Insurance Coverage']} (${invoice.insuranceCoveragePercentage}%)`}</span>
+                                        <span>{formatMoney(totalAmount - insuranceCoverageAmount)}</span>
+                                    </li>
+                                    :
+                                    null
+                                }
+                                {
+                                    invoice?.insuranceCoveragePercentage ?
+                                    <li>
+                                        <span className="bold-text">{translations[lang]['Receive Amount']}</span>
+                                        <span className="bold-text">{formatMoney(totalAmountRemaining)}</span>
                                     </li>
                                     :
                                     null
@@ -218,15 +227,6 @@ const InvoicePage = ({ roles }) => {
                                     <span>{translations[lang]['Amount Paid']}</span>
                                     <span>{formatMoney(invoice.paid)}</span>
                                 </li>
-                                {
-                                    invoice?.insuranceCoveragePercentage ?
-                                    <li>
-                                        <span className="bold-text">Receive Amount</span>
-                                        <span className="bold-text">{formatMoney(totalAmountRemaining)}</span>
-                                    </li>
-                                    :
-                                    null
-                                }
                                 <li>
                                     <span>{translations[lang]['Amount Remaining']}</span>
                                     <span>{
@@ -259,9 +259,9 @@ const InvoicePage = ({ roles }) => {
                                     :
                                     <span>{translations[lang]['Date']}, {
                                         invoice.invoiceDate ? 
-                                        format(new Date(invoice.invoiceDate), lang === 'ar' ? 'MM/dd/yyyy' : 'MMM d yyyy hh:MM a') 
+                                        format(new Date(invoice.invoiceDate), lang === 'ar' ? 'MM/dd/yyyy' : 'MMM d yyyy') 
                                         : 
-                                        format(new Date(invoice.createdAt), lang === 'ar' ? 'MM/dd/yyyy' : 'MMM d yyyy hh:MM a')
+                                        format(new Date(invoice.createdAt), lang === 'ar' ? 'MM/dd/yyyy' : 'MMM d yyyy')
                                         }
                                     </span>
                                 }
@@ -289,7 +289,7 @@ const InvoicePage = ({ roles }) => {
                                     {
                                         invoice?.insuranceCompany ?
                                         <li>
-                                            <span>{'Insurance Company'}</span>
+                                            <span>{translations[lang]['Insurance Company']}</span>
                                             <input 
                                             className="form-input" 
                                             type="text" 
@@ -315,9 +315,9 @@ const InvoicePage = ({ roles }) => {
                                         className="form-input" 
                                         type="text"
                                         value={ invoice.invoiceDate ? 
-                                            format(new Date(invoice.invoiceDate), lang === 'ar' ? 'MM/dd/yyyy' : 'MMM d yyyy hh:MM a') 
+                                            format(new Date(invoice.invoiceDate), lang === 'ar' ? 'MM/dd/yyyy' : 'MMM d yyyy') 
                                             : 
-                                            format(new Date(invoice.createdAt), lang === 'ar' ? 'MM/dd/yyyy' : 'MMM d yyyy hh:MM a')
+                                            format(new Date(invoice.createdAt), lang === 'ar' ? 'MM/dd/yyyy' : 'MMM d yyyy')
                                             }
                                         disabled
                                         />
@@ -329,7 +329,7 @@ const InvoicePage = ({ roles }) => {
                                             <input 
                                             className="form-input" 
                                             type="text"
-                                            value={format(new Date(invoice.dueDate), 'MMM d yyyy hh:MM a')}
+                                            value={format(new Date(invoice.dueDate), 'MMM d yyyy')}
                                             disabled
                                             />
                                         </li>

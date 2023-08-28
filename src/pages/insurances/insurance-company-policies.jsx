@@ -16,7 +16,7 @@ import Card from '../../components/cards/card'
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
 import translations from '../../i18n'
 import InsurancePolicyCard from '../../components/cards/insurance-policy';
-import InsurancePolicyFormModal from '../../components/modals/insurance-policy';
+import InsurancePolicyFormModal from '../../components/modals/insurance-policy-form';
 import InsurancePolicyDeleteConfirmationModal from '../../components/modals/confirmation/insurance-policy-confirmation-modal';
 import InsurancePolicyStatusConfirmationModal from '../../components/modals/confirmation/insurance-policy-update-confirmation-modal';
 
@@ -99,7 +99,7 @@ const InsuranceCompanyPoliciesPage = ({ roles }) => {
         
         <div className="padded-container">
             <PageHeader 
-            pageName={"Policies"} 
+            pageName={translations[lang]["Insurance Policies"]} 
             setShowModalForm={setShowFormModal} 
             setReload={setReload}
             reload={reload}

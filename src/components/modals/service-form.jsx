@@ -175,7 +175,7 @@ const ServiceFormModal = ({
             <div className="modal-header">
                 <h2>{ service ? translations[lang]['Update Service'] : translations[lang]['Create Service']}</h2>
                 <span className="hover" onClick={e => { 
-                    setService()
+                    setService ? setService() : null
                     setShowFormModal(false)
                 }}>
                     <CloseIcon />

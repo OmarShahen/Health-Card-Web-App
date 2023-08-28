@@ -16,6 +16,9 @@ import translations from '../i18n';
 
 const PrescriptionsFormPage = ({ roles }) => {
 
+    const pagePath = window.location.pathname
+    const patientId = pagePath.split('/')[2]
+
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -26,16 +29,13 @@ const PrescriptionsFormPage = ({ roles }) => {
 
     const [showFormModal, setShowFormModal] = useState(false)
 
-    const [searchParams, setSearchParams] = useSearchParams()
-    const cardId = searchParams.get('cardId')
-
     const [clinics, setClinics] = useState([])
-    const [patientCardId, setPatientCardId] = useState(cardId ? cardId : '')
     const [clinic, setClinic] = useState()
     const [notes, setNotes] = useState([])
     const [drugs, setDrugs] = useState([])
 
-    const [patientCardIdError, setPatientCardIdError] = useState()
+    const [newNote, setNewNote] = useState()
+
     const [clinicError, setClinicError] = useState()
     const [notesError, setNotesError] = useState()
     const [drugsError, setDrugsError] = useState()
@@ -63,26 +63,25 @@ const PrescriptionsFormPage = ({ roles }) => {
 
         if(e.key !== 'Enter') return 
 
-        const value = e.target.value
+        if(!newNote) return setNotesError('no note is added')
+
+        const value = newNote
 
         if(!value.trim()) return
 
         setNotes([...notes, value])
 
-        e.target.value = ''
+        setNewNote('')
     }
 
     const handlePrescription = () => {
         
-        if(!patientCardId) return setPatientCardIdError(translations[lang]['patient card ID is required']) 
-
-        if(isNaN(Number.parseInt(patientCardId))) return setPatientCardIdError(translations[lang]['patient card ID must be a number'])
-
         if(!clinic) return setClinicError(translations[lang]['clinic is required'])
 
         if(drugs.length === 0) return setDrugsError(translations[lang]['no drug is registered in the prescription'])
 
         const medicalData = {
+            patientId,
             doctorId: user._id,
             clinicId: clinic,
             notes,
@@ -90,13 +89,12 @@ const PrescriptionsFormPage = ({ roles }) => {
         }
 
         setIsSubmit(true)
-        serverRequest.post(`v1/prescriptions/cardsId/${patientCardId}`, medicalData)
+        serverRequest.post(`v1/prescriptions`, medicalData)
         .then(response => {
             setIsSubmit(false)
             const data = response.data
-            const patientId = data.prescription.patientId
             toast.success(data.message, { duration: 5000, position: 'top-right' })
-            navigate(`/prescriptions`)
+            navigate(`/prescriptions/${data.prescription._id}/view`)
         })
         .catch(error => {
             setIsSubmit(false)
@@ -140,35 +138,6 @@ const PrescriptionsFormPage = ({ roles }) => {
             <div className="cards-grey-container body-text">
                 <div className="prescription-form-wrapper left box-shadow-line">
                     <div className="cards-2-list-wrapper margin-top-1">
-                        <div className="prescription-form-notes-container">
-                            <strong>{translations[lang]['Patient Card ID']}</strong>
-                            <div className="form-input-container">
-                                <input 
-                                type="text" 
-                                className="form-input" 
-                                placeholder={translations[lang]["Patient Card ID"]}
-                                onClick={e => setPatientCardIdError()}
-                                onChange={e => setPatientCardId(e.target.value)}
-                                value={cardId}
-                                />
-                                <span className="red">{patientCardIdError}</span>
-                            </div>
-                            <span className="red">{notesError}</span>
-                            <div className="symptoms-diagnosis-tags-container">
-                                <div className="drug-instruction-list-container">
-                                    {notes.map((note, index) =>                 
-                                    <span 
-                                    className="status-btn pending"
-                                    >
-                                        {note}
-                                        <span onClick={e => setNotes(notes.filter((savedNote, savedIndex) => savedIndex !== index))}>
-                                            <CancelIcon />
-                                        </span>
-                                    </span>) 
-                                    }
-                                </div>
-                            </div>
-                        </div>  
                         <div className="prescription-form-notes-container">
                             <div className="form-input-container">
                                 <strong>{translations[lang]['Clinic']}</strong>
@@ -220,9 +189,25 @@ const PrescriptionsFormPage = ({ roles }) => {
                                 className="form-input" 
                                 placeholder={translations[lang]["notes"]}
                                 onKeyDown={handleNotesKeyDown} 
+                                value={newNote}
+                                onClick={e => setNotesError()}
+                                onChange={e => setNewNote(e.target.value)}
                                 />
                             </div>
                             <span className="red">{notesError}</span>
+                            <div className="padding-top-bottom right">
+                                <button 
+                                className="normal-button action-color-bg white-text show-mobile"
+                                onClick={e => {
+                                    if(!newNote) return setNotesError('no note is added')
+                                    if(!newNote.trim()) return
+                                    setNotes([...notes, newNote])
+                                    setNewNote('')
+                                }}
+                                >
+                                    Add
+                                </button>
+                            </div>
                             <div className="symptoms-diagnosis-tags-container">
                                 <div className="drug-instruction-list-container">
                                     {notes.map((note, index) =>                 

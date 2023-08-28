@@ -12,16 +12,17 @@ const InsurancePolicyFormModal = ({ setShowFormModal, reload, setReload, isUpdat
     const lang = useSelector(state => state.lang.lang)
     const user = useSelector(state => state.user.user)
 
+    const pagePath = window.location.pathname
+    const patientId = pagePath.split('/')[2]
+
     const [isSubmit, setIsSubmit] = useState(false)
     const [companies, setCompanies] = useState([])
 
-    const [cardId, setCardId] = useState(isUpdate ? insurancePolicy?.patient?.cardId : '')
     const [companyName, setCompanyName] = useState(isUpdate ? insurancePolicy?.insuranceCompany?.name : '')
     const [coveragePercentage, setCoveragePercentage] = useState(isUpdate ? insurancePolicy.coveragePercentage : '')
     const [startDate, setStartDate] = useState(isUpdate ? format(new Date(insurancePolicy.startDate), 'mm/dd/yyyy') : '')
     const [endDate, setEndDate] = useState(isUpdate ? format(new Date(insurancePolicy.endDate), 'mm/dd/yyyy') : '')
 
-    const [cardIdError, setCardIdError] = useState()
     const [companyNameError, setCompanyNameError] = useState()
     const [coveragePercentageError, setCoveragePercentageError] = useState()
     const [startDateError, setStartDateError] = useState()
@@ -48,19 +49,17 @@ const InsurancePolicyFormModal = ({ setShowFormModal, reload, setReload, isUpdat
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if(!cardId) return setCardIdError('card ID is required')
+        if(!companyName) return setCompanyNameError(translations[lang]['company name is required'])   
 
-        if(!companyName) return setCompanyNameError('company name is required')   
+        if(!coveragePercentage) return setCoveragePercentageError(translations[lang]['coverage percentage is required']) 
 
-        if(!coveragePercentage) return setCoveragePercentageError('coverage percentage is required') 
+        if(!startDate) return setStartDateError(translations[lang]['start date is required']) 
 
-        if(!startDate) return setStartDateError('start date is required') 
-
-        if(!endDate) return setEndDateError('end date is required') 
+        if(!endDate) return setEndDateError(translations[lang]['end date is required']) 
 
         const insurancePolicyData = {
+            patientId,
             clinicId: user.clinicId,
-            cardId: Number.parseInt(cardId),
             insuranceCompanyId: companyName,
             coveragePercentage: Number.parseFloat(coveragePercentage),
             startDate,
@@ -86,8 +85,6 @@ const InsurancePolicyFormModal = ({ setShowFormModal, reload, setReload, isUpdat
 
                 const errorResponse = error.response.data
 
-                if(errorResponse.field === 'cardId') return setCardIdError(errorResponse.message)
-
                 if(errorResponse.field === 'insuranceCompanyId') return setCompanyNameError(errorResponse.message)
 
                 if(errorResponse.field === 'coveragePercentage') return setCoveragePercentageError(errorResponse.message)
@@ -107,7 +104,7 @@ const InsurancePolicyFormModal = ({ setShowFormModal, reload, setReload, isUpdat
     return <div className="modal">
         <div className="modal-container body-text">
             <div className="modal-header">
-                <h2>{'Add Insurance Policy'}</h2>
+                <h2>{translations[lang]['Add Insurance Policy']}</h2>
             </div>  
                 <div>
                 <div className="modal-body-container">
@@ -117,30 +114,19 @@ const InsurancePolicyFormModal = ({ setShowFormModal, reload, setReload, isUpdat
                     onSubmit={handleSubmit}
                     >
                         <div className="form-input-container">
-                            <label>Patient Card ID</label>
-                            <input
-                            type="number"
-                            className="form-input"
-                            onClick={e => setCardIdError()}
-                            onChange={e => setCardId(e.target.value)}
-                            value={cardId}
-                            />
-                            <span className="red">{cardIdError}</span>
-                        </div>
-                        <div className="form-input-container">
-                            <label>Insurance Company</label>
+                            <label>{translations[lang]['Insurance Company']}</label>
                             <select
                             className="form-input"
                             onClick={e => setCompanyNameError()}
                             onChange={e => setCompanyName(e.target.value)}
                             >
-                            <option selected disabled>Select Insurance Company</option>
+                            <option selected disabled>{translations[lang]['Select Insurance Company']}</option>
                             {companies.map(company => <option value={company._id}>{company.name}</option>)}
                             </select>
                             <span className="red">{companyNameError}</span>
                         </div> 
                         <div className="form-input-container">
-                            <label>Coverage Percentage</label>
+                            <label>{translations[lang]['Coverage Percentage']}</label>
                             <input
                             type="number"
                             className="form-input"
@@ -151,7 +137,7 @@ const InsurancePolicyFormModal = ({ setShowFormModal, reload, setReload, isUpdat
                             <span className="red">{coveragePercentageError}</span>
                         </div>
                         <div className="form-input-container">
-                            <label>Start Date</label>
+                            <label>{translations[lang]['Start Date']}</label>
                             <input
                             type="date"
                             className="form-input"
@@ -162,7 +148,7 @@ const InsurancePolicyFormModal = ({ setShowFormModal, reload, setReload, isUpdat
                             <span className="red">{startDateError}</span>
                         </div>
                         <div className="form-input-container">
-                            <label>End Date</label>
+                            <label>{translations[lang]['End Date']}</label>
                             <input
                             type="date"
                             className="form-input"

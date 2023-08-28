@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast'
 import { TailSpin } from 'react-loader-spinner'
 import translations from '../../i18n'
 import { useSelector } from 'react-redux'
+import { format } from 'date-fns'
 
 const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, setIsUpdate, insurance }) => {
 
@@ -16,9 +17,13 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
 
     const [name, setName] = useState(isUpdate ? insurance.name : '')
     const [clinic, setClinic] = useState()
+    const [startDate, setStartDate] = useState(isUpdate ? insurance.startDate && format(new Date(insurance.startDate), 'yyyy-MM-dd') : '')
+    const [endDate, setEndDate] = useState(isUpdate ? insurance.endDate && format(new Date(insurance.endDate), 'yyyy-MM-dd') : '')
 
     const [nameError, setNameError] = useState()
     const [clinicError, setClinicError] = useState()
+    const [startDateError, setStartDateError] = useState()
+    const [endDateError, setEndDateError] = useState()
 
 
     useEffect(() => {
@@ -41,11 +46,15 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if(!name) return setNameError('name is required')
+        if(!name) return setNameError(translations[lang]['name is required'])
 
-        if(!clinic) return setClinicError('clinic is required')   
+        if(!clinic) return setClinicError(translations[lang]['clinic is required']) 
+        
+        if(!startDate) return setStartDateError(translations[lang]['start date is required'])
 
-        const insuranceData = { name, clinicId: clinic }
+        if(!endDate) return setEndDateError(translations[lang]['end date is required'])
+
+        const insuranceData = { name, clinicId: clinic, startDate, endDate }
 
         setIsSubmit(true)
         serverRequest.post(`/v1/insurances`, insuranceData)
@@ -66,6 +75,10 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
 
                 if(errorResponse.field === 'name') return setNameError(errorResponse.message)
 
+                if(errorResponse.field === 'startDate') return setStartDateError(errorResponse.message)
+
+                if(errorResponse.field === 'endDate') return setEndDateError(errorResponse.message)
+
                 toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
 
             } catch(error) {}
@@ -76,9 +89,13 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
     const handleUpdate = (e) => {
         e.preventDefault()
 
-        if(!name) return setNameError('name is required')        
+        if(!name) return setNameError(translations[lang]['name is required'])  
+        
+        if(!startDate) return setStartDateError(translations[lang]['start date is required'])
 
-        const insuranceData = { name }
+        if(!endDate) return setEndDateError(translations[lang]['end date is required'])
+
+        const insuranceData = { name, startDate, endDate }
 
         setIsSubmit(true)
         serverRequest.put(`/v1/insurances/${insurance._id}`, insuranceData)
@@ -100,6 +117,10 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
 
                 if(errorResponse.field === 'name') return setNameError(errorResponse.message)
 
+                if(errorResponse.field === 'startDate') return setStartDateError(errorResponse.message)
+
+                if(errorResponse.field === 'endDate') return setEndDateError(errorResponse.message)
+
                 toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
 
             } catch(error) {}
@@ -110,7 +131,7 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
     return <div className="modal">
         <div className="modal-container body-text">
             <div className="modal-header">
-                <h2>{isUpdate ? 'Update Insurance Company' : 'Add Insurance Company'}</h2>
+                <h2>{isUpdate ? translations[lang]['Update Insurance Company'] : translations[lang]['Add Insurance Company']}</h2>
             </div>  
                 <div>
                 <div className="modal-body-container">
@@ -120,7 +141,7 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
                     onSubmit={isUpdate ? handleUpdate : handleSubmit}
                     >
                         <div className="form-input-container">
-                            <label>Name</label>
+                            <label>{translations[lang]['Name']}</label>
                             <input 
                             type="text" 
                             className="form-input" 
@@ -136,18 +157,46 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
                             null
                             :
                             <div className="form-input-container">
-                                <label>Select Clinic</label>
+                                <label>{translations[lang]['Select Clinic']}</label>
                                 <select
                                 className="form-input"
                                 onClick={e => setClinicError()}
                                 onChange={e => setClinic(e.target.value)}
                                 >
-                                    <option disabled selected>Select Clinic</option>
+                                    <option disabled selected>{translations[lang]['Select Clinic']}</option>
                                     {clinics.map(clinic => <option value={clinic.clinic._id}>{clinic.clinic.name}</option>)}
                                 </select>
                                 <span className="red">{clinicError}</span>
                             </div> 
                         }
+                        <div className="form-input-container">
+                            <label>{translations[lang]['Start Date']}</label>
+                            <input 
+                            type="text" 
+                            onFocus={e => e.target.type = 'date'}
+                            onBlur={e => e.target.type = 'text'}
+                            className="form-input" 
+                            placeholder=""
+                            value={startDate}
+                            onChange={e => setStartDate(e.target.value)}
+                            onClick={e => setStartDateError()}
+                            />
+                            <span className="red">{startDateError}</span>
+                        </div> 
+                        <div className="form-input-container">
+                            <label>{translations[lang]['End Date']}</label>
+                            <input 
+                            type="text"
+                            onFocus={e => e.target.type = 'date'}
+                            onBlur={e => e.target.type = 'text'}
+                            className="form-input" 
+                            placeholder=""
+                            value={endDate}
+                            onChange={e => setEndDate(e.target.value)}
+                            onClick={e => setEndDateError()}
+                            />
+                            <span className="red">{endDateError}</span>
+                        </div> 
                                        
                     </form>
                 </div>
@@ -173,6 +222,7 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
                                 onClick={e => {
                                     e.preventDefault()
                                     setShowFormModal(false)
+                                    setIsUpdate(false)
                                 }}
                                 >{translations[lang]['Close']}</button>
                             </div>

@@ -1,22 +1,23 @@
 import { useState, useEffect } from 'react'
-import '../prescriptions.css'
-import { serverRequest } from "../../components/API/request"
+import './prescriptions.css'
+import { serverRequest } from "../components/API/request"
 import { useSelector } from 'react-redux'
-import CircularLoading from '../../components/loadings/circular'
-import EmptySection from '../../components/sections/empty/empty'
-import SearchInput from '../../components/inputs/search'
+import CircularLoading from '../components/loadings/circular'
+import EmptySection from '../components/sections/empty/empty'
+import SearchInput from '../components/inputs/search'
 import { useNavigate } from 'react-router-dom'
-import { searchServices } from '../../utils/searches/search-services'
-import PageHeader from '../../components/sections/page-header'
-import ServiceCard from '../../components/cards/service'
-import ServiceFormModal from '../../components/modals/service-form'
-import ServiceDeleteConfirmationModal from '../../components/modals/confirmation/service-delete-confirmation-modal'
-import { isRolesValid } from '../../utils/roles'
-import Card from '../../components/cards/card'
-import { formatNumber } from '../../utils/numbers'
+import { searchServices } from '../utils/searches/search-services'
+import PageHeader from '../components/sections/page-header'
+import ServiceCard from '../components/cards/service'
+import ServiceFormModal from '../components/modals/service-form'
+import ServiceDeleteConfirmationModal from '../components/modals/confirmation/service-delete-confirmation-modal'
+import { isRolesValid } from '../utils/roles'
+import Card from '../components/cards/card'
+import { formatNumber } from '../utils/numbers'
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
-import FloatingButton from '../../components/buttons/floating-button'
-import translations from '../../i18n'
+import FloatingButton from '../components/buttons/floating-button'
+import translations from '../i18n'
+import NavigationBar from '../components/navigation/navigation-bar'
 
 const ClinicsServicesPage = ({ roles }) => {
 
@@ -41,7 +42,14 @@ const ClinicsServicesPage = ({ roles }) => {
     }, [])
 
     useEffect(() => {
-        serverRequest.get(`/v1/clinics-owners/owners/${user._id}`)
+
+        if(user.roles.includes('STAFF')) {
+            return
+        }
+
+        let endpointURL = `/v1/clinics-owners/owners/${user._id}`
+
+        serverRequest.get(endpointURL)
         .then(response => {
             const data = response.data
             setClinics(data.clinics)
@@ -53,8 +61,15 @@ const ClinicsServicesPage = ({ roles }) => {
     }, [])
 
     useEffect(() => {
+
+        let endpointURL = `/v1/services/owners/${user._id}`
+
+        if(user.roles.includes('STAFF')) {
+            endpointURL = `/v1/services/clinics/${user.clinicId}`
+        }
+
         setIsLoading(true)
-        serverRequest.get(`/v1/services/owners/${user._id}`)
+        serverRequest.get(endpointURL)
         .then(response => {
             setIsLoading(false)
             setServices(response.data.services)
@@ -68,11 +83,12 @@ const ClinicsServicesPage = ({ roles }) => {
 
 
     return <div className="page-container">
+        <NavigationBar pageName={translations[lang]['Services']} />
+
         <PageHeader 
         pageName={translations[lang]["Services"]} 
-        addBtnText={translations[lang]['Add Service']} 
-        isHideBackButton={true}
-        setShow
+        addBtnText={user.roles.includes('OWNER') ? translations[lang]['Add Service'] : null} 
+        isHideBackButton={false}
         setShowModalForm={setIsShowForm} 
         />
         {
@@ -122,7 +138,7 @@ const ClinicsServicesPage = ({ roles }) => {
                         rows={services} 
                         setRows={setSearchedServices}
                         searchRows={searchServices}
-                        isHideClinics={false}
+                        isHideClinics={user.roles.includes('STAFF') ? true : false}
                         isCustomClincis={true}
                         customClinics={clinics}
                         />

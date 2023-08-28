@@ -88,14 +88,9 @@ const PrescriptionsPage = ({ roles }) => {
         <div className="padded-container">
             <PageHeader 
             pageName={translations[lang]['Prescriptions']} 
-            addBtnText={user.roles.includes('STAFF') ? null : translations[lang]["Add Prescription"]}
-            formURL={"/prescriptions/form"}
             reload={reload}
             setReload={setReload}
             />
-            <div className="show-mobile">
-                <FloatingButton url={'/prescriptions/form'} />
-            </div>
             <div className="cards-list-wrapper margin-bottom-1">
                 <Card 
                 icon={<NumbersOutlinedIcon />}

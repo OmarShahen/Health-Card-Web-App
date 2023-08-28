@@ -27,7 +27,7 @@ const CartBanner = () => {
     return (
         <div className="cart-banner-container">
             <div className="cart-banner-wrapper">
-                <div className="cart-banner-main" onClick={e => navigate('/invoices/checkout')}>
+                <div className="cart-banner-main" onClick={e => navigate(`/invoices/checkout`)}>
                     <span>{formatNumber(invoice.services.length)}</span>
                     <p className="cart-banner-action">{translations[lang]['View Invoice']}</p>
                 </div>

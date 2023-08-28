@@ -3,6 +3,7 @@ import { getAge } from '../../utils/age-calculator'
 import CardDate from './components/date'
 import CardActions from './components/actions'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
 import { useNavigate } from 'react-router-dom'
 import CardTransition from '../transitions/card-transitions'
 import { capitalizeFirstLetter } from '../../utils/formatString'
@@ -28,6 +29,14 @@ const PatientCard = ({ patient, reload, setReload, setTargetPatient, setIsShowDe
                 setIsShowDeleteModal(true)
                 deletePatient(patient._id)
             }
+        },
+        {
+            name: translations[lang]['Update Patient'],
+            icon: <CreateOutlinedIcon />,
+            onAction: (e) => {
+                e.stopPropagation()
+                navigate(`/patients/${patient?.patient?._id}/form?mode=UPDATE`)
+            }
         }
      ]
 
@@ -38,7 +47,7 @@ const PatientCard = ({ patient, reload, setReload, setTargetPatient, setIsShowDe
                     <img src={`https://avatars.dicebear.com/api/initials/${patientName}.svg`} alt="patient-image" />
                     <div>
                         <strong>{patientName}</strong>
-                        <span className="grey-text">#{patient.patient.cardId}</span>
+                        <span className="grey-text">#{patient?.patient?.patientId}</span>
                     </div>
                 </div>
                 <CardActions actions={cardActionsList} />
@@ -60,7 +69,7 @@ const PatientCard = ({ patient, reload, setReload, setTargetPatient, setIsShowDe
                     </li>
                     <li>
                         <strong>{translations[lang]['Card ID']}</strong>
-                        <span>#{patient.patient.cardId}</span>
+                        <span>{patient.patient.cardId ? `#${patient.patient.cardId}` : translations[lang]['Not Registered']}</span>
                     </li>
                     <li>
                         <strong>{translations[lang]['Gender']}</strong>
@@ -68,7 +77,7 @@ const PatientCard = ({ patient, reload, setReload, setTargetPatient, setIsShowDe
                     </li>
                     <li>
                         <strong>{translations[lang]['Social Status']}</strong>
-                        <span>{patient.patient.socialStatus ? capitalizeFirstLetter(patient.patient.socialStatus) : translations[lang]['Not Registered']}</span>
+                        <span>{patient.patient.socialStatus ? translations[lang][capitalizeFirstLetter(patient.patient.socialStatus)] : translations[lang]['Not Registered']}</span>
                     </li>
                     <li>
                         <strong>{translations[lang]['Age']}</strong>

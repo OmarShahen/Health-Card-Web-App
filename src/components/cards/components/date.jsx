@@ -8,7 +8,7 @@ const CardDate = ({ creationDate, updateDate }) => {
 
     return <div className="card-date-container grey-text">
         <div>
-            <span>{lang === 'en' ? format(new Date(creationDate), 'dd MMM yyyy') : format(new Date(creationDate), 'dd/MM/yyyy') }</span>
+            <span>{lang === 'en' ? format(new Date(creationDate), 'dd MMM yyyy') : format(new Date(creationDate), 'MM/dd/yyyy') }</span>
         </div>
         { lang === 'en' ?
             <div>

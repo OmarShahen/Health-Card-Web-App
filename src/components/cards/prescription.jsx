@@ -10,6 +10,7 @@ import CardTransition from '../transitions/card-transitions'
 import { useSelector } from 'react-redux'
 import translations from '../../i18n'
 
+
 const PrescriptionCard = ({ 
     prescription, 
     setReload, 
@@ -24,7 +25,7 @@ const PrescriptionCard = ({
 
     const patientName = `${prescription?.patient?.firstName} ${prescription?.patient?.lastName}`
     const doctorName = `${prescription?.doctor?.firstName} ${prescription?.doctor?.lastName}`
-    const patientCardId = prescription?.patient?.cardId
+    const patientCardId = prescription?.patient?.patientId
 
     const doctorActionsList = [
         {
@@ -93,7 +94,7 @@ const PrescriptionCard = ({
             <div className="card-contact-section-container">
                 <div>
                     <strong>{translations[lang]['Patient']}</strong><br />
-                    <span className="grey-text">{patientName} { patientCardId ? `- ${patientCardId}` : null }</span>
+                    <span className="grey-text">{patientName} { patientCardId ? `- #${patientCardId}` : null }</span>
                 </div>
                 
             </div>

@@ -34,13 +34,13 @@ class InvoiceDocument extends React.Component {
                             <span>{invoice.invoiceId}</span>
                         </li>
                         <li>
-                            <span>{'Invoice Date'}</span>
+                            <span>{translations[lang]['Invoice Date']}</span>
                             <span>
                                 {
                                     invoice.invoiceDate ? 
-                                    format(new Date(invoice.invoiceDate), 'MMMM dd, yyyy') 
+                                    format(new Date(invoice.invoiceDate), lang === 'en' ? 'MMMM dd, yyyy' : 'MM/dd/yyyy') 
                                     : 
-                                    format(new Date(invoice.createdAt), 'MMMM dd, yyyyy') 
+                                    format(new Date(invoice.createdAt), lang === 'en' ? 'MMMM dd, yyyy' : 'MM/dd/yyyy') 
                                 }
                             </span>
                         </li>
@@ -49,9 +49,9 @@ class InvoiceDocument extends React.Component {
                             <span>
                                 {
                                 invoice.dueDate ? 
-                                format(new Date(invoice.dueDate), 'MMMM dd, yyyy') 
+                                format(new Date(invoice.dueDate), lang === 'en' ? 'MMMM dd, yyyy' : 'MM/dd/yyyy') 
                                 : 
-                                format(new Date(invoice.createdAt), 'MMMM dd, yyyyy') 
+                                format(new Date(invoice.createdAt), lang === 'en' ? 'MMMM dd, yyyy' : 'MM/dd/yyyy') 
                                 }</span>
                         </li>
                     </ul>
@@ -59,7 +59,7 @@ class InvoiceDocument extends React.Component {
                         {
                             invoice?.insuranceCoveragePercentage ?
                             <li>
-                                <span>Insurance Company</span>
+                                <span>{translations[lang]['Insurance Company']}</span>
                                 <span>{invoice?.insuranceCompany.name}</span>
                             </li>
                             :
@@ -80,7 +80,14 @@ class InvoiceDocument extends React.Component {
                 <div className="invoice-padding-section"></div>
                 <div className="invoice-doc-total-container">
                     <strong>
-                        {formatMoney(invoice.totalCost)} {translations[lang]['due']} {invoice.invoiceDate ? format(new Date(invoice.invoiceDate), 'MMMM dd, yyyy') : format(new Date(invoice.createdAt), 'MMM dd, yyyyy') }</strong>
+                        {formatMoney(invoice.totalCost)}
+                            {
+                                lang === 'en' ?
+                                ` ${translations[lang]['due']} ${invoice.invoiceDate ? format(new Date(invoice.invoiceDate), 'MMMM dd, yyyy') : format(new Date(invoice.createdAt), 'MMMM dd, yyyy')}`
+                                :
+                                null
+                        }
+                    </strong>
                 </div>
             </div>
             <div className="invoice-padding-section"></div>
@@ -99,8 +106,8 @@ class InvoiceDocument extends React.Component {
                         {
                             invoice?.insuranceCoveragePercentage ?
                             <li>
-                                <span>{`Insurance Coverage (${invoice.insuranceCoveragePercentage}%)`}</span>
-                                <span>{formatMoney(totalAmountRemaining)}</span>
+                                <span>{`${translations[lang]['Insurance Coverage']} (${invoice.insuranceCoveragePercentage}%)`}</span>
+                                <span>{formatMoney(totalAmount * (invoice.insuranceCoveragePercentage/100))}</span>
                             </li>
                             :
                             null

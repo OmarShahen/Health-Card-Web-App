@@ -37,18 +37,18 @@ const InsurancesLayout = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={'Insurance'} />
+        <NavigationBar pageName={translations[lang]['Insurance']} />
         <div className="show-mobile">
         </div>
             <div className="padded-container">
                 <PageHeader 
-                pageName={!isLoading ? insurance.name : 'Loading...'} 
+                pageName={!isLoading ? insurance.name : translations[lang]['Loading...']} 
                 isHideRefresh={true} 
                 />
                 <div className="mini-page-navigator-container">
                     <ul>
-                        <li><NavLink to={`/insurance-companies/${insuranceCompanyId}/invoices`}>{'Invoices'}</NavLink></li>
-                        <li><NavLink to={`/insurance-companies/${insuranceCompanyId}/policies`}>{'Policies'}</NavLink></li> 
+                        <li><NavLink to={`/insurance-companies/${insuranceCompanyId}/invoices`}>{translations[lang]['Invoices']}</NavLink></li>
+                        <li><NavLink to={`/insurance-companies/${insuranceCompanyId}/policies`}>{translations[lang]['Insurance Policies']}</NavLink></li> 
                     </ul>
                 </div>
                 <Outlet />

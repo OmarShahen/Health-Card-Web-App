@@ -1,40 +1,39 @@
 import { useState, useEffect } from 'react'
-import './prescriptions.css'
+import '../prescriptions.css'
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
-import { serverRequest } from "../components/API/request"
+import { serverRequest } from "../../components/API/request"
 import { useSelector } from 'react-redux'
-import PageHeader from '../components/sections/page-header'
-import Card from '../components/cards/card';
+import PageHeader from '../../components/sections/page-header'
+import Card from '../../components/cards/card';
 import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined'
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import UpcomingOutlinedIcon from '@mui/icons-material/UpcomingOutlined'
-import AppointmentFormModal from '../components/modals/appointment-form'
+import AppointmentFormModal from '../../components/modals/appointment-form'
 import TimerOffOutlinedIcon from '@mui/icons-material/TimerOffOutlined'
 import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined'
-import NavigationBar from '../components/navigation/navigation-bar';
-import CircularLoading from '../components/loadings/circular';
-import FiltersSection from '../components/sections/filters/filters'
-import FloatingButton from '../components/buttons/floating-button'
-import AppointmentCard from '../components/cards/appointment'
-import EmptySection from '../components/sections/empty/empty'
-import SearchInput from '../components/inputs/search'
-import { searchAppointments } from '../utils/searches/search-appointments'
+import CircularLoading from '../../components/loadings/circular';
+import FiltersSection from '../../components/sections/filters/filters'
+import FloatingButton from '../../components/buttons/floating-button'
+import AppointmentCard from '../../components/cards/appointment'
+import EmptySection from '../../components/sections/empty/empty'
+import SearchInput from '../../components/inputs/search'
+import { searchAppointments } from '../../utils/searches/search-appointments'
 import { format } from 'date-fns'
-import { formatNumber } from '../utils/numbers'
-import AppointmentDeleteConfirmationModal from '../components/modals/confirmation/appointment-delete-confirmation-modal'
-import AppointmentStatusConfirmationModal from '../components/modals/confirmation/appointment-status-confirmation-modal'
-import { isRolesValid } from '../utils/roles'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import translations from '../i18n'
+import { formatNumber } from '../../utils/numbers'
+import AppointmentDeleteConfirmationModal from '../../components/modals/confirmation/appointment-delete-confirmation-modal'
+import AppointmentStatusConfirmationModal from '../../components/modals/confirmation/appointment-status-confirmation-modal'
+import { isRolesValid } from '../../utils/roles'
+import { useNavigate } from 'react-router-dom'
+import translations from '../../i18n'
 
 
-const AppointmentsPage = ({ roles }) => {
+const PatientAppointmentsPage = ({ roles }) => {
+
+    const pagePath = window.location.pathname
+    const patientId = pagePath.split('/')[2]
 
     const navigate = useNavigate()
-
-    const [searchParams, setSearchParams] = useSearchParams()
-    const periodType = searchParams.get('period')
 
     const [targetAppointment, setTargetAppointment] = useState({})
     const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
@@ -54,8 +53,7 @@ const AppointmentsPage = ({ roles }) => {
 
     const activeElementColor = { border: '2px solid #4c83ee', color: '#4c83ee' }
 
-    let todayDate = new Date()
-    periodType === '1' ? todayDate.setDate(todayDate.getDate() + 1) : null
+    const todayDate = new Date()
 
     const [statsQuery, setStatsQuery] = useState({ specific: format(todayDate, 'yyyy-MM-dd') })
 
@@ -66,10 +64,7 @@ const AppointmentsPage = ({ roles }) => {
 
     useEffect(() => {
         setIsLoading(true)
-        const endpointURL = user.roles.includes('STAFF') ?
-        `/v1/appointments/clinics/${user.clinicId}`
-        :
-        `/v1/appointments/doctors/${user._id}`
+        const endpointURL = `/v1/appointments/patients/${patientId}`
         serverRequest.get(endpointURL, { params: statsQuery })
         .then(response => {
             setIsLoading(false)
@@ -84,7 +79,25 @@ const AppointmentsPage = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Appointments']} />
+        {
+            user.roles.includes('STAFF') || user.roles.includes('DOCTOR') ?
+            <div className="show-mobile">
+                <FloatingButton setIsShowForm={setShowModalForm} />
+            </div>
+            :
+            null
+        }
+        
+        { 
+            showModalForm && (user.roles.includes('STAFF') || user.roles.includes('DOCTOR')) ? 
+            <AppointmentFormModal 
+            reload={reload} 
+            setReload={setReload} 
+            setShowFormModal={setShowModalForm} 
+            />
+            : 
+            null 
+         }
          { 
         isShowDeleteModal ? 
         <AppointmentDeleteConfirmationModal 
@@ -113,8 +126,11 @@ const AppointmentsPage = ({ roles }) => {
         <div className="padded-container">
             <PageHeader 
             pageName={translations[lang]["Appointments"]} 
+            addBtnText={user.roles.includes('STAFF') || user.roles.includes('DOCTOR') ? translations[lang]['Add Appointment'] : null}
+            setShowModalForm={setShowModalForm}
             setReload={setReload}
             reload={reload}
+            isHideBackButton={true}
             /> 
             <div className="cards-list-wrapper">
                 <Card 
@@ -164,7 +180,7 @@ const AppointmentsPage = ({ roles }) => {
             statsQuery={statsQuery} 
             setStatsQuery={setStatsQuery} 
             isShowUpcomingDates={true}
-            defaultValue={periodType === '1' ? '1' : '0'}
+            defaultValue={'0'}
             />
             <div className="search-input-container">
                 <SearchInput 
@@ -242,4 +258,4 @@ const AppointmentsPage = ({ roles }) => {
     </div>
 }
 
-export default AppointmentsPage
+export default PatientAppointmentsPage

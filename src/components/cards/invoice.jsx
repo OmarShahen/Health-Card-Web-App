@@ -134,7 +134,7 @@ const InvoiceCard = ({
                     <span>{invoice.paymentMethod ? formatPaymentMethod(invoice.paymentMethod) : translations[lang]['Not Registered']}</span>
                 </li>
                 <li>
-                    <strong>{'Insurance Company'}</strong>
+                    <strong>{translations[lang]['Insurance Company']}</strong>
                     <span>{invoice.insuranceCompany ? invoice?.insuranceCompany?.name : translations[lang]['Not Registered']}</span>
                 </li>
                 <li>
@@ -142,7 +142,7 @@ const InvoiceCard = ({
                     <span>{formatMoney(invoice.totalCost)}</span>
                 </li>
                 <li>
-                    <strong>{`Insurance coverage ${invoice.insuranceCoveragePercentage ? `(${invoice.insuranceCoveragePercentage}%)` : ''}`}</strong>
+                    <strong>{`${translations[lang]['Insurance Coverage']} ${invoice.insuranceCoveragePercentage ? `(${invoice.insuranceCoveragePercentage}%)` : ''}`}</strong>
                     <span>
                         {
                             invoice.insuranceCoveragePercentage ?

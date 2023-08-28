@@ -11,23 +11,34 @@ import PatientSurgeryForm from "../components/forms/patients/surgery"
 import { TailSpin } from "react-loader-spinner"
 import { serverRequest } from "../components/API/request"
 import { toast } from "react-hot-toast"
-import { getBirthYearByAge } from "../utils/age-calculator"
+import { getAge, getBirthYearByAge } from "../utils/age-calculator"
 import PageHeader from "../components/sections/page-header"
 import NavigationBar from '../components/navigation/navigation-bar'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from "react-redux"
 import { isRolesValid } from "../utils/roles"
-import { setIsShowModal } from "../redux/slices/modalSlice"
+import { setIsShowModal, setIsShowRenewModal } from "../redux/slices/modalSlice"
 import PatientCardInformationForm from "../components/forms/patients/card-info"
 import translations from "../i18n"
+import { useSearchParams } from 'react-router-dom'
+import CircularLoading from "../components/loadings/circular"
 
 const PatientFormPage = ({ roles }) => {
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
+    const pagePath = window.location.pathname
+    const patientId = pagePath.split('/')[2]
+
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
+
+    const [searchParams, setSearchParams] = useSearchParams()
+    const mode = searchParams.get('mode')
+
+    const [isUpdate, setIsUpdate] = useState(mode === 'UPDATE' ? true : false)
+    const [isLoadPatient, setIsLoadPatient] = useState(mode === 'UPDATE' ? true : false)
 
     const [clinics, setClinics] = useState([])
     const [isSubmit, setIsSubmit] = useState(false)
@@ -106,6 +117,63 @@ const PatientFormPage = ({ roles }) => {
 
     }, [])
 
+    useEffect(() => {
+
+        if(!isUpdate) {
+            return
+        }
+
+        setIsLoadPatient(true)
+        serverRequest.get(`/v1/patients/${patientId}`)
+        .then(response => {
+            setIsLoadPatient(false)
+
+            const patient = response.data.patient
+
+            setFirstName(patient.firstName)
+            setLastName(patient.lastName)
+            setGender(patient.gender)
+            setPhone(patient.phone)
+            setSocialStatus(patient.socialStatus)
+            setAge(getAge(patient.dateOfBirth))
+            setCity(patient.city)
+
+            setIsSmokingPast(patient.healthHistory.isSmokingPast)
+            setIsSmokingPresent(patient.healthHistory.isSmokingPresent)
+            setIsAlcoholPast(patient.healthHistory.isAlcoholPast)
+            setIsAlcoholPresent(patient.healthHistory.isAlcoholPresent)
+
+            setIsHighBloodPressure(patient.healthHistory.isHighBloodPressure)
+            setIsDiabetic(patient.healthHistory.isDiabetic)
+            setIsChronicHeart(patient.healthHistory.isChronicHeart)
+            setIsChronicNeurological(patient.healthHistory.isChronicNeurological)
+            setIsChronicLiver(patient.healthHistory.isChronicLiver)
+            setIsChronicKidney(patient.healthHistory.isChronicKidney)
+
+            setIsGeneticIssue(patient.healthHistory.isGeneticIssue)
+            setIsCancerFamily(patient.healthHistory.isCancerFamily)
+
+            setBloodGroup(patient.bloodGroup)
+            setIsBloodDiseases(patient.healthHistory.isBloodDiseases)
+            setIsBloodTransfusion(patient.healthHistory.isBloodTransfusion)
+
+            setIsAllergic(patient.healthHistory.isAllergic)
+            setAllergies(patient.healthHistory.allergies)
+            
+            setIsImmuneDiseases(patient.healthHistory.isImmuneDiseases)
+
+            setIsSurgicalOperations(patient.healthHistory.isSurgicalOperations)
+            setIsHospitalConfined(patient.healthHistory.isHospitalConfined)
+            setSurgicalOperationsReason(patient.healthHistory.surgicalOperationsReason)
+            setHospitalConfinedReason(patient.healthHistory.hospitalConfinedReason)
+        })
+        .catch(error => {
+            setIsLoadPatient(false)
+            console.error(error)
+            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
+        })
+    }, [])
+
     const handleSubmit = () => {
 
         if(!firstName) {
@@ -138,14 +206,9 @@ const PatientFormPage = ({ roles }) => {
             return setAgeError(translations[lang]['age is required'])
         }
 
-        if(!cardId) { 
-            toast.error(translations[lang]['card ID is required'], { duration: 3000, position: 'top-right' })
-            return setCardIdError(translations[lang]['card ID is required'])
-        }
-
-        if(!cvc) {
-            toast.error(translations[lang]['CVC is required'], { duration: 3000, position: 'top-right' })
-            return setCvcError(translations[lang]['CVC is required'])
+        if(user.roles.includes('DOCTOR') && !clinic) {
+            toast.error(translations[lang]['clinic is required'], { duration: 3000, position: 'top-right' })
+            return setClinicError(translations[lang]['clinic is required'])   
         }
 
         const patientData = {
@@ -208,6 +271,93 @@ const PatientFormPage = ({ roles }) => {
 
             if(error.response.data.field === 'mode') return dispatch(setIsShowModal(true)) 
 
+            if(error.response.data.field === 'activeUntilDate') return dispatch(setIsShowRenewModal(true))
+
+            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+        })
+    }
+
+    const handleUpdate = () => {
+        
+        if(!firstName) {
+            toast.error(translations[lang]['first name is required'], { duration: 3000, position: 'top-right' })
+            return setFirstNameError(translations[lang]['first name is required'])
+        }
+
+        if(!lastName) { 
+            toast.error(translations[lang]['last name is required'], { duration: 3000, position: 'top-right' })
+            return setLastNameError(translations[lang]['last name is required'])
+        }
+
+        if(!countryCode) { 
+            toast.error(translations[lang]['country code is required'], { duration: 3000, position: 'top-right' })
+            return setCountryCodeError(translations[lang]['country code is required'])
+        }
+
+        if(!phone) { 
+            toast.error(translations[lang]['phone is required'], { duration: 3000, position: 'top-right' })
+            return setPhoneError(translations[lang]['phone is required'])
+        }
+
+        if(!gender) { 
+            toast.error(translations[lang]['gender is required'], { duration: 3000, position: 'top-right' })
+            return setGenderError(translations[lang]['gender is required'])
+        }
+
+        if(!age) { 
+            toast.error(translations[lang]['age is required'], { duration: 3000, position: 'top-right' })
+            return setAgeError(translations[lang]['age is required'])
+        }
+
+        const patientData = {
+            firstName,
+            lastName,
+            countryCode: Number.parseInt(countryCode),
+            phone: Number.parseInt(phone),
+            gender,
+            socialStatus,
+            dateOfBirth: String(getBirthYearByAge(age)),
+            city,
+            bloodGroup,
+            healthHistory: {
+                isSmokingPast,
+                isSmokingPresent,
+                isAlcoholPast,
+                isAlcoholPresent,
+                isHighBloodPressure,
+                isDiabetic,
+                isChronicHeart,
+                isChronicNeurological,
+                isChronicLiver,
+                isChronicKidney,
+                isCancerFamily,
+                isGeneticIssue,
+                isBloodDiseases,
+                isBloodTransfusion,
+                isAllergic,
+                allergies,
+                isImmuneDiseases,
+                isSurgicalOperations,
+                surgicalOperationsReason,
+                isHospitalConfined,
+                hospitalConfinedReason
+            }
+        }
+
+        setIsSubmit(true)
+        serverRequest.put(`/v1/patients/${patientId}`, patientData)
+        .then(response => {
+            setIsSubmit(false)
+            const data = response.data
+            toast.success(data.message, { position: 'top-right', duration: 3000 })
+            navigate(`/patients/${data.patient._id}/medical-profile`)
+        })
+        .catch(error => {
+            setIsSubmit(false)
+            console.error(error)
+
+            if(error.response.data.field === 'mode') return dispatch(setIsShowModal(true)) 
+
             toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
         })
     }
@@ -215,7 +365,7 @@ const PatientFormPage = ({ roles }) => {
 
     return <div>
         <NavigationBar pageName={translations[lang]["Patients"]} />
-        <PageHeader pageName={translations[lang]['Create Patient']} />
+        <PageHeader pageName={isUpdate ? 'Update Patient' : translations[lang]['Create Patient']} />
             <div className="patient-profile-grid-container">
                 <div className="patient-profile-page-navigator-container">
                     <ul>
@@ -224,11 +374,16 @@ const PatientFormPage = ({ roles }) => {
                                 {translations[lang]['Personal Information']}
                             </a>
                         </li>
-                        <li>
-                            <a href="#card-section">
-                                {translations[lang]['Card Information']}
-                            </a>
-                        </li>
+                        {
+                            isUpdate ?
+                            null
+                            :
+                            <li>
+                                <a href="#card-section">
+                                    {translations[lang]['Card Information']}
+                                </a>
+                            </li>
+                        }
                         <li>
                             <a href="#bad-habits-section">
                                 {translations[lang]['Bad Habits']}
@@ -271,155 +426,173 @@ const PatientFormPage = ({ roles }) => {
                         </li>
                     </ul>
                 </div>
-                <div>
-                    <div className="cards-grey-container">
-                        <PatientPersonalInformationForm
-                        clinics={clinics}
-                        firstName={firstName}
-                        setFirstName={setFirstName}
-                        lastName={lastName}
-                        setLastName={setLastName}
-                        countryCode={countryCode}
-                        setCountryCode={setCountryCode}
-                        phone={phone}
-                        setPhone={setPhone}
-                        gender={gender}
-                        setGender={setGender}
-                        socialStatus={socialStatus}
-                        setSocialStatus={setSocialStatus}
-                        age={age}
-                        setAge={setAge}
-                        city={city}
-                        setCity={setCity}
-                        setClinic={setClinic}
+                {
+                    isLoadPatient ?
+                    <CircularLoading />
+                    :
+                    <div>
+                        <div className="cards-grey-container">
+                            <PatientPersonalInformationForm
+                            clinics={clinics}
+                            firstName={firstName}
+                            setFirstName={setFirstName}
+                            lastName={lastName}
+                            setLastName={setLastName}
+                            countryCode={countryCode}
+                            setCountryCode={setCountryCode}
+                            phone={phone}
+                            setPhone={setPhone}
+                            gender={gender}
+                            setGender={setGender}
+                            socialStatus={socialStatus}
+                            setSocialStatus={setSocialStatus}
+                            age={age}
+                            setAge={setAge}
+                            city={city}
+                            setCity={setCity}
+                            setClinic={setClinic}
 
-                        firstNameError={firstNameError}
-                        setFirstNameError={setFirstNameError}
-                        lastNameError={lastNameError}
-                        setLastNameError={setLastNameError}
-                        countryCodeError={countryCodeError}
-                        setCountryCodeError={setCountryCodeError}
-                        phoneError={phoneError}
-                        setPhoneError={setPhoneError}
-                        genderError={genderError}
-                        setGenderError={setGenderError}
-                        socialStatusError={socialStatusError}
-                        setSocialStatusError={setSocialStatusError}
-                        ageError={ageError}
-                        setAgeError={setAgeError}
-                        cityError={cityError}
-                        setCityError={setCityError}
-                        clinicError={clinicError}
-                        setClinicError={setClinicError}
-                        />
-                    </div>
-                    <div className="margin-top-1"></div>
-                    <div className="cards-grey-container">
-                        <PatientCardInformationForm 
-                        cardId={cardId}
-                        setCardId={setCardId}
-                        cardIdError={cardIdError}
-                        setCardIdError={setCardIdError}
-                        cvc={cvc}
-                        setCvc={setCvc}
-                        cvcError={cvcError}
-                        setCvcError={setCvcError}
-                        />
-                    </div>
-                    <div className="margin-top-1"></div>
-                    <div className="cards-grey-container">
-                        <PatientBadHabitsForm
-                        isSmokingPast={isSmokingPast}
-                        setIsSmokingPast={setIsSmokingPast}
-                        isSmokingPresent={isSmokingPresent}
-                        setIsSmokingPresent={setIsSmokingPresent}
-
-                        isAlcoholPast={isAlcoholPast}
-                        setIsAlcoholPast={setIsAlcoholPast}
-                        isAlcoholPresent={isAlcoholPresent}
-                        setIsAlcoholPresent={setIsAlcoholPresent}
-                        />
-                    </div>
-                    <div className="margin-top-1"></div>
-                    <div className="cards-grey-container">
-                        <PatientChronicDiseasesForm
-                        isHighBloodPressure={isHighBloodPressure}
-                        setIsHighBloodPressure={setIsHighBloodPressure}
-                        isDiabetic={isDiabetic}
-                        setIsDiabetic={setIsDiabetic}
-                        isChronicHeart={isChronicHeart}
-                        setIsChronicHeart={setIsChronicHeart}
-                        isChronicNeurological={isChronicNeurological}
-                        setIsChronicNeurological={setIsChronicNeurological}
-                        isChronicLiver={isChronicLiver}
-                        setIsChronicLiver={setIsChronicLiver}
-                        isChronicKidney={isChronicKidney}
-                        setIsChronicKidney={setIsChronicKidney}
-                        />
-                    </div>
-                    <div className="margin-top-1"></div>
-                    <div className="cards-grey-container">
-                        <PatientGeneticDiseasesForm
-                        isCancerFamily={isCancerFamily}
-                        setIsCancerFamily={setIsCancerFamily}
-                        isGeneticIssue={isGeneticIssue}
-                        setIsGeneticIssue={setIsGeneticIssue}
-                        />
-                    </div>
-                    <div className="margin-top-1"></div>
-                    <div className="cards-grey-container">
-                        <PatientBloodGroupForm
-                        setBloodGroup={setBloodGroup}
-                        setIsBloodDiseases={setIsBloodDiseases}
-                        setIsBloodTransfusion={setIsBloodTransfusion}
-                        />
-                    </div>
-                    <div className="margin-top-1"></div>
-                    <div className="cards-grey-container">
-                        <PatientAllergiesForm
-                        setIsAllergic={setIsAllergic}
-                        allergies={allergies}
-                        setAllergies={setAllergies}
-                        />
-                    </div>
-                    <div className="margin-top-1"></div>
-                    <div className="cards-grey-container">
-                        <PatientImmuneDiseasesForm
-                        setIsImmuneDiseases={setIsImmuneDiseases}
-                        />
-                    </div>
-                    <div className="margin-top-1"></div>
-                    <div className="cards-grey-container">
-                        <PatientSurgeryForm
-                        setIsSurgicalOperations={setIsSurgicalOperations}
-                        setSurgicalOperationsReason={setSurgicalOperationsReason}
-                        surgicalOperationsReason={surgicalOperationsReason}
-                        setIsHospitalConfined={setIsHospitalConfined}
-                        setHospitalConfinedReason={setHospitalConfinedReason}
-                        hospitalConfinedReason={hospitalConfinedReason}
-                        />
-                    </div>
-                    <div className="margin-top-1"></div>
-                    <div className="form-buttons-container" id="submit-section">
+                            firstNameError={firstNameError}
+                            setFirstNameError={setFirstNameError}
+                            lastNameError={lastNameError}
+                            setLastNameError={setLastNameError}
+                            countryCodeError={countryCodeError}
+                            setCountryCodeError={setCountryCodeError}
+                            phoneError={phoneError}
+                            setPhoneError={setPhoneError}
+                            genderError={genderError}
+                            setGenderError={setGenderError}
+                            socialStatusError={socialStatusError}
+                            setSocialStatusError={setSocialStatusError}
+                            ageError={ageError}
+                            setAgeError={setAgeError}
+                            cityError={cityError}
+                            setCityError={setCityError}
+                            clinicError={clinicError}
+                            setClinicError={setClinicError}
+                            />
+                        </div>
                         {
-                            isSubmit ?
-                            <TailSpin width="25" height="25" color="#4c83ee" />
+                            isUpdate ?
+                            null
                             :
-                            <button 
-                            form="patient-form"
-                            onClick={e => handleSubmit()}
-                            className="normal-button white-text action-color-bg"
-                            >{translations[lang]['Create']}</button>
+                            <div className="cards-grey-container padding-top-bottom margin-top-1">
+                                <PatientCardInformationForm 
+                                cardId={cardId}
+                                setCardId={setCardId}
+                                cardIdError={cardIdError}
+                                setCardIdError={setCardIdError}
+                                cvc={cvc}
+                                setCvc={setCvc}
+                                cvcError={cvcError}
+                                setCvcError={setCvcError}
+                                />
+                            </div>
                         }
-                        <button 
-                        className="normal-button cancel-button"
-                        onClick={e => {
-                            setShowModalForm(false)
-                        }}
-                        >{translations[lang]['Close']}</button>
+                        
+                        <div className="cards-grey-container padding-top-bottom margin-top-1">
+                            <PatientBadHabitsForm
+                            isSmokingPast={isSmokingPast}
+                            setIsSmokingPast={setIsSmokingPast}
+                            isSmokingPresent={isSmokingPresent}
+                            setIsSmokingPresent={setIsSmokingPresent}
+
+                            isAlcoholPast={isAlcoholPast}
+                            setIsAlcoholPast={setIsAlcoholPast}
+                            isAlcoholPresent={isAlcoholPresent}
+                            setIsAlcoholPresent={setIsAlcoholPresent}
+                            />
                         </div>
                         <div className="margin-top-1"></div>
-                </div>
+                        <div className="cards-grey-container">
+                            <PatientChronicDiseasesForm
+                            isHighBloodPressure={isHighBloodPressure}
+                            setIsHighBloodPressure={setIsHighBloodPressure}
+                            isDiabetic={isDiabetic}
+                            setIsDiabetic={setIsDiabetic}
+                            isChronicHeart={isChronicHeart}
+                            setIsChronicHeart={setIsChronicHeart}
+                            isChronicNeurological={isChronicNeurological}
+                            setIsChronicNeurological={setIsChronicNeurological}
+                            isChronicLiver={isChronicLiver}
+                            setIsChronicLiver={setIsChronicLiver}
+                            isChronicKidney={isChronicKidney}
+                            setIsChronicKidney={setIsChronicKidney}
+                            />
+                        </div>
+                        <div className="margin-top-1"></div>
+                        <div className="cards-grey-container">
+                            <PatientGeneticDiseasesForm
+                            isCancerFamily={isCancerFamily}
+                            setIsCancerFamily={setIsCancerFamily}
+                            isGeneticIssue={isGeneticIssue}
+                            setIsGeneticIssue={setIsGeneticIssue}
+                            />
+                        </div>
+                        <div className="margin-top-1"></div>
+                        <div className="cards-grey-container">
+                            <PatientBloodGroupForm
+                            setBloodGroup={setBloodGroup}
+                            setIsBloodDiseases={setIsBloodDiseases}
+                            setIsBloodTransfusion={setIsBloodTransfusion}
+
+                            bloodGroup={bloodGroup}
+                            isBloodDiseases={isBloodDiseases}
+                            isBloodTransfusion={isBloodTransfusion}
+                            />
+                        </div>
+                        <div className="margin-top-1"></div>
+                        <div className="cards-grey-container">
+                            <PatientAllergiesForm
+                            setIsAllergic={setIsAllergic}
+                            allergies={allergies}
+                            setAllergies={setAllergies}
+                            isAllergic={isAllergic}
+                            />
+                        </div>
+                        <div className="margin-top-1"></div>
+                        <div className="cards-grey-container">
+                            <PatientImmuneDiseasesForm
+                            setIsImmuneDiseases={setIsImmuneDiseases}
+                            isImmuneDiseases={isImmuneDiseases}
+                            />
+                        </div>
+                        <div className="margin-top-1"></div>
+                        <div className="cards-grey-container">
+                            <PatientSurgeryForm
+                            setIsSurgicalOperations={setIsSurgicalOperations}
+                            setSurgicalOperationsReason={setSurgicalOperationsReason}
+                            surgicalOperationsReason={surgicalOperationsReason}
+                            setIsHospitalConfined={setIsHospitalConfined}
+                            setHospitalConfinedReason={setHospitalConfinedReason}
+                            hospitalConfinedReason={hospitalConfinedReason}
+                            isHospitalConfined={isHospitalConfined}
+                            isSurgicalOperations={isSurgicalOperations}
+                            />
+                        </div>
+                        <div className="margin-top-1"></div>
+                        <div className="form-buttons-container" id="submit-section">
+                            {
+                                isSubmit ?
+                                <TailSpin width="25" height="25" color="#4c83ee" />
+                                :
+                                <button 
+                                form="patient-form"
+                                onClick={e => isUpdate ? handleUpdate() : handleSubmit()}
+                                className="normal-button white-text action-color-bg"
+                                >{isUpdate ? 'Update' : translations[lang]['Create']}</button>
+                            }
+                            <button 
+                            className="normal-button cancel-button"
+                            onClick={e => {
+                                setShowModalForm(false)
+                            }}
+                            >{translations[lang]['Close']}</button>
+                            </div>
+                            <div className="margin-top-1"></div>
+                    </div>
+                }
+                
             </div>        
             </div>
 }

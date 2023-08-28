@@ -20,6 +20,7 @@ const PatientImmuneDiseasesForm = (props) => {
                     name="immune" 
                     id="immune"
                     onChange={e => props.setIsImmuneDiseases(true)}
+                    checked={props.isImmuneDiseases}
                     />
                     <label for="immune">{translations[lang]['Yes']}</label>
                 </div>
@@ -29,6 +30,7 @@ const PatientImmuneDiseasesForm = (props) => {
                     name="immune" 
                     id="immune"
                     onChange={e => props.setIsImmuneDiseases(false)}
+                    checked={props.isImmuneDiseases === false}
                     />
                     <label for="immune">{translations[lang]['No']}</label>
                 </div>

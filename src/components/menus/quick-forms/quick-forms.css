@@ -5,7 +5,7 @@
     background-color: #FFF;
     z-index: 1;
     border-radius: .25rem;
-    padding: 1rem 1rem 1rem 0;
+    padding: .5rem;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     min-width: 12rem;
 }
@@ -32,7 +32,8 @@
     font-weight: 500;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
     color: #4c83ee;
     font-size: .8rem;
 }
@@ -40,6 +41,7 @@
 .quick-form-list-container ul li svg {
     color: #4c83ee;
     font-size: 1.2rem;
+    margin-right: .4rem;
 } 
 
 .quick-form-list-container ul li:hover {

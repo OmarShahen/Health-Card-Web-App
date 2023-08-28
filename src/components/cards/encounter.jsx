@@ -20,7 +20,7 @@ const EncounterCard = ({
 
      const patientName = `${encounter.patient.firstName} ${encounter.patient.lastName}`
      const doctorName = `${encounter.doctor.firstName} ${encounter.doctor.lastName}`
-     const patientCardId = encounter.patient.cardId
+     const patientCardId = encounter?.patient?.patientId
 
      const navigate = useNavigate()
 
@@ -81,7 +81,7 @@ const EncounterCard = ({
             <div className="card-contact-section-container">
                 <div>
                     <strong>{translations[lang]['Patient']}</strong><br />
-                    <span className="grey-text">{patientName} { patientCardId ? `- ${patientCardId}` : null }</span>
+                    <span className="grey-text">{patientName} { patientCardId ? `- #${patientCardId}` : null }</span>
                 </div>
             </div>
             <ul>

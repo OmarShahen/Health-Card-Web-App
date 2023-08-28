@@ -16,6 +16,7 @@ import Card from '../../components/cards/card'
 import { formatNumber } from '../../utils/numbers'
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
 import translations from '../../i18n'
+import PrescriptionDeleteConfirmationModal from '../../components/modals/confirmation/prescription-delete-confirmation-modal'
 
 const PatientPrescriptionsPage = ({ roles }) => {
 
@@ -27,6 +28,9 @@ const PatientPrescriptionsPage = ({ roles }) => {
     const patient = useSelector(state => state.patient.patient)
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
+
+    const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
+    const [targetPrescription, setTargetPrescription] = useState()
 
     const [statsQuery, setStatsQuery] = useState({})
     const [reload, setReload] = useState(0)
@@ -56,10 +60,21 @@ const PatientPrescriptionsPage = ({ roles }) => {
 
 
     return <div>
+        { 
+        isShowDeleteModal ? 
+        <PrescriptionDeleteConfirmationModal
+        prescription={targetPrescription}
+        reload={reload}
+        setReload={setReload} 
+        setIsShowModal={setIsShowDeleteModal}
+        /> 
+        : 
+        null 
+        }
         <PageHeader 
         pageName={translations[lang]["Prescriptions"]} 
-        addBtnText={translations[lang]['Add Prescription']} 
-        formURL={`/prescriptions/form?cardId=${patient.cardId}`}
+        addBtnText={translations[lang]['Add Prescription']}
+        formURL={`/patients/${patientId}/prescriptions/form`}
         isHideBackButton={true}
         isHideRefresh={true}
         />
@@ -72,7 +87,7 @@ const PatientPrescriptionsPage = ({ roles }) => {
             />
         </div>
         <div className="show-mobile">
-            <FloatingButton url={`/prescriptions/form?cardId=${patient.cardId}`} />
+            <FloatingButton url={`/patients/${patientId}/prescriptions/form`} />
         </div>
         <div>
             <div>
@@ -92,11 +107,16 @@ const PatientPrescriptionsPage = ({ roles }) => {
                         :
                         searchedPrescriptions.length !== 0 ?
                         <div className="cards-grey-container cards-3-list-wrapper">
-                            {searchedPrescriptions.map(prescription => <PrescriptionCard prescription={prescription} />)}
+                            {searchedPrescriptions
+                            .map(prescription => <PrescriptionCard 
+                            prescription={prescription}
+                            setTargetPrescription={setTargetPrescription}
+                            setIsShowDeleteModal={setIsShowDeleteModal}
+                            />)}
                         </div>
                             
                         :
-                        <EmptySection url={`/prescriptions/form?cardId=${patient.cardId}`} />
+                        <EmptySection />
                     }
                 </div> 
             </div>

@@ -14,21 +14,20 @@ const PrintDrugsTable = ({ rows }) => {
                 <tr className="print-table-header-rows">
                     <th>{translations[lang]['Drug Name']}</th>
                     <th>{translations[lang]['Amount']}</th>
-                    <th>{translations[lang]['Amount Unit']}</th>
-                    <th>{translations[lang]['Frequency Number']}</th>
-                    <th>{translations[lang]['Frequency Time']}</th>
+                    <th>{translations[lang]['Frequency']}</th>
                     <th>{translations[lang]['Period Number']}</th>
-                    <th>{translations[lang]['Period Time']}</th>
+                    <th>{translations[lang]['Dosage Times']}</th>
                 </tr>
                 {
                     rows.map((row, index) => <tr>
                         <td>{row.name}</td>
-                        <td>{row.dosage.amount}</td>
-                        <td>{translations[lang][row.dosage.unit]}</td>
-                        <td>{row.frequency.number}</td>
-                        <td>{translations[lang][capitalizeFirstLetter(row.frequency.timeUnit)]}</td>
-                        <td>{row.duration.number}</td>
-                        <td>{translations[lang][capitalizeFirstLetter(row.duration.timeUnit)]}</td>
+                        <td>{`${row.dosage.amount} ${translations[lang][row.dosage.unit]}`}</td>
+                        <td>{`${row.frequency.number} ${translations[lang][capitalizeFirstLetter(row.frequency.timeUnit)]}`}</td>
+                        <td>{`${row.duration.number} ${translations[lang][capitalizeFirstLetter(row.duration.timeUnit)]}`}</td>
+                        <td>
+                        { row.instructions
+                        .map((instruction, index) => <span>{translations[lang][instruction]}{row.instructions.length === index + 1 ? null : ','} </span>) }
+                        </td>
                     </tr>)
                 }
             </table>
