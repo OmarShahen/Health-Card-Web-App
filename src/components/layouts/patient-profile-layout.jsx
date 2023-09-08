@@ -19,6 +19,7 @@ const PatientProfileLayout = () => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+    const clinicId = pagePath.split('/')[4]
 
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
@@ -89,17 +90,19 @@ const PatientProfileLayout = () => {
                 </div>
             <div className="mini-page-navigator-container">
                 <ul>
-                    <li><NavLink to={`/patients/${patientId}/medical-profile`}>{translations[lang]['Profile']}</NavLink></li> 
-                    <li><NavLink to={`/patients/${patientId}/emergency-contacts`}>{translations[lang]['Emergency Contacts']}</NavLink></li>
+                    <li><NavLink to={`/patients/${patientId}/clinics/${clinicId}/medical-profile`}>{translations[lang]['Profile']}</NavLink></li> 
+                    <li><NavLink to={`/patients/${patientId}/clinics/${clinicId}/emergency-contacts`}>{translations[lang]['Contacts']}</NavLink></li>
                     {/* !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/doctors`}>{translations[lang]['Past Doctors']}</NavLink></li> */}
-                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/encounters`}>{translations[lang]['Encounters']}</NavLink></li> }
+                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/clinics/${clinicId}/encounters`}>{translations[lang]['Encounters']}</NavLink></li> }
                     {/* !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/symptoms`}>{translations[lang]['Symptoms']}</NavLink></li> */}
                     {/* !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/diagnosis`}>{translations[lang]['Diagnosis']}</NavLink></li> */}
-                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/prescriptions`}>{translations[lang]['Prescriptions']}</NavLink></li> }
-                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/drugs`}>{translations[lang]['Drugs']}</NavLink></li> }
-                    { user.roles.includes('DOCTOR') || user.roles.includes('STAFF') ? <li><NavLink to={`/patients/${patientId}/appointments`}>{translations[lang]['Appointments']}</NavLink></li> : null }
-                    { user.roles.includes('OWNER') || user.roles.includes('STAFF') ? <li><NavLink to={`/patients/${patientId}/invoices`}>{translations[lang]['Invoices']}</NavLink></li> : null }
-                    { user.roles.includes('OWNER') || user.roles.includes('STAFF') ? <li><NavLink to={`/patients/${patientId}/insurance-policies`}>{translations[lang]['Insurance Policies']}</NavLink></li> : null }
+                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/clinics/${clinicId}/prescriptions`}>{translations[lang]['Prescriptions']}</NavLink></li> }
+                    { !user.roles.includes('DOCTOR') ? null : <li><NavLink to={`/patients/${patientId}/clinics/${clinicId}/drugs`}>{translations[lang]['Drugs']}</NavLink></li> }
+                    { user.roles.includes('DOCTOR') || user.roles.includes('STAFF') ? <li><NavLink to={`/patients/${patientId}/clinics/${clinicId}/appointments`}>{translations[lang]['Appointments']}</NavLink></li> : null }
+                    { user.roles.includes('OWNER') || user.roles.includes('STAFF') ? <li><NavLink to={`/patients/${patientId}/clinics/${clinicId}/invoices`}>{translations[lang]['Invoices']}</NavLink></li> : null }
+                    { user.roles.includes('OWNER') || user.roles.includes('STAFF') ? <li><NavLink to={`/patients/${patientId}/clinics/${clinicId}/insurance-policies`}>{translations[lang]['Insurance']}</NavLink></li> : null }
+                    { user.roles.includes('OWNER') || user.roles.includes('STAFF') ? <li><NavLink to={`/patients/${patientId}/clinics/${clinicId}/attachments`}>{translations[lang]['Attachments']}</NavLink></li> : null }
+
                 </ul>
             </div>
             <Outlet />

@@ -9,21 +9,16 @@ import EmptySection from '../../components/sections/empty/empty'
 import SearchInput from '../../components/inputs/search'
 import { searchInsurances } from '../../utils/searches/search-insurances'
 import { format } from 'date-fns'
-import InvoiceFormModal from '../../components/modals/invoice-form'
-import PayDebtFormModal from '../../components/modals/pay-debt-form'
-import InvoiceDeleteConfirmationModal from '../../components/modals/confirmation/invoice-delete-confirmation-modal';
-import InvoiceRefundConfirmationModal from '../../components/modals/confirmation/invoice-refund-confirmation-modal';
 import { isRolesValid } from '../../utils/roles';
 import { useNavigate } from 'react-router-dom';
 import { formatNumber } from '../../utils/numbers'
 import Card from '../../components/cards/card'
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
-import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined'
 import translations from '../../i18n'
-import InsuranceCard from '../../components/cards/insurance';
-import InsuranceFormModal from '../../components/modals/insurance-form';
-import InsuranceDeleteConfirmationModal from '../../components/modals/confirmation/insurance-delete-confirmation-modal';
-
+import InsuranceCard from '../../components/cards/insurance'
+import InsuranceFormModal from '../../components/modals/insurance-form'
+import InsuranceDeleteConfirmationModal from '../../components/modals/confirmation/insurance-delete-confirmation-modal'
+import InsuranceStatusConfirmationModal from '../../components/modals/confirmation/insurance-status-confirmation-modal'
 
 const InsurancesPage = ({ roles }) => {
 
@@ -33,7 +28,7 @@ const InsurancesPage = ({ roles }) => {
     const [isShowPayDebtForm, setIsShowPayDebtForm] = useState(false)
     const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
     const [isUpdate, setIsUpdate] = useState(false)
-
+    const [isShowUpdateStatus, setIsShowUpdateStatus] = useState(false)
 
     const [targetInsurance, setTargetInsurance] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -90,10 +85,22 @@ const InsurancesPage = ({ roles }) => {
         : 
         null 
         }
+        {
+            isShowUpdateStatus ? 
+            <InsuranceStatusConfirmationModal 
+            reload={reload}
+            setReload={setReload}
+            insurance={targetInsurance}
+            status={!targetInsurance.isActive}
+            setIsShowModal={setIsShowUpdateStatus}
+            />
+            :
+            null
+        }
         
         
         {
-            user.roles.includes('STAFF') ?
+            user.roles.includes('OWNER') ?
             <div className="show-mobile">
                 <FloatingButton setIsShowForm={setIsShowForm} />
             </div>
@@ -120,7 +127,7 @@ const InsurancesPage = ({ roles }) => {
             <PageHeader 
             pageName={translations[lang]["Insurance Companies"]} 
             setShowModalForm={setShowFormModal} 
-            addBtnText={translations[lang]['Add Insurance Company']}
+            addBtnText={user.roles.includes('OWNER') ? translations[lang]['Add Insurance Company'] : null}
             setReload={setReload}
             reload={reload}
             /> 
@@ -156,6 +163,7 @@ const InsurancesPage = ({ roles }) => {
                         setIsShowDeleteModal={setIsShowDeleteModal}
                         setIsUpdate={setIsUpdate}
                         setShowFormModal={setShowFormModal}
+                        setIsShowUpdateStatus={setIsShowUpdateStatus}
                         />)}                    
                 </div>
                 :

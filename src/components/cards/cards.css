@@ -157,9 +157,12 @@
 
 .card-container {
     padding: 1rem;
-    border-radius: .25rem;
-    box-shadow: var(--box-shadow-line);
-    background-color: #F8F8F8;
+    border-radius: .75rem;
+    /*box-shadow: var(--box-shadow-line);*/
+    border: 0.0625rem solid rgba(231, 234, 243, 0.7);
+    /*background-color: #F8F8F8;*/
+    box-shadow: 0rem 0.375rem 0.75rem rgba(140, 152, 164, 0.075);
+    background-color: #FFF;
 }
 
 .card-white-bg {
@@ -381,6 +384,37 @@
 .appointment-card-body ul li span {
     color: #4c83ee;
     font-weight: bold;
+}
+
+.folder-header-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.folder-header-container .folder-image-container {
+    display: flex;
+    align-items: center;
+}
+
+.folder-header-container .folder-image-container svg {
+    margin-right: .5rem;
+    font-size: 4rem;
+    color: #6B7B93;
+}
+
+.folder-header-container .folder-description-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.pin-icon-container {
+    display: flex;
+    align-items: center;
+}
+
+.pin-icon-container svg {
+    font-size: 1rem;
+    color: #6B7B93;
 }
 
 @media only screen and (max-width: 950px) {

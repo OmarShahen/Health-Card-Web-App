@@ -26,9 +26,11 @@
     "react-hot-toast": "^2.4.0",
     "react-input-verification-code": "^1.0.2",
     "react-loader-spinner": "^5.3.4",
+    "react-pdf": "^7.3.3",
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.1",
+    "react-simple-image-viewer": "^1.2.2",
     "react-to-print": "^2.14.12",
     "react-verification-input": "^3.3.0"
   },

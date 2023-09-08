@@ -42,6 +42,7 @@ import AssignmentReturnOutlinedIcon from '@mui/icons-material/AssignmentReturnOu
 import SignalCellularAltOutlinedIcon from '@mui/icons-material/SignalCellularAltOutlined'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined'
+import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined'
 
 
 const SideBar = ({ width, isHideText, setHideSideBar }) => {
@@ -188,6 +189,19 @@ const SideBar = ({ width, isHideText, setHideSideBar }) => {
                         <NavLink to="/clinics/services">
                             <FactCheckOutlinedIcon />
                             {translations[lang]['Services']}
+                        </NavLink>
+                    </div>
+                </li>
+                :
+                null
+            }
+            {
+                user.roles.includes('OWNER') || user.roles.includes('DOCTOR') ?
+                <li>
+                    <div>
+                        <NavLink to="/files-manager">
+                            <CreateNewFolderOutlinedIcon />
+                            {translations[lang]['Files Manager']}
                         </NavLink>
                     </div>
                 </li>
@@ -379,14 +393,19 @@ const SideBar = ({ width, isHideText, setHideSideBar }) => {
                                     </NavLink>
                                 </div>
                             </li>
-                            <li>
-                                <div>
-                                    <NavLink to="/staffs">
-                                            <AssignmentIndOutlinedIcon />
-                                            { translations[lang]['Staffs'] }
-                                    </NavLink>
-                                </div>
-                            </li>
+                            {
+                                user.roles.includes('OWNER') ?
+                                <li>
+                                    <div>
+                                        <NavLink to="/staffs">
+                                                <AssignmentIndOutlinedIcon />
+                                                { translations[lang]['Staffs'] }
+                                        </NavLink>
+                                    </div>
+                                </li>
+                                :
+                                null
+                            }
                         </ul>
                         </motion.ul>
                         :

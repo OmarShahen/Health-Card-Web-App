@@ -171,7 +171,7 @@ const EncountersFormPage = ({ roles }) => {
             isHideRefresh={true} 
             />
             <div className="cards-grey-container body-text">
-                <div className="prescription-form-wrapper box-shadow-line left">
+                <div className="prescription-form-wrapper box-shadow left">
                     <div className="cards-2-list-wrapper">
                         <div className="prescription-form-notes-container">
                             <div className="form-input-container">

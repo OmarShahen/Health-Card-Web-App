@@ -41,9 +41,12 @@ const PatientFormPage = ({ roles }) => {
     const [isLoadPatient, setIsLoadPatient] = useState(mode === 'UPDATE' ? true : false)
 
     const [clinics, setClinics] = useState([])
+    const [doctors, setDoctors] = useState([])
     const [isSubmit, setIsSubmit] = useState(false)
 
     const [clinic, setClinic] = useState()
+    const [doctor, setDoctor] = useState()
+    const [selectedDoctors, setSelectedDoctors] = useState([])
     const [firstName, setFirstName] = useState()
     const [lastName, setLastName] = useState()
     const [countryCode, setCountryCode] = useState(20)
@@ -85,6 +88,7 @@ const PatientFormPage = ({ roles }) => {
     const [hospitalConfinedReason, setHospitalConfinedReason] = useState([])
 
     const [clinicError, setClinicError] = useState()
+    const [doctorError, setDoctorError] = useState()
     const [firstNameError, setFirstNameError] = useState()
     const [lastNameError, setLastNameError] = useState()
     const [countryCodeError, setCountryCodeError] = useState()
@@ -97,9 +101,14 @@ const PatientFormPage = ({ roles }) => {
     const [cvcError, setCvcError] = useState()
 
     useEffect(() => {
-
-        scroll(0, 0)
         isRolesValid(user.roles, roles) ? null : navigate('/login')
+
+        if(user.roles.includes('STAFF')) {
+            return
+        }
+    }, [])
+
+    useEffect(() => {
 
         if(user.roles.includes('STAFF')) {
             return
@@ -109,6 +118,24 @@ const PatientFormPage = ({ roles }) => {
         .then(response => {
             const data = response.data
             setClinics(data.clinics)
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+        })
+
+    }, [])
+
+    useEffect(() => {
+
+        if(!user.roles.includes('STAFF')) {
+            return
+        }
+
+        serverRequest.get(`/v1/doctors/clinics/${user.clinicId}`)
+        .then(response => {
+            const data = response.data
+            setDoctors(data.doctors)
         })
         .catch(error => {
             console.error(error)
@@ -249,11 +276,12 @@ const PatientFormPage = ({ roles }) => {
         }
 
         if(user.roles.includes('STAFF')) {
+            patientData.doctorsIds = selectedDoctors.map(doctor => doctor.doctorId)
             patientData.clinicId = user.clinicId
         }
 
         if(user.roles.includes('DOCTOR')) {
-            patientData.doctorId = user._id
+            patientData.doctorsIds = [user._id]
             patientData.clinicId = clinic
         }
 
@@ -263,7 +291,7 @@ const PatientFormPage = ({ roles }) => {
             setIsSubmit(false)
             const data = response.data
             toast.success(data.message, { position: 'top-right', duration: 3000 })
-            navigate(`/patients/${data.patient._id}/medical-profile`)
+            navigate(`/patients/${data.patient._id}/clinics/${patientData.clinicId}/medical-profile`)
         })
         .catch(error => {
             setIsSubmit(false)
@@ -350,7 +378,7 @@ const PatientFormPage = ({ roles }) => {
             setIsSubmit(false)
             const data = response.data
             toast.success(data.message, { position: 'top-right', duration: 3000 })
-            navigate(`/patients/${data.patient._id}/medical-profile`)
+            navigate(`/patients`)
         })
         .catch(error => {
             setIsSubmit(false)
@@ -365,7 +393,7 @@ const PatientFormPage = ({ roles }) => {
 
     return <div>
         <NavigationBar pageName={translations[lang]["Patients"]} />
-        <PageHeader pageName={isUpdate ? 'Update Patient' : translations[lang]['Create Patient']} />
+        <PageHeader pageName={isUpdate ? translations[lang]['Update Patient'] : translations[lang]['Create Patient']} />
             <div className="patient-profile-grid-container">
                 <div className="patient-profile-page-navigator-container">
                     <ul>
@@ -434,6 +462,7 @@ const PatientFormPage = ({ roles }) => {
                         <div className="cards-grey-container">
                             <PatientPersonalInformationForm
                             clinics={clinics}
+                            doctors={doctors}
                             firstName={firstName}
                             setFirstName={setFirstName}
                             lastName={lastName}
@@ -451,6 +480,11 @@ const PatientFormPage = ({ roles }) => {
                             city={city}
                             setCity={setCity}
                             setClinic={setClinic}
+                            setDoctor={setDoctor}
+                            selectedDoctors={selectedDoctors}
+                            setSelectedDoctors={setSelectedDoctors}
+
+                            isUpdate={isUpdate}
 
                             firstNameError={firstNameError}
                             setFirstNameError={setFirstNameError}
@@ -470,13 +504,15 @@ const PatientFormPage = ({ roles }) => {
                             setCityError={setCityError}
                             clinicError={clinicError}
                             setClinicError={setClinicError}
+                            doctorError={doctorError}
+                            setDoctorError={setDoctorError}
                             />
                         </div>
                         {
                             isUpdate ?
                             null
                             :
-                            <div className="cards-grey-container padding-top-bottom margin-top-1">
+                            <div className="cards-grey-container margin-top-1">
                                 <PatientCardInformationForm 
                                 cardId={cardId}
                                 setCardId={setCardId}
@@ -490,7 +526,7 @@ const PatientFormPage = ({ roles }) => {
                             </div>
                         }
                         
-                        <div className="cards-grey-container padding-top-bottom margin-top-1">
+                        <div className="cards-grey-container margin-top-1">
                             <PatientBadHabitsForm
                             isSmokingPast={isSmokingPast}
                             setIsSmokingPast={setIsSmokingPast}
@@ -580,7 +616,7 @@ const PatientFormPage = ({ roles }) => {
                                 form="patient-form"
                                 onClick={e => isUpdate ? handleUpdate() : handleSubmit()}
                                 className="normal-button white-text action-color-bg"
-                                >{isUpdate ? 'Update' : translations[lang]['Create']}</button>
+                                >{isUpdate ? translations[lang]['Update'] : translations[lang]['Create']}</button>
                             }
                             <button 
                             className="normal-button cancel-button"

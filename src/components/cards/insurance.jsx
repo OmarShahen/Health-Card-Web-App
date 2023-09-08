@@ -8,13 +8,17 @@ import CardTransition from '../transitions/card-transitions'
 import translations from '../../i18n'
 import { useNavigate } from 'react-router-dom'
 import { format } from 'date-fns'
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined'
+import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined'
+import { SignalWifiStatusbarNullTwoTone } from '@mui/icons-material'
 
 const InsuranceCard = ({ 
     insurance, 
     setTargetInsurance, 
     setIsShowDeleteModal,
     setIsUpdate,
-    setShowFormModal
+    setShowFormModal,
+    setIsShowUpdateStatus
 }) => {
 
     const user = useSelector(state => state.user.user)
@@ -43,6 +47,16 @@ const InsuranceCard = ({
                 setShowFormModal(true)
             }
         },
+        {
+            name: insurance.isActive ? translations[lang]['Block Insurance'] : translations[lang]['Activate Insurance'],
+            icon: insurance.isActive ? <BlockOutlinedIcon /> : <GppGoodOutlinedIcon />,
+            onAction: e => {
+                e.stopPropagation()
+                setTargetInsurance(insurance)
+                setIsShowUpdateStatus(true)
+            }
+
+        }
      ]
 
     return <CardTransition>
@@ -54,13 +68,24 @@ const InsuranceCard = ({
                     <span className="grey-text">{''}</span>
                 </div>
             </div>
-            {<CardActions actions={cardActionsList} />}
+            { user.roles.includes('OWNER') ? <CardActions actions={cardActionsList} /> : null }
         </div>
         <div className="patient-card-body">
             <ul>
                 <li>
                     <strong>{translations[lang]['Clinic']}</strong>
                     <span>{insurance.clinic.name}</span>
+                </li>
+                <li>
+                    <strong>{translations[lang]['Status']}</strong>
+                    <span>
+                        {
+                        insurance.isActive ? 
+                        <span className="status-btn done bold-text">{translations[lang]['Active']}</span>
+                        : 
+                        <span className="status-btn declined bold-text">{translations[lang]['Blocked']}</span>
+                        }
+                    </span>
                 </li>
                 {
                     insurance.startDate ?

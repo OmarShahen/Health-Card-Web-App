@@ -143,6 +143,7 @@ const InvoiceCheckoutPage = ({ roles }) => {
         const invoiceData = {
             patientId: invoice.patientId,
             clinicId: user.clinicId,
+            creatorId: user._id,
             services: invoice.services.map(service => service._id),
             invoiceDate: invoiceDate ? format(invoiceDate, 'yyyy-MM-dd HH:MM:ss') : format(new Date(), 'yyyy-MM-dd HH:MM:ss'),
             paidAmount: payAmount ? Number.parseFloat(payAmount) : 0,

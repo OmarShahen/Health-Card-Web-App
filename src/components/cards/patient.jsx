@@ -14,10 +14,13 @@ const PatientCard = ({ patient, reload, setReload, setTargetPatient, setIsShowDe
 
     const navigate = useNavigate()
 
+    const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
     const patientName = `${patient.patient.firstName} ${patient.patient.lastName}`
     const patientPhone = `+${patient.patient.countryCode}${patient.patient.phone}`
+
+    const profileURL = user.roles.includes('STAFF') ? `/patients/${patient.patient._id}/clinics/${user.clinicId}/medical-profile` : `/patients/${patient.patient._id}/clinics/${patient.clinic._id}/medical-profile`
 
     const cardActionsList = [
         {
@@ -41,7 +44,9 @@ const PatientCard = ({ patient, reload, setReload, setTargetPatient, setIsShowDe
      ]
 
     return <CardTransition>
-        <div onClick={e => navigate(`/patients/${patient.patient._id}/medical-profile`)} className="patient-card-container body-text">
+        <div 
+        onClick={e => navigate(profileURL)} 
+        className="patient-card-container body-text">
             <div className="patient-card-header">
                 <div className="patient-image-info-container">
                     <img src={`https://avatars.dicebear.com/api/initials/${patientName}.svg`} alt="patient-image" />

@@ -9,7 +9,11 @@ import { useSelector } from 'react-redux'
 const PageHeader = ({ 
     pageName, 
     addBtnText, 
-    setShowModalForm, 
+    addBtnTextIcon,
+    addBtnText2,
+    addBtnText2Icon,
+    setShowModalForm,
+    setShowModalForm2, 
     formURL, 
     setReload, 
     reload, 
@@ -42,7 +46,24 @@ const PageHeader = ({
                 className="btns-container subheader-text" 
                 onClick={e => formURL ? navigate(formURL) : setShowModalForm(true)}
                 >
-                    <button><AddOutlinedIcon /><strong>{addBtnText}</strong></button>
+                    {
+                        addBtnText2 ?
+                        <button 
+                        onClick={e => { 
+                            e.stopPropagation()
+                            setShowModalForm2(true)
+                        }}
+                        >
+                            { addBtnText2Icon ? addBtnText2Icon : <AddOutlinedIcon /> }
+                            <strong>{addBtnText2}</strong>
+                        </button>
+                        :
+                        null
+                    }
+                    <button>
+                        { addBtnTextIcon ? addBtnTextIcon : <AddOutlinedIcon /> }
+                        <strong>{addBtnText}</strong>
+                    </button>
                 </div>
                 :
                 null

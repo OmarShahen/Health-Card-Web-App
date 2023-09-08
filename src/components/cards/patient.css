@@ -1,13 +1,18 @@
 .patient-card-container {
     padding: 1rem;
-    border-radius: .25rem;
+    /*border-radius: .25rem;
     box-shadow: var(--box-shadow);
+    background-color: #FFF;*/
+    border-radius: .75rem;
+    border: 0.0625rem solid rgba(231, 234, 243, 0.7);
+    box-shadow: 0rem 0.375rem 0.75rem #8c98a413;
     background-color: #FFF;
+    transition: .3s;
 }
 
 .patient-card-container:hover {
     cursor: pointer;
-    opacity: .8;
+    transform: scale(.9);
 }
 
 .patient-card-header {

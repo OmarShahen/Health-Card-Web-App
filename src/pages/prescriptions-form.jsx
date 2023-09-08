@@ -136,7 +136,7 @@ const PrescriptionsFormPage = ({ roles }) => {
         <div className="padded-container">
             <PageHeader pageName={translations[lang]['Create Prescription']} isHideRefresh={true} />
             <div className="cards-grey-container body-text">
-                <div className="prescription-form-wrapper left box-shadow-line">
+                <div className="prescription-form-wrapper left box-shadow">
                     <div className="cards-2-list-wrapper margin-top-1">
                         <div className="prescription-form-notes-container">
                             <div className="form-input-container">

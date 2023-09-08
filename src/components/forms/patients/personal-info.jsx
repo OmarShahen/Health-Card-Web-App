@@ -2,6 +2,8 @@ import { useSelector } from "react-redux"
 import { cities } from "../../../utils/cities"
 import { capitalizeFirstLetter } from "../../../utils/formatString"
 import translations from "../../../i18n"
+import CancelIcon from '@mui/icons-material/Cancel'
+
 
 const PatientPersonalInformationForm = (props) => {
     
@@ -114,7 +116,7 @@ const PatientPersonalInformationForm = (props) => {
                 <span className="red">{props.cityError}</span>
             </div>
             {
-                user.roles.includes('DOCTOR') ?
+                user.roles.includes('DOCTOR') && !props.isUpdate ?
                 <div className="form-input-container">
                     <label>{translations[lang]['Clinic']}</label>
                     <select
@@ -127,6 +129,49 @@ const PatientPersonalInformationForm = (props) => {
                     </select>
                     <span className="red">{props.clinicError}</span>
                 </div>                
+                :
+                null
+            }
+            {
+                user.roles.includes('STAFF') && !props.isUpdate ?
+                <div className="form-input-container">
+                    <label>{translations[lang]['Doctors']}</label>
+                    <select
+                    className="form-input"
+                    onChange={e => {
+
+                        if(e.target.value === 'ALL') {
+                            props.setSelectedDoctors([...props.doctors])
+                            return
+                        }
+
+                        const doctorRegisteredList = props.selectedDoctors.filter(doctor => doctor.doctorId === e.target.value)
+                        if(doctorRegisteredList.length != 0) {
+                            return
+                        }
+
+                        const targetDoctorList = props.doctors.filter(doctor => doctor.doctorId === e.target.value)
+                        props.setSelectedDoctors([...props.selectedDoctors, ...targetDoctorList])
+                    }}
+                    onClick={e => props.setDoctorError()}
+                    >
+                        <option selected disabled>{translations[lang]['Select Doctors']}</option>
+                        <option value="ALL">{translations[lang]['All']}</option>
+                        {props.doctors.map(doctor => <option value={doctor?.doctor?._id}>
+                            {`${doctor?.doctor?.firstName} ${doctor?.doctor?.lastName}`}
+                        </option>)}
+                    </select>
+                    <div className="drug-instruction-list-container">
+                    {props.selectedDoctors.map(doctor => <span className="status-btn pending">
+                        {`${doctor?.doctor?.firstName} ${doctor?.doctor?.lastName}`}
+                        <span 
+                        onClick={e => props.setSelectedDoctors(props.selectedDoctors.filter(selectedDoctor => selectedDoctor?.doctorId !== doctor?.doctorId))}>
+                            <CancelIcon />
+                        </span>
+                    </span>)}
+                </div>
+                    <span className="red">{props.doctorError}</span>
+                </div>
                 :
                 null
             }

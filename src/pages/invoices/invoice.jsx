@@ -268,6 +268,20 @@ const InvoicePage = ({ roles }) => {
                             </div>
                             <div className="invoice-payment-list-container">
                                 <ul>
+                                    {
+                                        invoice.creator ?
+                                        <li>
+                                            <span>{'Creator'}</span>
+                                            <input 
+                                            className="form-input" 
+                                            type="text" 
+                                            value={`${invoice?.creator?.firstName} ${invoice?.creator?.lastName}`} 
+                                            disabled
+                                            />
+                                        </li>
+                                        :
+                                        null
+                                    }
                                     <li>
                                         <span>{translations[lang]['To']}</span>
                                         <input 
