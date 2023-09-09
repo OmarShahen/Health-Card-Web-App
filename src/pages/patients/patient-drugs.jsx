@@ -23,6 +23,7 @@ const PatientDrugsPage = ({ roles }) => {
     
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+    const clinicId = pagePath.split('/')[4]
 
     const patient = useSelector(state => state.patient.patient)
     const user = useSelector(state => state.user.user)

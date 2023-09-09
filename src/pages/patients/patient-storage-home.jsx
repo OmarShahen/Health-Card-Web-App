@@ -63,7 +63,7 @@ const PatientStorageHomePage = ({ roles }) => {
         const endpointURL = user.roles.includes('STAFF') ?
         `/v1/folders/clinics/${clinicId}/patients/${patientId}/staffs`
         :
-        `/v1/folders/patients/${patientId}`
+        `/v1/folders/clinics/${clinicId}/patients/${patientId}`
 
         setIsLoading(true)
         serverRequest.get(endpointURL)

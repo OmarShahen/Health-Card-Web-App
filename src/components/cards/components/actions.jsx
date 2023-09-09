@@ -8,7 +8,8 @@ const CardActions = ({ actions }) => {
 
     return <div 
     className="small-description-text actions-container">
-        <span 
+        <span
+        className="options-icon-container"
         onClick={e => {
             e.stopPropagation()
             setIsShow(!isShow)

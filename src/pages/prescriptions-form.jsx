@@ -18,6 +18,7 @@ const PrescriptionsFormPage = ({ roles }) => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+    const clinicId = pagePath.split('/')[4]
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -45,19 +46,6 @@ const PrescriptionsFormPage = ({ roles }) => {
         isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
 
-    useEffect(() => {
-
-        serverRequest.get(`/v1/clinics/doctors/${user._id}`)
-        .then(response => {
-            const data = response.data
-            setClinics(data.clinics)
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-
-    }, [])
     
     const handleNotesKeyDown = (e) => {
 
@@ -76,14 +64,12 @@ const PrescriptionsFormPage = ({ roles }) => {
 
     const handlePrescription = () => {
         
-        if(!clinic) return setClinicError(translations[lang]['clinic is required'])
-
         if(drugs.length === 0) return setDrugsError(translations[lang]['no drug is registered in the prescription'])
 
         const medicalData = {
             patientId,
             doctorId: user._id,
-            clinicId: clinic,
+            clinicId,
             notes,
             medicines: drugs,
         }
@@ -113,12 +99,10 @@ const PrescriptionsFormPage = ({ roles }) => {
         setPatientCardId('')
         setDrugs([])
         setNotes([])
-        setClinic('')
 
         setPatientCardIdError()
         setDrugsError()
         setNotesError()
-        setClinicError()
     }
 
     return <div className="page-container">
@@ -137,22 +121,6 @@ const PrescriptionsFormPage = ({ roles }) => {
             <PageHeader pageName={translations[lang]['Create Prescription']} isHideRefresh={true} />
             <div className="cards-grey-container body-text">
                 <div className="prescription-form-wrapper left box-shadow">
-                    <div className="cards-2-list-wrapper margin-top-1">
-                        <div className="prescription-form-notes-container">
-                            <div className="form-input-container">
-                                <strong>{translations[lang]['Clinic']}</strong>
-                                <select
-                                className="form-input"
-                                onChange={e => setClinic(e.target.value)}
-                                onClick={e => setClinicError()}
-                                >
-                                    <option selected disabled>{translations[lang]['Select Clinic']}</option>
-                                    {clinics.map(clinic => <option value={clinic.clinic._id}>{clinic.clinic.name}</option>)}
-                                </select>
-                            </div>
-                            <span className="red">{clinicError}</span>
-                        </div>                
-                    </div>
                     <div className="prescription-form-notes-container margin-top-1">
                         <div className="prescription-header-container">
                             <div>

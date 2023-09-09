@@ -32,6 +32,7 @@ const PatientAppointmentsPage = ({ roles }) => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+    const clinicId = pagePath.split('/')[4]
 
     const navigate = useNavigate()
 
@@ -64,7 +65,7 @@ const PatientAppointmentsPage = ({ roles }) => {
 
     useEffect(() => {
         setIsLoading(true)
-        const endpointURL = `/v1/appointments/patients/${patientId}`
+        const endpointURL = `/v1/appointments/clinics/${clinicId}/patients/${patientId}`
         serverRequest.get(endpointURL, { params: statsQuery })
         .then(response => {
             setIsLoading(false)
@@ -187,7 +188,7 @@ const PatientAppointmentsPage = ({ roles }) => {
                 rows={appointments} 
                 setRows={setSearchedAppointments}
                 searchRows={searchAppointments}
-                isHideClinics={user.roles.includes('STAFF') ? true : false }
+                isHideClinics={true}
                 />
             </div>
             <div className="appointments-categories-container">

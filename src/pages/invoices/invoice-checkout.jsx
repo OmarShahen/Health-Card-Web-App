@@ -131,7 +131,7 @@ const InvoiceCheckoutPage = ({ roles }) => {
         setTotalAmountRemaining(amountRemainingWithInsurance)
         setPayAmount(insurancePolicy?.coveragePercentage ? amountRemainingWithInsurance : totalCost)
 
-    }, [calculatorCounter])
+    }, [invoice.services])
 
 
     const payInvoice = () => {
@@ -197,7 +197,7 @@ const InvoiceCheckoutPage = ({ roles }) => {
                 <div className="invoice-checkout-grid-container body-text">
                     <CardTransition>
                     <div className="invoice-services-container">
-                        <h6>{translations[lang]['Invoice']} <span className="action-color-text normal-text">#{invoice?.invoice?.invoiceId}</span></h6>
+                        <h6>{translations[lang]['Invoice']} <span className="action-color-text normal-text">{invoice?.invoice?.invoiceId}</span></h6>
                         <ul>
                             {invoice.services.map(service => <li>
                                 <span>{service.name}</span>
@@ -205,7 +205,7 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                     {formatMoney(service.cost)}
                                     <span onClick={e => { 
                                         dispatch(removeService(service))
-                                        setCalculatorCounter(calculatorCounter + 1)
+                                        //setCalculatorCounter(calculatorCounter + 1)
                                     }}>
                                         <DeleteOutlineOutlinedIcon />
                                     </span>
@@ -231,7 +231,14 @@ const InvoiceCheckoutPage = ({ roles }) => {
                             }
                             <li>
                                 <span className="bold-text">{translations[lang]['Receive Amount']}</span>
-                                <span className="bold-text">{formatMoney(totalAmountRemaining)}</span>
+                                <span className="bold-text">
+                                    {
+                                    formatMoney(insurancePolicy?.coveragePercentage ? 
+                                    getTotal(invoice.services) - (getTotal(invoice.services) * (insurancePolicy.coveragePercentage / 100)) 
+                                    : 
+                                    getTotal(invoice.services))
+                                    }
+                                </span>
                             </li>
                             <li>
                                 <span>{translations[lang]['Amount Paid']}</span>
@@ -245,7 +252,7 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                     insurancePolicy?.coveragePercentage ? 
                                     formatMoney(totalAmountRemaining - payAmount) 
                                     :
-                                    formatMoney(totalAmount - payAmount)
+                                    formatMoney(getTotal(invoice.services) - payAmount)
                                     : 
                                     formatMoney(0)
                                     }
@@ -261,7 +268,6 @@ const InvoiceCheckoutPage = ({ roles }) => {
                     <CardTransition>
                         <div className="invoice-payment-container">
                             <div className="invoice-payment-header-container">
-                                <span>{translations[lang]['Invoice from']} <span className="actions-color-text">{invoice?.invoice?.clinic?.name}</span></span>
                                 <div>
                                     <strong>{formatMoney(getTotal(invoice.services))}</strong>
                                 </div>
@@ -272,10 +278,6 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                     <li>
                                         <span>{translations[lang]['To']}</span>
                                         <input className="form-input" type="text" value={patient?.firstName + ' ' + patient?.lastName} disabled/>
-                                    </li>
-                                    <li>
-                                        <span>{translations[lang]['From']}</span>
-                                        <input className="form-input" type="text" value={'Test Clinic'} disabled/>
                                     </li>
                                     {
                                         invoice?.invoice?.insuranceCompany ?
@@ -299,9 +301,9 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                         value={payAmount}
                                         min="0"
                                         onChange={e => {
-                                            if(insurancePolicy.coveragePercentage && Number.parseFloat(e.target.value) > totalAmountRemaining) {
+                                            if(insurancePolicy?.coveragePercentage && Number.parseFloat(e.target.value) > totalAmountRemaining) {
                                                 return
-                                            } else if(!insurancePolicy.coveragePercentage && totalAmount < Number.parseFloat(e.target.value)) {
+                                            } else if(!insurancePolicy?.coveragePercentage && getTotal(invoice.services) < Number.parseFloat(e.target.value)) {
                                                 return
                                             }
 

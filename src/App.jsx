@@ -116,8 +116,8 @@ function App() {
             <Route path="/encounters" element={<EncountersPage roles={['DOCTOR']} />} />
             <Route path="/appointments" element={<AppointmentsPage roles={['STAFF', 'DOCTOR', 'OWNER']} />} />
             <Route path="/prescriptions" element={<PrescriptionsPage roles={['DOCTOR', 'STAFF']} />} />
-            <Route path="/patients/:patientId/encounters/form" element={<EncountersFormPage roles={['DOCTOR']} />} />
-            <Route path="/patients/:patientId/prescriptions/form" element={<PrescriptionsFormPage roles={['DOCTOR']} />} />
+            <Route path="/patients/:patientId/clinics/:clinicId/encounters/form" element={<EncountersFormPage roles={['DOCTOR']} />} />
+            <Route path="/patients/:patientId/clinics/:clinicId/prescriptions/form" element={<PrescriptionsFormPage roles={['DOCTOR']} />} />
             <Route path="/patients/form" element={<PatientFormPage roles={['STAFF', 'DOCTOR']}/>} />
             <Route path="/patients/:patientId/form" element={<PatientFormPage roles={['STAFF', 'DOCTOR']}/>} />
             <Route path="/encounters/:id/update" element={<UpdateEncountersFormPage roles={['DOCTOR']} />} />

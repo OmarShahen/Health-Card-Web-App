@@ -35,6 +35,7 @@ const PatientInvoicesPage = ({ roles }) => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+    const clinicId = pagePath.split('/')[4]
 
     const [isShowForm, setIsShowForm] = useState(false)
     const [isShowPayDebtForm, setIsShowPayDebtForm] = useState(false)
@@ -65,7 +66,7 @@ const PatientInvoicesPage = ({ roles }) => {
 
     useEffect(() => {
 
-        let endpointURL = `/v1/invoices/patients/${patientId}`
+        let endpointURL = `/v1/invoices/clinics/${clinicId}/patients/${patientId}`
 
         setIsLoading(true)
         serverRequest.get(endpointURL, { params: statsQuery })
@@ -276,7 +277,7 @@ const PatientInvoicesPage = ({ roles }) => {
                 rows={invoices} 
                 setRows={setSearchedInvoices}
                 searchRows={searchInvoices}
-                isHideClinics={user.roles.includes('STAFF') ? true : false}
+                isHideClinics={true}
                 />
             </div>
             <div className="appointments-categories-container">

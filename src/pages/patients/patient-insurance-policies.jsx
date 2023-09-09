@@ -25,6 +25,7 @@ const PatientInsurancePoliciesPage = ({ roles }) => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+    const clinicId = pagePath.split('/')[4]
 
     const [isShowForm, setIsShowForm] = useState(false)
     const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
@@ -50,7 +51,7 @@ const PatientInsurancePoliciesPage = ({ roles }) => {
 
     useEffect(() => {
 
-        let endpointURL = `/v1/insurance-policies/patients/${patientId}`
+        let endpointURL = `/v1/insurance-policies/clinics/${clinicId}/patients/${patientId}/all`
 
         setIsLoading(true)
         serverRequest.get(endpointURL)
@@ -139,7 +140,7 @@ const PatientInsurancePoliciesPage = ({ roles }) => {
                 rows={insurancePolicies} 
                 setRows={setSearchedInsurancePolicies}
                 searchRows={searchInsurancePolicies}
-                isHideClinics={user.roles.includes('STAFF') ? true : false}
+                isHideClinics={true}
                 />
             </div>
             

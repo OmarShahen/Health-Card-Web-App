@@ -24,6 +24,7 @@ const PatientEncountersPage = ({ roles }) => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+    const clinicId = pagePath.split('/')[4]
 
     const patient = useSelector(state => state.patient.patient)
     const user = useSelector(state => state.user.user)
@@ -45,7 +46,7 @@ const PatientEncountersPage = ({ roles }) => {
     }, [])
     useEffect(() => {
         setIsLoading(true)
-        serverRequest.get(`/v1/encounters/patients/${patientId}`, { params: statsQuery })
+        serverRequest.get(`/v1/encounters/clinics/${clinicId}/patients/${patientId}`, { params: statsQuery })
         .then(response => {
             setIsLoading(false)
             setEncounters(response.data.encounters)
@@ -73,7 +74,7 @@ const PatientEncountersPage = ({ roles }) => {
         <PageHeader 
         pageName={translations[lang]["Encounters"]} 
         addBtnText={translations[lang]['Add Encounter']}
-        formURL={`/patients/${patientId}/encounters/form`}
+        formURL={`/patients/${patientId}/clinics/${clinicId}/encounters/form`}
         isHideBackButton={true}
         isHideRefresh={true}
         />
@@ -86,7 +87,9 @@ const PatientEncountersPage = ({ roles }) => {
             />
         </div>
         <div className="show-mobile">
-            <FloatingButton url={`/patients/${patientId}/encounters/form`} />
+            <FloatingButton 
+            url={`/patients/${patientId}/clinics/${clinicId}/encounters/form`} 
+            />
         </div>
         <div>
             <div>
@@ -100,7 +103,8 @@ const PatientEncountersPage = ({ roles }) => {
                     rows={encounters} 
                     setRows={setSearchedEncounters}
                     searchRows={searchEncounters}
-                    isHideSpeciality={false}
+                    isHideSpeciality={true}
+                    isHideClinics={true}
                     />
                 </div>
                 <div>

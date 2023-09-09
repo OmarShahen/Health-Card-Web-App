@@ -17,6 +17,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+    const clinicId = pagePath.split('/')[4]
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -27,18 +28,15 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
     const [isSubmit, setIsSubmit] = useState(false)
     const [isServicesLoading, setIsServicesLoading] = useState(user.roles.includes('STAFF') ? true : false)
     const [isDoctorsLoading, setIsDoctorsLoading] = useState(user.roles.includes('STAFF') ? true : false)
-    const [isClinicsLoading, setIsClinicsLoading] = useState(user.roles.includes('DOCTOR') ? true : false)
 
     const [servicesList, setServicesList] = useState([])
     const [doctors, setDoctors] = useState([])
-    const [clinics, setClinics] = useState([])
 
     const [status, setStatus] = useState('UPCOMING')
     const [reservationDate, setReservationDate] = useState()
     const [reservationTime, setReservationTime] = useState()
     const [service, setService] = useState()
     const [doctor, setDoctor] = useState()
-    const [clinic, setClinic] = useState()
 
     const [isSendMail, setIsSendMail] = useState(true)
 
@@ -48,27 +46,6 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
     const [serviceError, setServiceError] = useState()
     const [doctorError, setDoctorError] = useState()
     const [clinicError, setClinicError] = useState()
-
-    useEffect(() => {
-
-        if(user.roles.includes('STAFF')) {
-            return
-        }
-
-        setIsClinicsLoading(true)
-        serverRequest.get(`/v1/clinics/doctors/${user._id}`)
-        .then(response => {
-            setIsClinicsLoading(false)
-            const data = response.data
-            setClinics(data.clinics)
-        })
-        .catch(error => {
-            setIsClinicsLoading(false)
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-
-    }, [])
 
 
     useEffect(() => {
@@ -124,8 +101,6 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
 
         if(!doctor && user.roles.includes('STAFF')) return setDoctorError(translations[lang]['doctor is required'])
 
-        if(!clinic && user.roles.includes('DOCTOR')) return setClinicError(translations[lang]['clinic is required'])
-
         const [year, month, day] = reservationDate.split('-').map(Number)
         const [hours, minutes] = reservationTime.split(':').map(Number)
         const seconds = 0
@@ -134,7 +109,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
 
         const appointment = {
             patientId,
-            clinicId: user.roles.includes('DOCTOR') ? clinic : user.clinicId,
+            clinicId: user.roles.includes('DOCTOR') ? clinicId : user.clinicId,
             doctorId: user.roles.includes('STAFF') ? doctor : user._id,
             reservationTime: bookDate,
             status,
@@ -195,7 +170,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                 <h2>{translations[lang]['Create Appointment']}</h2>
             </div>
             {
-                isServicesLoading || isDoctorsLoading || isClinicsLoading  ?
+                isServicesLoading || isDoctorsLoading  ?
                 <CircularLoading />
                 :
                 <div>
@@ -273,25 +248,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                             :
                             null
                         }
-                        {
-                            user.roles.includes('DOCTOR') ?
-                            <div className="form-input-container">
-                                <label>{translations[lang]['Clinic']}</label>
-                                <select
-                                className="form-input"
-                                onChange={e => setClinic(e.target.value)}
-                                onClick={e => setClinicError()}
-                                >
-                                    <option selected disabled>{translations[lang]['Select Clinic']}</option>
-                                    {clinics.map(clinic => <option value={clinic?.clinic?._id}>
-                                        {clinic?.clinic?.name}
-                                    </option>)}
-                                </select>
-                                <span className="red">{clinicError}</span>
-                            </div>
-                            :
-                            null
-                        }
+                        
                         <div></div>
                         <div 
                         className="modal-send-email-container body-text"

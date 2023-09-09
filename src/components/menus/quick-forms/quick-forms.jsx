@@ -30,6 +30,7 @@ const QuickFormMenu = ({
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+    const clinicId = pagePath.split('/')[4]
 
     return <div className="quick-form-menu-container">
         <div className="quick-form-menu-header-container">
@@ -49,7 +50,7 @@ const QuickFormMenu = ({
                 
                 {
                     user.roles.includes('DOCTOR') ?
-                    <li onClick={e => navigate(`/patients/${patientId}/encounters/form`)}>
+                    <li onClick={e => navigate(`/patients/${patientId}/clinics/${clinicId}/encounters/form`)}>
                         <span>{translations[lang]['Encounter']}</span>
                         <AssignmentOutlinedIcon />
                     </li>
@@ -58,7 +59,7 @@ const QuickFormMenu = ({
                 }
                 {
                     user.roles.includes('DOCTOR') ?
-                    <li onClick={e => navigate(`/patients/${patientId}/prescriptions/form`)}>
+                    <li onClick={e => navigate(`/patients/${patientId}/clinics/${clinicId}/prescriptions/form`)}>
                         <span>{translations[lang]['Prescription']}</span>
                         <MedicationOutlinedIcon />
                     </li>

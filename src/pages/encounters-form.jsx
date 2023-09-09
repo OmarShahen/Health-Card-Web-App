@@ -22,6 +22,7 @@ const EncountersFormPage = ({ roles }) => {
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
+    const clinicId = pagePath.split('/')[4]
 
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
@@ -54,19 +55,6 @@ const EncountersFormPage = ({ roles }) => {
         isRolesValid(user.roles, roles) ? null : navigate('/login')
     }, [])
 
-    useEffect(() => {
-        serverRequest.get(`/v1/clinics/doctors/${user._id}`)
-        .then(response => {
-            const data = response.data
-            setClinics(data.clinics)
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-
-    }, [])
-
     const handleNotesKeyDown = (e) => {
 
         if(e.key !== 'Enter') return 
@@ -83,12 +71,6 @@ const EncountersFormPage = ({ roles }) => {
     }
 
     const handleEncounter = () => {
-      
-        if(!clinic) {
-            toast.error(translations[lang]['clinic is required'], { duration: 3000, position: 'top-right' })
-            setClinicError(translations[lang]['clinic is required'])
-            return
-        }
 
         if(symptoms.length === 0) {
             toast.error(translations[lang]['patient symptoms is required'], { duration: 3000, position: 'top-right' })
@@ -105,7 +87,7 @@ const EncountersFormPage = ({ roles }) => {
         const medicalData = {
             doctorId: user._id,
             patientId,
-            clinicId: clinic,
+            clinicId,
             symptoms,
             diagnosis,
             medicines: drugs,
@@ -121,7 +103,7 @@ const EncountersFormPage = ({ roles }) => {
             setIsSubmit(false)
             const data = response.data
             toast.success(data.message, { duration: 5000, position: 'top-right' })
-            drugs.length === 0 ? navigate(`/patients/${patientId}/encounters`) : navigate(`/prescriptions/${data.prescription._id}/view`)
+            drugs.length === 0 ? navigate(`/patients/${patientId}/clinics/${data.encounter.clinicId}/encounters`) : navigate(`/prescriptions/${data.prescription._id}/view`)
         })
         .catch(error => {
             setIsSubmit(false)
@@ -142,13 +124,11 @@ const EncountersFormPage = ({ roles }) => {
         setDiagnosis([])
         setDrugs([])
         setNotes([])
-        setClinic('')
 
         setPatientCardIdError()
         setSymptomsError()
         setDiagnosisError()
         setNotesError()
-        setClinicError()
     }
 
     return <div className="page-container">
@@ -172,22 +152,6 @@ const EncountersFormPage = ({ roles }) => {
             />
             <div className="cards-grey-container body-text">
                 <div className="prescription-form-wrapper box-shadow left">
-                    <div className="cards-2-list-wrapper">
-                        <div className="prescription-form-notes-container">
-                            <div className="form-input-container">
-                                <strong>{translations[lang]['Clinic']}</strong>
-                                <select
-                                className="form-input"
-                                onChange={e => setClinic(e.target.value)}
-                                onClick={e => setClinicError()}
-                                >
-                                    <option selected disabled>{translations[lang]['Select Clinic']}</option>
-                                    {clinics.map(clinic => <option value={clinic.clinic._id}>{clinic.clinic.name}</option>)}
-                                </select>
-                            </div>
-                            <span className="red">{clinicError}</span>
-                        </div>
-                    </div>
                     
                     <SymptomsDiagnosisForm
                     symptoms={symptoms}
