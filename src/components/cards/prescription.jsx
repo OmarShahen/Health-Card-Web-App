@@ -50,7 +50,7 @@ const PrescriptionCard = ({
             icon: <HotelOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                navigate(`/patients/${prescription.patient._id}/medical-profile`)
+                navigate(`/patients/${prescription.patient._id}/clinics/${prescription.clinicId}/medical-profile`)
             }
         },
      ]

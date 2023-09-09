@@ -109,13 +109,6 @@
         display: none !important;
     }
 
-    .page-header-container {
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        width: 100%;
-    }
-
     .page-header-title-container {
         display: flex !important;
         align-items: flex-start !important;

@@ -50,7 +50,7 @@ const EncounterCard = ({
             icon: <HotelOutlinedIcon />,
             onAction: (e) => {
                 e.stopPropagation()
-                navigate(`/patients/${encounter.patient._id}/medical-profile`)
+                navigate(`/patients/${encounter.patient._id}/clinics/${encounter.clinicId}/medical-profile`)
             }
         },
      ]
