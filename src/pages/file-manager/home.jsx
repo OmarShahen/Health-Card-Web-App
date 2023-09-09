@@ -160,7 +160,9 @@ const FileManagerHomePage = ({ roles }) => {
         />
        
         <div className="show-mobile">
-            <FloatingButton />
+            <FloatingButton
+            setIsShowForm={setIsShowForm}
+            />
         </div>
         <div>
             <div>

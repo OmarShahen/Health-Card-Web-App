@@ -35,7 +35,7 @@ const PageHeader = ({
             </div>
         }
             <div className="page-header-container">
-            <div>
+            <div className="page-header-title-container">
                 <h1>
                     {pageName}
                 </h1>

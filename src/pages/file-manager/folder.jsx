@@ -191,7 +191,9 @@ const FileManagerFolderPage = ({ roles }) => {
         />
        
         <div className="show-mobile">
-            <FloatingButton />
+            <FloatingButton 
+            setIsShowForm={setIsShowUploadForm}
+            />
         </div>
         <div>
             <div>

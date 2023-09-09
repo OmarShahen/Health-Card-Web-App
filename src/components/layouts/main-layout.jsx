@@ -22,7 +22,7 @@ const MainLayout = () => {
 
     const [hideSideBar, setHideSideBar] = useState(false)
 
-    const noSidebarStyle = { padding: window.innerWidth < 700 ? '0 .3rem' : '0 7rem' }
+    const noSidebarStyle = { padding: window.innerWidth < 700 ? '0 .7rem' : '0 7rem' }
 
     useEffect(() => {
 

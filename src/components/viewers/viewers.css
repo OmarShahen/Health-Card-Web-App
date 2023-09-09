@@ -1,4 +1,4 @@
-.modal {
+.viewer-modal {
     width: 100vw;
     min-height: 100vh;
     position: fixed;
@@ -12,7 +12,7 @@
     z-index: 100;
 }
 
-.modal-container {
+.viewer-modal-container {
     background-color: #FFF;
     width: 50rem;
     margin: auto;

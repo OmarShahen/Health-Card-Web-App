@@ -181,7 +181,7 @@
 @media only screen and (max-width: 900px) {
 
     .modal-container {
-        width: 80%;
+        width: 90%;
         margin: auto;
         margin-top: 2rem;
         margin-bottom: 2rem;
@@ -192,4 +192,15 @@
     .modal-form-container {
         grid-template-columns: 50% 50%;
     }
+
+    .upload-file-form-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        column-gap: 1rem;
+    }
+
+    .file-upload-info-container {
+        margin-top: 1rem;
+    }
+    
 }

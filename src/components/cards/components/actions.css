@@ -6,7 +6,7 @@
     font-size: 1.3rem;
 }
 
-.actions-container:hover .actions-dropdown-container {
+.actions-container .actions-dropdown-container {
     display: block;
     cursor: pointer;
     opacity: 1;

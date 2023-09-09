@@ -109,12 +109,29 @@
         display: none !important;
     }
 
+    .page-header-container {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .page-header-title-container {
+        display: flex !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+    }
+
+    .btns-container button strong {
+        font-size: .9rem !important;
+    }
+
     .header-mobile-icons-container {
         display: block;
     }
 
     .page-header-container div h1 {
-        font-size: 1.6rem;
+        font-size: 1.2rem;
     }
     
   }
