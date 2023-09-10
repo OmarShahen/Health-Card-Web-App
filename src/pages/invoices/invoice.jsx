@@ -271,7 +271,7 @@ const InvoicePage = ({ roles }) => {
                                     {
                                         invoice.creator ?
                                         <li>
-                                            <span>{'Creator'}</span>
+                                            <span>{translations[lang]['Creator']}</span>
                                             <input 
                                             className="form-input" 
                                             type="text" 
