@@ -4,8 +4,10 @@ import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
 import { TailSpin } from 'react-loader-spinner'
 import translations from '../../i18n'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { format } from 'date-fns'
+import { setIsShowModal, setIsShowRenewModal } from '../../redux/slices/modalSlice'
+
 
 const FolderFormModal = ({ 
     setShowFormModal, 
@@ -18,6 +20,8 @@ const FolderFormModal = ({
     patientId,
     clinicId
 }) => {
+
+    const dispatch = useDispatch()
 
     const lang = useSelector(state => state.lang.lang)
     const user = useSelector(state => state.user.user)
@@ -89,6 +93,18 @@ const FolderFormModal = ({
                 const errorResponse = error.response.data
 
                 if(errorResponse.field === 'name') return setNameError(errorResponse.message)
+
+                if(errorResponse.field === 'mode') {
+                    setShowFormModal(false)
+                    dispatch(setIsShowModal(true))
+                    return
+                }
+
+                if(errorResponse.field === 'activeUntilDate') {
+                    setShowFormModal(false)
+                    dispatch(setIsShowRenewModal(true))
+                    return
+                }
 
                 toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
 

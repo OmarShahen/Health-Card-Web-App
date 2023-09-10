@@ -4,7 +4,7 @@ import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
 import { TailSpin } from 'react-loader-spinner'
 import translations from '../../i18n'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { format } from 'date-fns'
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
 import { projectStorage } from '../../firebase/config'
@@ -15,6 +15,7 @@ import imageIcon from '../../assets/placeholder-img-format.svg'
 import pdfIcon from '../../assets/pdf-icon.svg'
 import excelIcon from '../../assets/google-sheets-icon.svg'
 import wordIcon from '../../assets/google-docs-icon.svg'
+import { setIsShowModal, setIsShowRenewModal } from '../../redux/slices/modalSlice'
 
 
 const UploadFileFormModal = ({ 
@@ -26,6 +27,8 @@ const UploadFileFormModal = ({
 
     const pagePath = window.location.pathname
     const folderId = pagePath.split('/')[3]
+
+    const dispatch = useDispatch()
 
     const lang = useSelector(state => state.lang.lang)
     const user = useSelector(state => state.user.user)
@@ -179,6 +182,21 @@ const UploadFileFormModal = ({
                 })
                 .catch(error => {
                     console.error(error)
+
+                    const errorResponse = error.response.data
+
+                    if(errorResponse.field === 'mode') {
+                        setShowFormModal(false)
+                        dispatch(setIsShowModal(true))
+                        return
+                    }
+    
+                    if(errorResponse.field === 'activeUntilDate') {
+                        setShowFormModal(false)
+                        dispatch(setIsShowRenewModal(true))
+                        return
+                    }
+
                     toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
                 })
               });
