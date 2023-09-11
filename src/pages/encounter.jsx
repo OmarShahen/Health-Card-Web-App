@@ -10,6 +10,8 @@ import PageHeader from '../components/sections/page-header'
 import { isRolesValid } from '../utils/roles'
 import DeleteEncounterConfirmationModal from '../components/modals/confirmation/encounter-delete-confirmation-modal'
 import translations from '../i18n'
+import CircularLoading from '../components/loadings/circular'
+
 
 const EncounterPage = ({ roles }) => {
 
@@ -72,7 +74,7 @@ const EncounterPage = ({ roles }) => {
                     />
                 </div> 
                 : 
-                null 
+                <CircularLoading />
             }
             </div>
     </div>

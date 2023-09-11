@@ -21,7 +21,7 @@ const DrugFormModal = ({ drugs, setDrugs, setShowFormModal, mode, targetDrug }) 
     const [frequencyNumber, setFrequencyNumber] = useState(mode === 'EDITE' ? targetDrug?.frequency?.number : '')
     const [frequencyTime, setFrequencyTime] = useState(mode === 'EDITE' ? targetDrug?.frequency?.timeUnit : "day")
     const [periodNumber, setPeriodNumber] = useState(mode === 'EDITE' ? targetDrug?.duration?.number : '')
-    const [periodTime, setPeriodTime] = useState(mode === 'EDITE' ? targetDrug?.duration?.timeUnit : "week")
+    const [periodTime, setPeriodTime] = useState(mode === 'EDITE' ? targetDrug?.duration?.timeUnit : "day")
     const [instructions, setInstructions] = useState(mode === 'EDITE' ? targetDrug?.instructions : [])
 
     const [drugNameError, setDrugNameError] = useState()

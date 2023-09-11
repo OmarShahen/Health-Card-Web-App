@@ -11,6 +11,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { isRolesValid } from '../utils/roles'
 import PrescriptionConfirmationDeleteModal from '../components/modals/confirmation/prescription-delete-confirmation-modal'
 import translations from '../i18n'
+import CircularLoading from '../components/loadings/circular'
+
 
 const PrescriptionPage = ({ roles }) => {
 
@@ -76,16 +78,17 @@ const PrescriptionPage = ({ roles }) => {
                     { prescription ? <PrintPrescription prescription={prescription} /> : null }                </div>
                 </div>
             </div>
-           { prescription ?
-           <div className="grey-bg-container">
-                <PrescriptionCard 
-                prescription={prescription} 
-                setIsShowDeleteModal={setIsShowDeleteModal}
-                setTargetPrescription={setPrescription}
-                /> 
-           </div>
-           : 
-           null 
+            { 
+                prescription ?
+                <div className="grey-bg-container">
+                        <PrescriptionCard 
+                        prescription={prescription} 
+                        setIsShowDeleteModal={setIsShowDeleteModal}
+                        setTargetPrescription={setPrescription}
+                        /> 
+                </div>
+                : 
+                <CircularLoading /> 
            }
         </div>
     </div>

@@ -258,11 +258,10 @@ const ServiceFormModal = ({
                                 className="normal-button cancel-button"
                                 onClick={e => {
                                     e.preventDefault()
-                                    setService()
+                                    setService ? setService() : null
                                     setShowFormModal(false)
-                                    clinicId ? setIsShowRequestModel(true) : null
                                 }}
-                                >{ clinicId && !isShowCloseButton ? translations[lang]['Next'] : translations[lang]['Close'] }</button>
+                                >{translations[lang]['Close']}</button>
                             </div>
                     </div>
                 </div>
