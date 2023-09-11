@@ -128,11 +128,6 @@ const FileCard = ({
             return
         }
 
-        if(file.type === 'pdf') {
-            window.open(`/viewers/pdf/${file._id}`, '_blank')
-            return
-        }
-
         window.open(file.url, '_blank')
     }} 
     className="patient-card-container body-text"
