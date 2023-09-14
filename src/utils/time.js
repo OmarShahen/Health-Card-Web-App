@@ -1,4 +1,4 @@
-const getTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone
+export const getTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone
 
 
 export const getTime = (dateTimeValue) => {

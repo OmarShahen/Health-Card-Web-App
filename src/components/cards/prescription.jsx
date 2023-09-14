@@ -9,6 +9,9 @@ import CardActions from './components/actions'
 import CardTransition from '../transitions/card-transitions'
 import { useSelector } from 'react-redux'
 import translations from '../../i18n'
+import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
+import { serverRequest } from '../API/request'
+import { toast } from 'react-hot-toast'
 
 
 const PrescriptionCard = ({ 
@@ -27,6 +30,17 @@ const PrescriptionCard = ({
     const doctorName = `${prescription?.doctor?.firstName} ${prescription?.doctor?.lastName}`
     const patientCardId = prescription?.patient?.patientId
 
+    const sendPrescriptionThroughWhatsapp = () => {
+        serverRequest.post(`/v1/prescriptions/${prescription._id}/send/whatsapp`)
+        .then(response => {
+            toast.success(response.data.message, { duration: 3000, position: 'top-right' })
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
+        })
+    }
+
     const doctorActionsList = [
         {
             name: translations[lang]['Delete Prescription'],
@@ -43,6 +57,14 @@ const PrescriptionCard = ({
             onAction: (e) => {
                 e.stopPropagation()
                 navigate(`/prescriptions/${prescription._id}/update`)
+            }
+        },
+        {
+            name: translations[lang]['Send through whatsapp'],
+            icon: <SendOutlinedIcon />,
+            onAction: e => {
+                e.stopPropagation()
+                sendPrescriptionThroughWhatsapp()
             }
         },
         {

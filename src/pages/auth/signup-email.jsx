@@ -8,6 +8,7 @@ import { setUser } from '../../redux/slices/userSlice'
 import PageTransition from '../../components/transitions/page-transitions'
 import logo from '../../assets/khatab.png'
 import translations from '../../i18n'
+import { getTimeZone } from '../../utils/time'
 
 const SignUpEmailPage = () => {
 
@@ -47,7 +48,8 @@ const SignUpEmailPage = () => {
         setIsSubmit(true)
         serverRequest.post(`/v1/auth/verify/emails/${email}`)
         .then(response => {
-            const userData = { ...user, ...verifyData, role: 'DOCTOR' }
+            let userData = { ...user, ...verifyData, role: 'DOCTOR' }
+            userData.timeZone = getTimeZone()
             serverRequest.post('/v1/auth/signup', userData)
             .then(response => {
                 setIsSubmit(false)
