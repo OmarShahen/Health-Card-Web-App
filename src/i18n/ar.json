@@ -627,5 +627,6 @@
     "6 files is the maximum": "6 ملفات هو الحد الأقصى",
     "Update File": "تعديل الملفات",
     "Creator": "المنشئ",
-    "Send through whatsapp": "ارسل عبر الواتس اب"
+    "Send through whatsapp": "ارسل عبر الواتس اب",
+    "phone number must be entered": "يجب ادخال رقم هاتف"
 }

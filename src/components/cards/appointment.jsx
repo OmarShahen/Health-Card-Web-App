@@ -144,7 +144,7 @@ const AppointmentCard = ({
                 </li>
                 <li>
                     <strong>{translations[lang]['Date']}</strong>
-                    <span>{format(new Date(appointment?.reservationTime), lang === 'en' ? 'dd MMM yyyy' : 'MM/dd/yyyy')}</span>
+                    <span>{format(new Date(appointment?.reservationTime), lang === 'en' ? 'dd MMM yyyy' : 'yyyy/MM/dd')}</span>
                 </li>
                 <li>
                     <strong>{translations[lang]['Time']}</strong>

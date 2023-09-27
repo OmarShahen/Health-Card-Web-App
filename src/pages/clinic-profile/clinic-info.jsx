@@ -23,6 +23,7 @@ const ClinicProfilePage = ({ roles }) => {
     const [isSubmit, setIsSubmit] = useState(false)
 
     const [name, setName] = useState()
+    const [phone, setPhone] = useState()
     const [country, setCountry] = useState()
     const [city, setCity] = useState()
     const [creationDate, setCreationDate] = useState()
@@ -30,6 +31,7 @@ const ClinicProfilePage = ({ roles }) => {
     const [chosenSpecialities, setChosenSpecialities] = useState([])
 
     const [nameError, setNameError] = useState()
+    const [phoneError, setPhoneError] = useState()
     const [countryError, setCountryError] = useState()
     const [cityError, setCityError] = useState()
     const [specialityError, setSpecialityError] = useState([])
@@ -55,6 +57,7 @@ const ClinicProfilePage = ({ roles }) => {
             const data = response.data
             const clinic = data.clinic
             setName(clinic.name)
+            setPhone(clinic.phone ? `0${clinic.phone}` : '')
             setChosenSpecialities(clinic.specialities)
             setCity(clinic.city)
             setCountry(clinic.country)
@@ -70,13 +73,19 @@ const ClinicProfilePage = ({ roles }) => {
         e.preventDefault()
 
         if(!name) return setNameError(translations[lang]['name is required'])
+
+        if(!phone) return setPhoneError(translations[lang]['phone is required'])
+
+        if(isNaN(phone)) return setPhoneError(translations[lang]['phone number must be entered'])
         
         if(!city) return setCityError(translations[lang]['city is required'])
 
         if(chosenSpecialities.length === 0) return setSpecialityError(translations[lang]['one speciality is required'])
 
         const updatedData = { 
-            name, 
+            name,
+            phone: parseInt(phone),
+            countryCode: 20,
             city,
             country,
             speciality: chosenSpecialities.map(special => special._id),
@@ -137,11 +146,17 @@ const ClinicProfilePage = ({ roles }) => {
                     <span className="red">{nameError}</span>
                 </div>
                 <div>
-                    <label>{translations[lang]['Country']}</label>
+                    <label>{translations[lang]['Phone']}</label>
                     <div className="form-input-button-container">
-                        <input type="text" className="form-input" value={country} disabled />
+                        <input 
+                        type="tel" 
+                        className="form-input" 
+                        value={phone}
+                        onChange={e => setPhone(e.target.value)}
+                        onClick={e => setPhoneError()}
+                        />
                     </div>
-                    <span className="red">{countryError}</span>
+                    <span className="red">{phoneError}</span>
                 </div>
                 <div>
                     <label>{translations[lang]['City']}</label>
@@ -164,15 +179,11 @@ const ClinicProfilePage = ({ roles }) => {
                     <span className="red">{cityError}</span>
                 </div>
                 <div>
-                    <label>{translations[lang]['Creation Date']}</label>
+                    <label>{translations[lang]['Country']}</label>
                     <div className="form-input-button-container">
-                        <input 
-                        type="text" 
-                        className="form-input" 
-                        value={creationDate ? format(new Date(creationDate), 'dd MMM yyyy') : null}
-                        disabled
-                        />
+                        <input type="text" className="form-input" value={country} disabled />
                     </div>
+                    <span className="red">{countryError}</span>
                 </div>
                 <div className="form-input-button-container">
                     <div>
@@ -197,7 +208,17 @@ const ClinicProfilePage = ({ roles }) => {
                         <span className="red">{specialityError}</span>
                     </div>
                 </div>
-                <div></div>
+                <div>
+                    <label>{translations[lang]['Creation Date']}</label>
+                    <div className="form-input-button-container">
+                        <input 
+                        type="text" 
+                        className="form-input" 
+                        value={creationDate ? format(new Date(creationDate), 'dd MMM yyyy') : null}
+                        disabled
+                        />
+                    </div>
+                </div>
                 <div>
                     {
                         isSubmit ?

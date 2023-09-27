@@ -18,7 +18,6 @@ const ClinicCard = ({ clinic, isOwner, setIsShowDeleteModal, setTargetClinic, is
     const _id = isOwner ? clinic._id : clinic.clinic._id
     const clinicId = isOwner ? clinic?.clinicId : clinic?.clinic?.clinicId
     const name = isOwner ? clinic?.name : clinic?.clinic?.name
-    const phone = isOwner ? `+${clinic?.countryCode}${clinic?.phone}` : `+${clinic?.clinic?.countryCode}${clinic?.clinic?.phone}`
     const city = isOwner ? clinic?.city : clinic?.clinic?.city
     const country = isOwner ? clinic?.country : clinic?.clinic?.country
     const mode = isOwner ? clinic?.mode : clinic?.clinic?.mode
@@ -49,6 +48,15 @@ const ClinicCard = ({ clinic, isOwner, setIsShowDeleteModal, setTargetClinic, is
         </div>
         <div className="patient-card-body">
             <ul>
+                <li>
+                    <strong>{translations[lang]['Phone']}</strong>
+                    {
+                        clinic?.clinic?.phone ?
+                        <span>{`+${clinic?.clinic?.countryCode}${clinic?.clinic?.phone}`}</span>
+                        :
+                        <span>{translations[lang]['Not Registered']}</span>
+                    }
+                </li>
                 <li>
                     <strong>{translations[lang]['Country']}</strong>
                     <span>{translations[lang][capitalizeFirstLetter(country)]}</span>

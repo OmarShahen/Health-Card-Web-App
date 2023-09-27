@@ -213,7 +213,16 @@ const AppointmentsPage = ({ roles }) => {
                     </div>
                     <div style={ viewStatus === 'EXPIRED' ? activeElementColor : null } onClick={e => {
                         setViewStatus('EXPIRED')
-                        setSearchedAppointments(appointments.filter(appointment => appointment.status === 'EXPIRED'))
+                        setSearchedAppointments(appointments.filter(appointment => {
+                            const todayDate = new Date()
+                            const reservationDate = new Date(appointment.reservationTime)
+
+                            if(todayDate > reservationDate) {
+                                return true
+                            }
+
+                            return false
+                        }))
                     }}>
                         {translations[lang]['Expired']}
                     </div>

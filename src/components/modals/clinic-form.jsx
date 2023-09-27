@@ -24,12 +24,14 @@ const ClinicFormModal = ({ setShowFormModal, setReload, reload, setIsShowService
     const [isSubmit, setIsSubmit] = useState(false)
 
     const [name, setName] = useState()
+    const [phone, setPhone] = useState()
     const [city, setCity] = useState()
     const [specialities, setSpecialities] = useState([])
     const [chosenSpecialities, setChosenSpecialities] = useState([])
 
 
     const [nameError, setNameError] = useState()
+    const [phoneError, setPhoneError] = useState()
     const [cityError, setCityError] = useState()
     const [specialitiesError, setSpecialitiesError] = useState()
 
@@ -51,6 +53,10 @@ const ClinicFormModal = ({ setShowFormModal, setReload, reload, setIsShowService
 
         if(!name) return setNameError(translations[lang]['name is required'])
 
+        if(!phone) return setPhoneError(translations[lang]['phone is required'])
+
+        if(isNaN(phone)) return setPhoneError(translations[lang]['phone number must be entered'])
+
         if(!city) return setCityError(translations[lang]['city is required'])
 
         if(chosenSpecialities.length === 0) return setSpecialitiesError(translations[lang]['specialities is required'])
@@ -58,6 +64,8 @@ const ClinicFormModal = ({ setShowFormModal, setReload, reload, setIsShowService
         const clinicInfo = {
             ownerId: user._id,
             name,
+            phone: Number.parseInt(phone),
+            countryCode: 20,
             speciality: chosenSpecialities.map(speciality => speciality._id),
             city,
             country: 'EGYPT'
@@ -91,6 +99,8 @@ const ClinicFormModal = ({ setShowFormModal, setReload, reload, setIsShowService
             const errorData = error.response.data
 
             if(errorData.field === 'name') return setNameError(errorData.message)
+
+            if(errorData.field === 'phone') return setPhoneError(errorData.message)
 
             if(errorData.field === 'specialities') return setSpecialitiesError(errorData.message)
 
@@ -142,6 +152,18 @@ const ClinicFormModal = ({ setShowFormModal, setReload, reload, setIsShowService
                                     onClick={e => setNameError()}
                                     />
                                     <span className="red">{nameError}</span>
+                                </div>
+                                <div className="form-input-container">
+                                    <label>{translations[lang]['Phone']}</label>
+                                    <input 
+                                    type="tel" 
+                                    className="form-input" 
+                                    placeholder=""
+                                    value={phone}
+                                    onChange={e => setPhone(e.target.value)}
+                                    onClick={e => setPhoneError()}
+                                    />
+                                    <span className="red">{phoneError}</span>
                                 </div>
                                 <div className="form-input-container">
                                     <label>{translations[lang]['Country']}</label>
