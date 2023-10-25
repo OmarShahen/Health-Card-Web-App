@@ -9,7 +9,7 @@ import translations from '../../../i18n'
 import { useSelector } from 'react-redux'
 
 
-const AppointmentDeleteConfirmationModal = ({ appointment, reload, setReload, setIsShowModal, setViewStatus }) => {
+const AppointmentDeleteConfirmationModal = ({ appointment, reload, setReload, setIsShowModal }) => {
 
     const lang = useSelector(state => state.lang.lang)
 
@@ -23,14 +23,13 @@ const AppointmentDeleteConfirmationModal = ({ appointment, reload, setReload, se
             const data = response.data
             const deletedAppointment = data.appointment
             setReload(reload + 1)
-            setViewStatus('ALL')
             setIsShowModal(false)
             toast.success(data.message, { position: 'top-right', duration: 3000 })
         })
         .catch(error => {
             setIsLoading(false)
             console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+            toast.error(error?.response?.data?.message, { position: 'top-right', duration: 3000 })
         })
     }
    

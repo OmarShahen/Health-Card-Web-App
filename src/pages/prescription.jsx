@@ -50,7 +50,6 @@ const PrescriptionPage = ({ roles }) => {
 
  
     return <div className="page-container page-white-background">
-        <NavigationBar pageName={translations[lang]['Prescription']} />
         {
             isShowDeleteModal ?
             <PrescriptionConfirmationDeleteModal

@@ -857,6 +857,11 @@ button:hover {
   opacity: .8;
 }
 
+.image-container img {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+}
 
 .cards-list-wrapper {
   display: grid !important;
@@ -943,6 +948,7 @@ background-clip: content-box;
 ::-webkit-scrollbar-thumb:hover {
 background-color: #a8bbbf;
 }
+
 
 @media only screen and (max-width: 950px) {
   .page-container {

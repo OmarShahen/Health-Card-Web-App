@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { serverRequest } from "../../components/API/request"
 import { useSelector } from 'react-redux'
-import PageHeader from '../../components/sections/page-header'
 import CircularLoading from '../../components/loadings/circular'
 import FloatingButton from '../../components/buttons/floating-button'
 import EmptySection from '../../components/sections/empty/empty'
@@ -119,14 +118,7 @@ const PatientInsurancePoliciesPage = ({ roles }) => {
         
         
         <div className="padded-container">
-            <PageHeader 
-            pageName={translations[lang]["Insurance Policies"]} 
-            addBtnText={user.roles.includes('STAFF') ? translations[lang]['Add Insurance Policy'] : null}
-            setShowModalForm={setShowFormModal}
-            setReload={setReload}
-            reload={reload}
-            isHideBackButton={true}
-            /> 
+            
             <div className="cards-list-wrapper">
                 <Card 
                 icon={<NumbersOutlinedIcon />}

@@ -83,16 +83,14 @@ const ClinicsServicesPage = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Services']} />
-
         <PageHeader 
         pageName={translations[lang]["Services"]} 
-        addBtnText={user.roles.includes('OWNER') ? translations[lang]['Add Service'] : null} 
+        addBtnText={user.roles.includes('OWNER') || user.roles.includes('STAFF') ? translations[lang]['Add Service'] : null} 
         isHideBackButton={false}
         setShowModalForm={setIsShowForm} 
         />
         {
-            user.roles.includes('OWNER') ?
+            user.roles.includes('OWNER') || user.roles.includes('STAFF') ?
             <div className="show-mobile">
                 <FloatingButton setIsShowForm={setIsShowForm} />
             </div>
@@ -156,6 +154,7 @@ const ClinicsServicesPage = ({ roles }) => {
                          reload={reload}
                          setIsShowForm={setIsShowForm}
                          setIsShowDeleteModal={setIsShowDeleteModal}
+                         isHideBtns={true}
                          />)}
                     </div>
                     :

@@ -17,7 +17,7 @@ const PatientCard = ({ patient, reload, setReload, setTargetPatient, setIsShowDe
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
-    const patientName = `${patient.patient.firstName} ${patient.patient.lastName}`
+    const patientName = `${patient.patient.firstName} ${patient?.patient?.lastName ? patient?.patient?.lastName : ''}`
     const patientPhone = `+${patient.patient.countryCode}${patient.patient.phone}`
 
     const profileURL = user.roles.includes('STAFF') ? `/patients/${patient.patient._id}/clinics/${user.clinicId}/medical-profile` : `/patients/${patient.patient._id}/clinics/${patient.clinic._id}/medical-profile`

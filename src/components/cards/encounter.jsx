@@ -18,7 +18,7 @@ const EncounterCard = ({
     setIsShowDeleteModal 
     }) => {
 
-     const patientName = `${encounter.patient.firstName} ${encounter.patient.lastName}`
+     const patientName = `${encounter?.patient?.firstName} ${encounter?.patient?.lastName ? encounter?.patient?.lastName : ''}`
      const doctorName = `${encounter.doctor.firstName} ${encounter.doctor.lastName}`
      const patientCardId = encounter?.patient?.patientId
 

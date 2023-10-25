@@ -19,7 +19,6 @@ const SupportPage = ({ roles }) => {
     }, [])
 
     return <div className="support-page-container">
-        <NavigationBar pageName={translations[lang]['Support']}/>
         <PageHeader pageName={translations[lang]['Support']} />
         <div className="support-page-text-container cards-grey-container body-text">
             <div>

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import FooterSection from '../sections/footers/footer'
 import { setIsShowSidebar } from '../../redux/slices/sidebarSlice'
 import SuccessfulSignupModal from '../modals/successful-signup'
+import NavigationBar from '../navigation/navigation-bar'
 
 
 const MainLayout = () => {
@@ -57,6 +58,7 @@ const MainLayout = () => {
              null 
              }
             <div className="page-main-container" style={sidebar.isShowSidebar ? { marginLeft: '19vw', paddingRight: '1rem' } : noSidebarStyle}>
+                <NavigationBar />
                 <Outlet />
                 <FooterSection />
             </div>

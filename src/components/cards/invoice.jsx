@@ -31,7 +31,7 @@ const InvoiceCard = ({
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
-    const patientName = `${invoice.patient.firstName} ${invoice.patient.lastName}`
+    const patientName = `${invoice.patient.firstName} ${invoice?.patient?.lastName ? invoice?.patient?.lastName : ''}`
     const patientPhone = `+${invoice.patient.countryCode}${invoice.patient.phone}`
 
     const formatPaymentMethod = (method) => {

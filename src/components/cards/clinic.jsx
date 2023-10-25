@@ -38,7 +38,7 @@ const ClinicCard = ({ clinic, isOwner, setIsShowDeleteModal, setTargetClinic, is
     <div onClick={e => disableOnClickView ? null : navigate(`/clinics/${_id}/profile`)} className={`patient-card-container body-text`}>
         <div className="patient-card-header">
             <div className="patient-image-info-container">
-                <img src={`https://avatars.dicebear.com/api/initials/${name}.svg`} alt="patient-image" />
+                <img src={`https://avatars.dicebear.com/api/initials/${name}.svg`} alt="clinic-image" />
                 <div>
                     <strong>{name}</strong>
                     <span className="grey-text">#{clinicId}</span>

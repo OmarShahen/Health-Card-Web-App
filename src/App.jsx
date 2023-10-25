@@ -87,6 +87,8 @@ import FileManagerFilesPage from './pages/file-manager/file'
 
 import PDFViewerPage from './pages/viewer/pdf-viewer'
 
+import AnalyticsOverviewPage from './pages/analytics/overview'
+
 import { useSelector } from 'react-redux'
 import { BrowserRouter as Router, Routes, Route, Navigate  } from 'react-router-dom'
 
@@ -108,6 +110,9 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
 
           <Route element={user.isLogged ? <MainLayout /> : <LoginPage />}>
+
+            <Route path="/analytics/overview" element={<AnalyticsOverviewPage roles={['OWNER']} />} />
+
             <Route path="/doctors" element={<DoctorsPage roles={['OWNER', 'STAFF']} />} />
             <Route path="/staffs" element={<StaffsPage roles={['OWNER']} />} />
             <Route path="/invoices" element={<InvoicesPage roles={['OWNER', 'STAFF']} />} />
@@ -116,8 +121,8 @@ function App() {
             <Route path="/encounters" element={<EncountersPage roles={['DOCTOR']} />} />
             <Route path="/appointments" element={<AppointmentsPage roles={['STAFF', 'DOCTOR', 'OWNER']} />} />
             <Route path="/prescriptions" element={<PrescriptionsPage roles={['DOCTOR', 'STAFF']} />} />
-            <Route path="/patients/:patientId/clinics/:clinicId/encounters/form" element={<EncountersFormPage roles={['DOCTOR']} />} />
-            <Route path="/patients/:patientId/clinics/:clinicId/prescriptions/form" element={<PrescriptionsFormPage roles={['DOCTOR']} />} />
+            <Route path="/encounters/form" element={<EncountersFormPage roles={['DOCTOR']} />} />
+            <Route path="/prescriptions/form" element={<PrescriptionsFormPage roles={['DOCTOR']} />} />
             <Route path="/patients/form" element={<PatientFormPage roles={['STAFF', 'DOCTOR']}/>} />
             <Route path="/patients/:patientId/form" element={<PatientFormPage roles={['STAFF', 'DOCTOR']}/>} />
             <Route path="/encounters/:id/update" element={<UpdateEncountersFormPage roles={['DOCTOR']} />} />

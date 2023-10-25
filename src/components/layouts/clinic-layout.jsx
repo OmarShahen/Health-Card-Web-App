@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import NavigationBar from '../navigation/navigation-bar'
 import PageHeader from '../sections/page-header'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -32,7 +31,6 @@ const ClinicsLayout = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Clinics']} />
         <div className="show-mobile">
         </div>
             <div className="padded-container">

@@ -20,6 +20,8 @@ const InsurancePolicyCard = ({
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
+    const patientName = `${insurancePolicy?.patient?.firstName} ${insurancePolicy?.patient?.lastName ? insurancePolicy?.patient?.lastName : ''}`
+
     const cardActionsList = [
         {
             name: translations[lang]['Delete Insurance Policy'],
@@ -45,9 +47,9 @@ const InsurancePolicyCard = ({
     <div className="patient-card-container body-text disable-hover">
         <div className="patient-card-header">
             <div className="patient-image-info-container">
-                <img src={`https://avatars.dicebear.com/api/initials/${insurancePolicy?.patient?.firstName + ' ' + insurancePolicy?.patient?.lastName}.svg`} alt="patient-image" />
+                <img src={`https://avatars.dicebear.com/api/initials/${patientName}.svg`} alt="patient-image" />
                 <div>
-                    <strong>{insurancePolicy?.patient?.firstName + ' ' + insurancePolicy?.patient?.lastName}</strong>
+                    <strong>{patientName}</strong>
                     <span className="grey-text">{insurancePolicy?.patient?.cardId}</span>
                 </div>
             </div>

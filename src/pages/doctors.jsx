@@ -67,7 +67,6 @@ const DoctorsPage = ({ roles }) => {
 
  
     return <div className="page-container page-white-background">
-        <NavigationBar pageName={translations[lang]["Doctors"]} />
         { 
         isShowDeleteModal ? 
         <DoctorDeleteConfirmationModal 

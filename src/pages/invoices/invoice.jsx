@@ -99,7 +99,6 @@ const InvoicePage = ({ roles }) => {
     }, [reload])
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Invoice']} />
         { 
             isShowDeleteModal ? 
             <InvoiceDeleteConfirmationModal 
@@ -287,7 +286,7 @@ const InvoicePage = ({ roles }) => {
                                         <input 
                                         className="form-input" 
                                         type="text" 
-                                        value={`${invoice.patient.firstName} ${invoice.patient.lastName}`} 
+                                        value={`${invoice.patient.firstName} ${invoice?.patient?.lastName ? invoice?.patient?.lastName : ''}`} 
                                         disabled
                                         />
                                     </li>

@@ -20,7 +20,7 @@ const PatientPersonalInformationForm = (props) => {
         </div>
         <div className="cards-2-list-wrapper">
             <div className="form-input-container">
-                <label>{translations[lang]['First Name']}</label>
+                <label>{translations[lang]['Name']}*</label>
                 <input 
                 type="text" 
                 className="form-input"
@@ -31,18 +31,7 @@ const PatientPersonalInformationForm = (props) => {
                 <span className="red">{props.firstNameError}</span>
             </div>
             <div className="form-input-container">
-                <label>{translations[lang]['Last Name']}</label>
-                <input 
-                type="text" 
-                className="form-input"
-                onClick={e => props.setLastNameError()}
-                onChange={e => props.setLastName(e.target.value)}
-                value={props.lastName}
-                />
-                <span className="red">{props.lastNameError}</span>
-            </div>
-            <div className="form-input-container">
-                <label>{translations[lang]['Phone']}</label>
+                <label>{translations[lang]['Phone']}*</label>
                 <input 
                 type="tel" 
                 className="form-input"
@@ -53,7 +42,7 @@ const PatientPersonalInformationForm = (props) => {
                 <span className="red">{props.phoneError}</span>
             </div>
             <div className="form-input-container">
-                <label>{translations[lang]['Gender']}</label>
+                <label>{translations[lang]['Gender']}*</label>
                 <select
                 className="form-input"
                 onClick={e => props.setGenderError()}
@@ -85,7 +74,7 @@ const PatientPersonalInformationForm = (props) => {
                 <span className="red">{props.socialStatusError}</span>
             </div>
             <div className="form-input-container">
-                <label>{translations[lang]['Age']}</label>
+                <label>{translations[lang]['Age']}*</label>
                 <input 
                 type="number" 
                 className="form-input"
@@ -118,7 +107,7 @@ const PatientPersonalInformationForm = (props) => {
             {
                 user.roles.includes('DOCTOR') && !props.isUpdate ?
                 <div className="form-input-container">
-                    <label>{translations[lang]['Clinic']}</label>
+                    <label>{translations[lang]['Clinic']}*</label>
                     <select
                     className="form-input"
                     onChange={e => props.setClinic(e.target.value)}
@@ -135,7 +124,7 @@ const PatientPersonalInformationForm = (props) => {
             {
                 user.roles.includes('STAFF') && !props.isUpdate ?
                 <div className="form-input-container">
-                    <label>{translations[lang]['Doctors']}</label>
+                    <label>{translations[lang]['Doctors']}*</label>
                     <select
                     className="form-input"
                     onChange={e => {

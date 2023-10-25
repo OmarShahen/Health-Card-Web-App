@@ -26,7 +26,7 @@ const PrescriptionCard = ({
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
-    const patientName = `${prescription?.patient?.firstName} ${prescription?.patient?.lastName}`
+    const patientName = `${prescription?.patient?.firstName} ${prescription?.patient?.lastName ? prescription?.patient?.lastName : ''}`
     const doctorName = `${prescription?.doctor?.firstName} ${prescription?.doctor?.lastName}`
     const patientCardId = prescription?.patient?.patientId
 

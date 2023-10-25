@@ -105,8 +105,6 @@ const UpdateEncountersFormPage = ({ roles }) => {
     }
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]["Encounter"]} />
-
         {
             showFormModal ?
             <DrugFormModal 

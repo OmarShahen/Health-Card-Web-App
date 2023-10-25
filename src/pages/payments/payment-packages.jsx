@@ -41,9 +41,7 @@ const PaymentsPackagesPage = ({ roles }) => {
     ]
 
 
-    return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Billing Plans']} />
-        
+    return <div className="page-container">        
         <div className="padded-container">
             <PageHeader 
             pageName={translations[lang]["Billing Plans"]} 

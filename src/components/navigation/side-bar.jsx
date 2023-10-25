@@ -182,6 +182,14 @@ const SideBar = ({ width, isHideText, setHideSideBar }) => {
                 :
                 null
             }
+            <li>
+                <div>
+                    <NavLink to="/appointments">
+                    <TodayOutlinedIcon />
+                    {translations[lang]['Appointments']}
+                    </NavLink>
+                </div>
+            </li>
             {
                 user.roles.includes('OWNER') || user.roles.includes('STAFF') ?
                 <li>
@@ -317,51 +325,7 @@ const SideBar = ({ width, isHideText, setHideSideBar }) => {
                 </li>
                 :
                 null
-            }
-        
-        <li>
-                <div 
-                className="header-list-container"
-                onClick={e => setIsShowAppointments(!isShowAppointments)}
-                >
-                    { translations[lang]['Appointments'] }
-                    <span>
-                        { isShowTreatment ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
-                    </span>
-                </div>
-                {
-                    isShowAppointments ?
-                    <motion.ul
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="nested-links"
-                    >
-                    <ul className="nav-nested-list-container">
-                        <li>
-                            <div>
-                                <NavLink to="/appointments">
-                                        <TodayOutlinedIcon />
-                                        { translations[lang]['Today'] }
-                                </NavLink>
-                            </div>
-                            <span className="side-bar-number-container span-text">{formatNumber(numberOfAppointments)}</span>
-                        </li>
-                        <li>
-                            <div>
-                                <NavLink to="/appointments?period=1">
-                                        <InsertInvitationOutlinedIcon />
-                                        { translations[lang]['Tommorrow'] }
-                                </NavLink>
-                            </div>
-                        </li>
-                    </ul>
-                    </motion.ul>
-                    :
-                    null
-                }
-            </li>            
+            }         
             
             {
                 user.roles.includes('OWNER') || user.roles.includes('STAFF') ?

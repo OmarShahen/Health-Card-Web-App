@@ -13,6 +13,7 @@ import DrugCard from '../components/cards/drug'
 import { isRolesValid } from '../utils/roles'
 import { setIsShowModal, setIsShowRenewModal } from '../redux/slices/modalSlice'
 import translations from '../i18n';
+import SearchPatientInputField from '../components/inputs/patients-search';
 
 const PrescriptionsFormPage = ({ roles }) => {
 
@@ -30,14 +31,13 @@ const PrescriptionsFormPage = ({ roles }) => {
 
     const [showFormModal, setShowFormModal] = useState(false)
 
-    const [clinics, setClinics] = useState([])
-    const [clinic, setClinic] = useState()
+    const [patient, setPatient] = useState()
     const [notes, setNotes] = useState([])
     const [drugs, setDrugs] = useState([])
 
     const [newNote, setNewNote] = useState()
 
-    const [clinicError, setClinicError] = useState()
+    const [patientError, setPatientError] = useState()
     const [notesError, setNotesError] = useState()
     const [drugsError, setDrugsError] = useState()
 
@@ -63,13 +63,15 @@ const PrescriptionsFormPage = ({ roles }) => {
     }
 
     const handlePrescription = () => {
+
+        if(!patient) return setPatientError(translations[lang]['patient is required'])
         
         if(drugs.length === 0) return setDrugsError(translations[lang]['no drug is registered in the prescription'])
 
         const medicalData = {
-            patientId,
+            patientId: patient.patientId,
             doctorId: user._id,
-            clinicId,
+            clinicId: patient.clinicId,
             notes,
             medicines: drugs,
         }
@@ -106,7 +108,6 @@ const PrescriptionsFormPage = ({ roles }) => {
     }
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]["Prescription"]} />
         {
             showFormModal ?
             <DrugFormModal 
@@ -121,6 +122,32 @@ const PrescriptionsFormPage = ({ roles }) => {
             <PageHeader pageName={translations[lang]['Create Prescription']} isHideRefresh={true} />
             <div className="cards-grey-container body-text">
                 <div className="prescription-form-wrapper left box-shadow">
+                <div className="cards-2-list-wrapper margin-top-1">
+                        <div className="prescription-form-notes-container">
+                            <strong>{translations[lang]['Patient']}</strong>
+                            <SearchPatientInputField
+                            removeLabel={true} 
+                            setTargetPatient={setPatient}
+                            setTargetPatientError={setPatientError}
+                            targetPatientError={patientError}
+                            placeholder={translations[lang]['Patient']}
+                            />
+                            <div className="symptoms-diagnosis-tags-container">
+                                <div className="drug-instruction-list-container">
+                                    {notes.map((note, index) =>                 
+                                    <span 
+                                    className="status-btn pending"
+                                    >
+                                        {note}
+                                        <span onClick={e => setNotes(notes.filter((savedNote, savedIndex) => savedIndex !== index))}>
+                                            <CancelIcon />
+                                        </span>
+                                    </span>) 
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div className="prescription-form-notes-container margin-top-1">
                         <div className="prescription-header-container">
                             <div>

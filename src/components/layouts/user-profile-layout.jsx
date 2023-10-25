@@ -1,5 +1,4 @@
 import { NavLink, Outlet } from "react-router-dom"
-import NavigationBar from '../../components/navigation/navigation-bar'
 import PageHeader from '../../components/sections/page-header'
 import { useSelector } from "react-redux"
 import translations from "../../i18n"
@@ -10,7 +9,6 @@ const UserProfileLayoutPage = () => {
     const lang = useSelector(state => state.lang.lang)
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Account Settings']} />
         <div className="padded-container">
             <PageHeader pageName={translations[lang]["Account Settings"]} />
             <div className="mini-page-navigator-container">

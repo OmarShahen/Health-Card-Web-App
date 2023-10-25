@@ -630,6 +630,15 @@
     "Update File": "Update File",
     "Creator": "Creator",
     "Send through whatsapp": "Send through whatsapp",
-    "phone number must be entered": "phone number must be entered"
+    "phone number must be entered": "phone number must be entered",
+    "next": "next",
+    "previous": "previous",
+    "today": "today",
+    "agenda": "agenda",
+    "Update Appointment": "Update Appointment",
+    "Add Patient": "Add Patient",
+    "patient is required": "patient is required",
+    "There is no services in the invoice": "There is no services in the invoice",
+    "Amount paid is more than the total cost": "Amount paid is more than the total cost"
     
 }

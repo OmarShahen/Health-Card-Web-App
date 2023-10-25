@@ -8,13 +8,14 @@ import { formatMoney } from '../../utils/numbers'
 import './invoice.css'
 import { NavLink, useNavigate } from 'react-router-dom'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
-import { removeService, closeInvoice } from '../../redux/slices/invoiceSlice'
+import { removeService, closeInvoice, setIsActive } from '../../redux/slices/invoiceSlice'
 import { TailSpin } from 'react-loader-spinner'
 import { toast } from 'react-hot-toast'
 import CardTransition from '../../components/transitions/card-transitions';
 import { isRolesValid } from '../../utils/roles';
 import translations from '../../i18n';
 import { setPatient } from '../../redux/slices/patientSlice';
+import SearchPatientInputField from '../../components/inputs/patients-search';
 
 const InvoiceCheckoutPage = ({ roles }) => {
 
@@ -48,14 +49,11 @@ const InvoiceCheckoutPage = ({ roles }) => {
     const lang = useSelector(state => state.lang.lang)
     const invoice = useSelector(state => state.invoice)
 
+    const [targetPatient, setTargetPatient] = useState()
+    const [targetPatientError, setTargetPatientError] = useState()
 
-    const [calculatorCounter, setCalculatorCounter] = useState(1)
-
-    const [patient, setPatient] = useState({})
     const [insurancePolicy, setInsurancePolicy] = useState()
-    const [insuranceCoverageAmount, setInsuranceCoverageAmount] = useState(0)
     const [insuranceCoveragePercentage, setInsuranceCoveragePercentage] = useState(0)
-    const [totalAmount, setTotalAmount] = useState(getTotal(invoice.services))
     const [totalAmountRemaining, setTotalAmountRemaining] = useState(getTotal(invoice.services))
 
     const [dueDate, setDueDate] = useState()
@@ -76,72 +74,45 @@ const InvoiceCheckoutPage = ({ roles }) => {
     }, [])
 
     useEffect(() => {
-        serverRequest.get(`/v1/patients/${invoice.patientId}`)
-        .then(response => {
-            const data = response.data
-            setPatient(data.patient)
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
-        })
+        dispatch(setIsActive({ isActive: true }))
     }, [])
 
     useEffect(() => {
-        serverRequest.get(`/v1/insurance-policies/patients/${invoice.patientId}/clinics/${user.clinicId}`)
+        if(!targetPatient) {
+            setInsurancePolicy()
+            return
+        }
+
+        serverRequest.get(`/v1/insurance-policies/patients/${targetPatient.patientId}/clinics/${targetPatient.clinicId}`)
         .then(response => {
-            const data = response.data
-            const insurancePolicyList = data.insurancePolicy
+            const insurancePolicyList = response.data.insurancePolicy
+
             if(insurancePolicyList.length === 0) {
                 return
             }
 
             const insurancePolicy = insurancePolicyList[0]
             setInsurancePolicy(insurancePolicy)
-            const totalCost = getTotal(invoice.services)
-            setInsuranceCoverageAmount(totalCost - (totalCost * (insurancePolicy.coveragePercentage / 100)))
-            setInsuranceCoveragePercentage(insurancePolicy.coveragePercentage ? insurancePolicy.coveragePercentage / 100 : 1)
-            setTotalAmount(totalCost)
+            setInsuranceCoveragePercentage(insurancePolicy.coveragePercentage)
 
-            const amountRemainingWithInsurance = insurancePolicy.coveragePercentage ? totalCost - (totalCost * (insurancePolicy.coveragePercentage / 100)) : 0
-            
-            setTotalAmountRemaining(amountRemainingWithInsurance)
-            setPayAmount(insurancePolicy?.coveragePercentage ? amountRemainingWithInsurance : totalCost)
         })
         .catch(error => {
             console.error(error)
-            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
         })
-    }, [])
 
-
-    useEffect(() => {
-
-        if(!insurancePolicy) {
-            return
-        }
-
-        const totalCost = getTotal(invoice.services)
-        setInsuranceCoverageAmount(totalCost - (totalCost * (insurancePolicy.coveragePercentage / 100)))
-        setInsuranceCoveragePercentage(insurancePolicy.coveragePercentage ? insurancePolicy.coveragePercentage / 100 : 1)
-        setTotalAmount(totalCost)
-
-        const amountRemainingWithInsurance = insurancePolicy.coveragePercentage ? totalCost - (totalCost * (insurancePolicy.coveragePercentage / 100)) : 0
-        
-        setTotalAmountRemaining(amountRemainingWithInsurance)
-        setPayAmount(insurancePolicy?.coveragePercentage ? amountRemainingWithInsurance : totalCost)
-
-    }, [invoice.services])
+    }, [targetPatient])
 
 
     const payInvoice = () => {
 
-        if(invoice.services.length == 0) return toast.error('There is no services in the invoice', { duration: 3000, position: 'top-right' })
+        if(!targetPatient) return setTargetPatientError(translations[lang]['patient is required'])
 
-        if(payAmount > getTotal(invoice.services)) return setPayAmountError('Amount paid is more than the total cost')
+        if(invoice.services.length == 0) return toast.error(translations[lang]['There is no services in the invoice'], { duration: 3000, position: 'top-right' })
+
+        if(payAmount > getTotal(invoice.services)) return setPayAmountError(translations[lang]['Amount paid is more than the total cost'])
 
         const invoiceData = {
-            patientId: invoice.patientId,
+            patientId: targetPatient.patientId,
             clinicId: user.clinicId,
             creatorId: user._id,
             services: invoice.services.map(service => service._id),
@@ -183,11 +154,13 @@ const InvoiceCheckoutPage = ({ roles }) => {
 
     const deleteInvoice = () => {
         dispatch(closeInvoice())
-        navigate(`/patients/${invoice.patientId}/invoices`)
+        setTargetPatient()
+        setInsuranceCoveragePercentage()
+        setInsurancePolicy()
+        setPayAmount(0)
     }
 
     return <div className="page-container">
-        <NavigationBar pageName={'Invoice-Checkout'} />
         <div className="padded-container">
             <PageHeader 
             pageName={translations[lang]["Invoice Checkout"]} 
@@ -221,9 +194,9 @@ const InvoiceCheckoutPage = ({ roles }) => {
                             {
                                 insurancePolicy?.coveragePercentage ?
                                 <li>
-                                    <span>{translations[lang]['Insurance Coverage']} {`(${insurancePolicy.coveragePercentage}%)`}</span>
+                                    <span>{translations[lang]['Insurance Coverage']} {`(${insuranceCoveragePercentage}%)`}</span>
                                     <span>
-                                        {formatMoney(getTotal(invoice.services) * insuranceCoveragePercentage)}
+                                        {formatMoney(getTotal(invoice.services) * (insuranceCoveragePercentage / 100))}
                                     </span>
                                 </li>
                                 :
@@ -233,8 +206,8 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                 <span className="bold-text">{translations[lang]['Receive Amount']}</span>
                                 <span className="bold-text">
                                     {
-                                    formatMoney(insurancePolicy?.coveragePercentage ? 
-                                    getTotal(invoice.services) - (getTotal(invoice.services) * (insurancePolicy.coveragePercentage / 100)) 
+                                    formatMoney(insuranceCoveragePercentage ? 
+                                    getTotal(invoice.services) - (getTotal(invoice.services) * (insuranceCoveragePercentage / 100)) 
                                     : 
                                     getTotal(invoice.services))
                                     }
@@ -242,21 +215,28 @@ const InvoiceCheckoutPage = ({ roles }) => {
                             </li>
                             <li>
                                 <span>{translations[lang]['Amount Paid']}</span>
-                                <span>{payAmount ? formatMoney(payAmount) : formatMoney(0)}</span>
+                                <span>
+                                    {
+                                        payAmount ? 
+                                        formatMoney(payAmount) 
+                                        : 
+                                        formatMoney(0)
+                                    }
+                                </span>
                             </li>
                             <li>
                                 <span>{translations[lang]['Amount Remaining']}</span>
                                 <span>
-                                    {
+                                { 
                                     payAmount ? 
-                                    insurancePolicy?.coveragePercentage ? 
-                                    formatMoney(totalAmountRemaining - payAmount) 
+                                    insuranceCoveragePercentage ?
+                                    formatMoney((getTotal(invoice.services) - (getTotal(invoice.services) * (insuranceCoveragePercentage/100))) - payAmount) 
                                     :
-                                    formatMoney(getTotal(invoice.services) - payAmount)
+                                    formatMoney(getTotal(invoice.services) - payAmount) 
                                     : 
-                                    formatMoney(0)
-                                    }
-                            </span>
+                                    formatMoney(0) 
+                                }
+                                </span>
                             </li>
                         </ul>
                         <div className="invoice-link-container">
@@ -277,22 +257,13 @@ const InvoiceCheckoutPage = ({ roles }) => {
                                 <ul>
                                     <li>
                                         <span>{translations[lang]['To']}</span>
-                                        <input className="form-input" type="text" value={patient?.firstName + ' ' + patient?.lastName} disabled/>
+                                        <SearchPatientInputField 
+                                        removeLabel={true}
+                                        targetPatientError={targetPatientError}
+                                        setTargetPatient={setTargetPatient}
+                                        setTargetPatientError={setTargetPatientError}
+                                        />
                                     </li>
-                                    {
-                                        invoice?.invoice?.insuranceCompany ?
-                                        <li>
-                                            <span>{translations[lang]['Insurance Company']}</span>
-                                            <input
-                                            className="form-input"
-                                            type="text" 
-                                            value={invoice?.invoice?.insuranceCompany?.name}
-                                            disabled
-                                            />
-                                        </li>
-                                        :
-                                        null
-                                    }
                                     <li>
                                         <span>{translations[lang]['Amount to pay']}</span>
                                         <input 

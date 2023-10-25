@@ -8,8 +8,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setIsActive, setInvoice, closeInvoice } from '../../redux/slices/invoiceSlice'
 import { setIsShowModal, setIsShowRenewModal } from '../../redux/slices/modalSlice'
 import translations from '../../i18n'
+import SearchPatientInputField from '../inputs/patients-search'
 
-const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
+const InvoiceFormModal = ({ setShowModalForm }) => {
 
     const navigate = useNavigate()
 
@@ -18,45 +19,19 @@ const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
     const dispatch = useDispatch()
 
     const [isSubmit, setIsSubmit] = useState(false)
-    const [isClinicsLoading, setIsClinicsLoading] = useState(false)
-    const [cardId, setCardId] = useState()
-    const [clinic, setClinic] = useState(user.roles.includes('STAFF') ? user.clinicId : '')
-    const [clinics, setClinics] = useState([])
 
-    const [cardIdError, setCardIdError] = useState()
-    const [clinicError, setClinicError] = useState()
+    const [targetPatient, setTargetPatient] = useState()
+    const [targetPatientError, setTargetPatientError] = useState()
 
-    useEffect(() => {
-
-        if(user.roles.includes('STAFF')) {
-            return
-        }
-        
-        setIsClinicsLoading(true)
-        serverRequest.get(`/v1/clinics/doctors/${user._id}`)
-        .then(response => {
-            setIsClinicsLoading(false)
-            const data = response.data
-            setClinics(data.clinics)
-        })
-        .catch(erorr => {
-            setIsClinicsLoading(false)
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-    }, [])
 
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if(!cardId) return setCardIdError(translations[lang]['card number is required'])
-
-        if(user.roles.includes('DOCTOR') && !clinic) return setClinicError(translations[lang]['clinic is required'])
+        if(!targetPatient) return setTargetPatientError('patient is required')
 
         const invoiceData = { 
-            cardId: Number.parseInt(cardId),
             status: 'DRAFT',
-            clinicId: clinic
+            clinicId: user.clinicId
         }
 
         setIsSubmit(true)
@@ -108,36 +83,11 @@ const InvoiceFormModal = ({ reload, setReload, setShowModalForm }) => {
             </div>
             <div className="modal-body-container">
                 <form id="patient-card-form" className="modal-form-container responsive-form body-text" onSubmit={handleSubmit}>
-                    <div className="form-input-container">
-                        <label>{translations[lang]['Patient Card Number']}</label>
-                        <input 
-                        type="text" 
-                        className="form-input" 
-                        placeholder=""
-                        value={cardId}
-                        onChange={e => setCardId(e.target.value)}
-                        onClick={e => setCardIdError()}
-                        />
-                        <span className="red">{cardIdError}</span>
-                    </div>
-                    {
-                            user.roles.includes('STAFF') ?
-                            null
-                            :
-                            <div className="form-input-container">
-                                <label>{translations[lang]['Select Clinic']}</label>
-                                <select
-                                onChange={e => setClinic(e.target.value)}
-                                onClick={e => setClinicError()}
-                                >
-                                    <option selected disabled>{translations[lang]['Select Clinic']}</option>
-                                    {clinics.map(clinic => <option value={clinic.clinic._id}>
-                                        {clinic.clinic.name}
-                                    </option>)}
-                                </select>
-                                <span className="red">{clinicError}</span>
-                            </div>
-                        }
+                    <SearchPatientInputField 
+                    setTargetPatient={setTargetPatient}
+                    setTargetPatientError={setTargetPatientError}
+                    targetPatientError={targetPatientError}
+                    />
                 </form>
             </div>
             <div className="modal-form-btn-container">

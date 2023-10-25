@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react'
 import './prescriptions.css'
 import { serverRequest } from "../components/API/request"
 import { useSelector } from 'react-redux'
-import PatientFormModal from '../components/modals/patient-form'
-import PatientCardJoinFormModal from '../components/modals/patient-card-join-form';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
 import NavigationBar from '../components/navigation/navigation-bar'
 import CircularLoading from '../components/loadings/circular'
@@ -23,6 +21,7 @@ import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
 import Card from '../components/cards/card'
 import { formatNumber } from '../utils/numbers'
 import translations from '../i18n'
+import PageHeader from '../components/sections/page-header'
 
 const PatientsPage = ({ roles }) => {
 
@@ -69,7 +68,6 @@ const PatientsPage = ({ roles }) => {
 
 
     return <div className="page-container page-white-background">
-        <NavigationBar pageName={translations[lang]['Patients']} />
         { 
         isShowDeleteModal ? 
         <PatientDeleteConfirmationModal 
@@ -82,53 +80,20 @@ const PatientsPage = ({ roles }) => {
         null 
         }
         <div className="show-mobile">
-            { user.roles.includes('STAFF') || user.roles.includes('DOCTOR') ? <FloatingButton url={'/patients/form'} /> : null }
+            { 
+            user.roles.includes('STAFF') || user.roles.includes('DOCTOR') ? 
+            <FloatingButton url={'/patients/form'} /> 
+            : 
+            null 
+            }
         </div>
-        {
-            showPatientIdForm ?
-            <PatientCardJoinFormModal
-            setShowModalForm={setShowPatientIdForm} 
-            reload={reload}
-            setReload={setReload}
-            />
-            :
-            null
-        }
-
-        {
-            showPatientDataForm ?
-            <PatientFormModal
-            setShowModalForm={setShowPatientDataForm}
-            reload={reload}
-            setReload={setReload}
-            />
-            :
-            null
-        }
+        
             <div className="padded-container">
-                <div className="page-header-wrapper">
-                    <div className="back-button-container">
-                        <ArrowBackIcon />
-                        <span onClick={e => navigate(-1)}>{translations[lang]['Back']}</span>
-                    </div>
-                    <div className="page-header-container">
-                        <div>
-                            <h1>
-                                {translations[lang]['Patients']}
-                            </h1>
-                        </div>
-                        <div 
-                        className="btns-container subheader-text">
-                            { user.roles.includes('STAFF') || user.roles.includes('DOCTOR') ? <button onClick={e => navigate('/patients/form')}><AddOutlinedIcon /><strong>{translations[lang]['Create Patient']}</strong></button> : null }
-                            { user.roles.includes('DOCTOR') || user.roles.includes('STAFF') ? <button onClick={e => setShowPatientIdForm(true)}><AddOutlinedIcon /><strong>{translations[lang]['Add patient by card']}</strong></button> : null }
-                        </div>
-                        <div className="header-mobile-icons-container">
-                            <div onClick={e => setReload(reload + 1)}>
-                                <CachedIcon />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <PageHeader 
+                pageName={translations[lang]['Patients']}
+                formURL={'/patients/form'}
+                addBtnText={translations[lang]['Add Patient']}
+                />
                 <div className="cards-list-wrapper margin-bottom-1">
                     <Card 
                     icon={<NumbersOutlinedIcon />}

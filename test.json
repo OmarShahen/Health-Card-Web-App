@@ -1,0 +1,52 @@
+{
+    "gradientPosition": {"y1": 200},
+     "scales": {
+        "y": {
+          "grid": {
+            "color": "#e7eaf3",
+            "drawBorder": false,
+            "zeroLineColor": "#e7eaf3"
+          },
+          "ticks": {
+            "min": 0,
+            "max": 100,
+            "stepSize": 20,
+            "color": "#97a4af",
+            "font": {
+              "family": "Open Sans, sans-serif"
+            },
+            "padding": 10,
+            "postfix": "k"
+          }
+        },
+        "x": {
+          "grid": {
+            "display": false,
+            "drawBorder": false
+          },
+          "ticks": {
+            "color": "#97a4af",
+            "font": {
+              "size": 12,
+              "family": "Open Sans, sans-serif"
+            },
+            "padding": 5
+          }
+        }
+    },
+    "plugins": {
+      "tooltip": {
+        "prefix": "$",
+        "postfix": "k",
+        "hasIndicator": true,
+        "mode": "index",
+        "intersect": false,
+        "lineMode": true,
+        "lineWithLineColor": "rgba(19, 33, 68, 0.075)"
+      }
+    },
+    "hover": {
+      "mode": "nearest",
+      "intersect": true
+    }
+  }

@@ -20,12 +20,11 @@ const ServicesPage = ({ roles }) => {
 
     const navigate = useNavigate()
 
+    const services = useSelector(state => state.services.services)
+
     const [isShowForm, setIsShowForm] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
-    const [reload, setReload] = useState(1)
     const [showModalForm, setShowModalForm] = useState(false)
-    const [services, setServices] = useState([])
-    const [searchedServices, setSearchedServices] = useState([])
+    const [searchedServices, setSearchedServices] = useState(services)
 
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
@@ -39,24 +38,8 @@ const ServicesPage = ({ roles }) => {
         }
     }, [])
 
-    useEffect(() => {
-        setIsLoading(true)
-        serverRequest.get(`/v1/services/clinics/${user.clinicId}`)
-        .then(response => {
-            setIsLoading(false)
-            setServices(response.data.services)
-            setSearchedServices(response.data.services)
-        })
-        .catch(error => {
-            setIsLoading(false)
-            console.error(error)
-        })
-    }, [reload])
-
-
     return <div className="page-container">
         { invoice.isActive ? <CartBanner /> : null }
-        <NavigationBar pageName={translations[lang]['Services']} />
         <div className="show-mobile">
             <FloatingButton setIsShowForm={setShowModalForm} />
         </div>
@@ -75,15 +58,11 @@ const ServicesPage = ({ roles }) => {
             </div>
            
             {
-                isLoading ?
-                <CircularLoading />
-                :
                 searchedServices.length !== 0 ?
                 <div className="cards-grey-container cards-3-list-wrapper">
                         {searchedServices.map(service => <ServiceCard 
                         service={service} 
-                        reload={reload} 
-                        setReload={setReload} 
+                        isHideActions={true}
                         />)}                    
                 </div>
                 :

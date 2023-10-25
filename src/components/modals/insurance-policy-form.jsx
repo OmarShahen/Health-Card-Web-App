@@ -6,48 +6,34 @@ import { TailSpin } from 'react-loader-spinner'
 import translations from '../../i18n'
 import { useSelector } from 'react-redux'
 import format from 'date-fns/format'
+import SearchPatientInputField from '../inputs/patients-search'
 
 const InsurancePolicyFormModal = ({ setShowFormModal, reload, setReload, isUpdate, setIsUpdate, insurancePolicy }) => {
 
     const lang = useSelector(state => state.lang.lang)
     const user = useSelector(state => state.user.user)
-
-    const pagePath = window.location.pathname
-    const patientId = pagePath.split('/')[2]
+    const companies = useSelector(state => state.insuranceCompanies.insuranceCompanies)
 
     const [isSubmit, setIsSubmit] = useState(false)
-    const [companies, setCompanies] = useState([])
 
+    const [targetPatient, setTargetPatient] = useState()
     const [companyName, setCompanyName] = useState(isUpdate ? insurancePolicy?.insuranceCompany?.name : '')
     const [coveragePercentage, setCoveragePercentage] = useState(isUpdate ? insurancePolicy.coveragePercentage : '')
     const [startDate, setStartDate] = useState(isUpdate ? format(new Date(insurancePolicy.startDate), 'mm/dd/yyyy') : '')
     const [endDate, setEndDate] = useState(isUpdate ? format(new Date(insurancePolicy.endDate), 'mm/dd/yyyy') : '')
 
+    const [targetPatientError, setTargetPatientError] = useState()
     const [companyNameError, setCompanyNameError] = useState()
     const [coveragePercentageError, setCoveragePercentageError] = useState()
     const [startDateError, setStartDateError] = useState()
     const [endDateError, setEndDateError] = useState()
 
 
-    useEffect(() => {
-
-        if(isUpdate) {
-            return
-        }
-
-        serverRequest.get(`/v1/insurances/clinics/${user.clinicId}`)
-        .then(response => {
-            const insurances = response.data.insurances
-            setCompanies(insurances)
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
-        })
-    }, [])
 
     const handleSubmit = (e) => {
         e.preventDefault()
+
+        if(!targetPatient) return setTargetPatientError(translations[lang]['patient is required'])
 
         if(!companyName) return setCompanyNameError(translations[lang]['company name is required'])   
 
@@ -58,7 +44,7 @@ const InsurancePolicyFormModal = ({ setShowFormModal, reload, setReload, isUpdat
         if(!endDate) return setEndDateError(translations[lang]['end date is required']) 
 
         const insurancePolicyData = {
-            patientId,
+            patientId: targetPatient.patientId,
             clinicId: user.clinicId,
             insuranceCompanyId: companyName,
             coveragePercentage: Number.parseFloat(coveragePercentage),
@@ -113,6 +99,11 @@ const InsurancePolicyFormModal = ({ setShowFormModal, reload, setReload, isUpdat
                     className="modal-form-container responsive-form body-text" 
                     onSubmit={handleSubmit}
                     >
+                        <SearchPatientInputField
+                        targetPatientError={targetPatientError}
+                        setTargetPatient={setTargetPatient}
+                        setTargetPatientError={setTargetPatientError}
+                        />
                         <div className="form-input-container">
                             <label>{translations[lang]['Insurance Company']}</label>
                             <select

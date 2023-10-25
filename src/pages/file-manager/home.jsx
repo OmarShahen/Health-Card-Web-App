@@ -93,7 +93,6 @@ const FileManagerHomePage = ({ roles }) => {
     }, [reloadFile])
 
     return <div>
-        <NavigationBar pageName={translations[lang]['Files Manager']} />
         { 
             isShowImageViewer && imagesURLs.length !== 0 ? 
             <AppImageViewers

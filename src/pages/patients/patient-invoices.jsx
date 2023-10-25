@@ -169,7 +169,7 @@ const PatientInvoicesPage = ({ roles }) => {
             : 
             null 
         }
-        {
+        {/*
             user.roles.includes('STAFF') ?
             <div className="show-mobile">
                 <FloatingButton 
@@ -178,37 +178,10 @@ const PatientInvoicesPage = ({ roles }) => {
             </div>
             :
             null
-        }
+    */}
         
         <div className="padded-container">
-            <div className="page-header-wrapper">
-                    <div className="page-header-container">
-                        <div>
-                            <h1>
-                                {translations[lang]['Invoices']}
-                            </h1>
-                        </div>
-                        <div 
-                        className="btns-container subheader-text">
-                            { 
-                                user.roles.includes('STAFF') ? 
-                                <button
-                                onClick={e => initInvoice()}
-                                >
-                                    <AddOutlinedIcon />
-                                    <strong>{translations[lang]['Add Invoice']}</strong>
-                                </button> 
-                                : 
-                                null 
-                            }
-                        </div>
-                        <div className="header-mobile-icons-container">
-                            <div onClick={e => setReload(reload + 1)}>
-                                <CachedIcon />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+           
             <div className="cards-4-list-wrapper">
                 <Card 
                 icon={<NumbersOutlinedIcon />}

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { serverRequest } from "../../components/API/request"
 import { useSelector } from 'react-redux'
 import PageHeader from '../../components/sections/page-header'
-import NavigationBar from '../../components/navigation/navigation-bar';
 import CircularLoading from '../../components/loadings/circular';
 import FiltersSection from '../../components/sections/filters/filters'
 import FloatingButton from '../../components/buttons/floating-button'
@@ -127,7 +126,6 @@ const InvoicesPage = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Invoices']} />
         { 
         isShowDeleteModal ? 
         <InvoiceDeleteConfirmationModal 
@@ -166,7 +164,7 @@ const InvoicesPage = ({ roles }) => {
         {
             user.roles.includes('STAFF') ?
             <div className="show-mobile">
-                <FloatingButton setIsShowForm={setIsShowForm} />
+                <FloatingButton url={`/invoices/checkout`} />
             </div>
             :
             null
@@ -175,6 +173,8 @@ const InvoicesPage = ({ roles }) => {
         <div className="padded-container">
             <PageHeader 
             pageName={translations[lang]["Invoices"]} 
+            addBtnText={translations[lang]['Add Invoice']}
+            formURL={`/invoices/checkout`}
             setReload={setReload}
             reload={reload}
             /> 

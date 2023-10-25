@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-import NavigationBar from '../navigation/navigation-bar'
 import PageHeader from '../sections/page-header'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { formatNumber } from '../../utils/numbers'
 import { serverRequest } from '../API/request'
 import translations from '../../i18n'
 
@@ -37,7 +35,6 @@ const InsurancesLayout = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Insurance']} />
         <div className="show-mobile">
         </div>
             <div className="padded-container">

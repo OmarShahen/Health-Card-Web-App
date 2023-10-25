@@ -5,50 +5,40 @@ import { useSelector, useDispatch } from 'react-redux';
 import { serverRequest } from '../components/API/request';
 import { TailSpin } from 'react-loader-spinner'
 import { toast } from 'react-hot-toast'
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SymptomsDiagnosisForm from '../components/forms/prescriptions/symptoms-diagnosis';
 import DrugFormModal from '../components/modals/drug-form';
 import CancelIcon from '@mui/icons-material/Cancel'
-import NavigationBar from '../components/navigation/navigation-bar'
 import DrugCard from '../components/cards/drug'
 import { isRolesValid } from '../utils/roles'
 import { setIsShowModal, setIsShowRenewModal } from '../redux/slices/modalSlice'
 import translations from '../i18n';
+import SearchPatientInputField from '../components/inputs/patients-search';
 
 const EncountersFormPage = ({ roles }) => {
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
-
-    const pagePath = window.location.pathname
-    const patientId = pagePath.split('/')[2]
-    const clinicId = pagePath.split('/')[4]
-
+    
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
     const [isSubmit, setIsSubmit] = useState(false)
 
     const [showFormModal, setShowFormModal] = useState(false)
-    const [searchParams, setSearchParams] = useSearchParams()
 
-    const cardId = searchParams.get('cardId')
-
-    const [patientCardId, setPatientCardId] = useState(cardId ? cardId : '')
-    const [clinics, setClinics] = useState([])
+    const [patient, setPatient] = useState()
     const [symptoms, setSymptoms] = useState([])
     const [diagnosis, setDiagnosis] = useState([])
     const [notes, setNotes] = useState([])
     const [drugs, setDrugs] = useState([])
-    const [clinic, setClinic] = useState()
 
     const [newNote, setNewNote] = useState()
 
-    const [patientCardIdError, setPatientCardIdError] = useState()
+    const [patientError, setPatientError] = useState()
     const [symptomsError, setSymptomsError] = useState()
     const [diagnosisError, setDiagnosisError] = useState()
     const [notesError, setNotesError] = useState()
-    const [clinicError, setClinicError] = useState()
 
     useEffect(() => {
         scroll(0,0)
@@ -72,6 +62,12 @@ const EncountersFormPage = ({ roles }) => {
 
     const handleEncounter = () => {
 
+        if(!patient) {
+            toast.error(translations[lang]['patient is required'], { duration: 3000, position: 'top-right' })
+            setPatientError(translations[lang]['patient is required']) 
+            return
+        }
+
         if(symptoms.length === 0) {
             toast.error(translations[lang]['patient symptoms is required'], { duration: 3000, position: 'top-right' })
             setSymptomsError(translations[lang]['patient symptoms is required']) 
@@ -86,8 +82,8 @@ const EncountersFormPage = ({ roles }) => {
 
         const medicalData = {
             doctorId: user._id,
-            patientId,
-            clinicId,
+            patientId: patient.patientId,
+            clinicId: patient.clinicId,
             symptoms,
             diagnosis,
             medicines: drugs,
@@ -103,7 +99,7 @@ const EncountersFormPage = ({ roles }) => {
             setIsSubmit(false)
             const data = response.data
             toast.success(data.message, { duration: 5000, position: 'top-right' })
-            drugs.length === 0 ? navigate(`/patients/${patientId}/clinics/${data.encounter.clinicId}/encounters`) : navigate(`/prescriptions/${data.prescription._id}/view`)
+            drugs.length === 0 ? navigate(`/patients/${patient.patientId}/clinics/${patient.clinicId}/encounters`) : navigate(`/prescriptions/${data.prescription._id}/view`)
         })
         .catch(error => {
             setIsSubmit(false)
@@ -132,8 +128,6 @@ const EncountersFormPage = ({ roles }) => {
     }
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]["Encounter"]} />
-
         {
             showFormModal ?
             <DrugFormModal 
@@ -152,6 +146,18 @@ const EncountersFormPage = ({ roles }) => {
             />
             <div className="cards-grey-container body-text">
                 <div className="prescription-form-wrapper box-shadow left">
+                    <div className="cards-2-list-wrapper margin-top-1">
+                        <div className="prescription-form-notes-container">
+                            <strong>{translations[lang]['Patient']}</strong>
+                            <SearchPatientInputField 
+                            removeLabel={true} 
+                            setTargetPatient={setPatient}
+                            setTargetPatientError={setPatientError}
+                            targetPatientError={patientError}
+                            placeholder={translations[lang]['Patient']}
+                            />
+                        </div>
+                    </div>
                     
                     <SymptomsDiagnosisForm
                     symptoms={symptoms}

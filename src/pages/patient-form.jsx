@@ -208,11 +208,6 @@ const PatientFormPage = ({ roles }) => {
             return setFirstNameError(translations[lang]['first name is required'])
         }
 
-        if(!lastName) { 
-            toast.error(translations[lang]['last name is required'], { duration: 3000, position: 'top-right' })
-            return setLastNameError(translations[lang]['last name is required'])
-        }
-
         if(!countryCode) { 
             toast.error(translations[lang]['country code is required'], { duration: 3000, position: 'top-right' })
             return setCountryCodeError(translations[lang]['country code is required'])
@@ -240,7 +235,6 @@ const PatientFormPage = ({ roles }) => {
 
         const patientData = {
             firstName,
-            lastName,
             countryCode: Number.parseInt(countryCode),
             phone: Number.parseInt(phone),
             gender,
@@ -312,11 +306,6 @@ const PatientFormPage = ({ roles }) => {
             return setFirstNameError(translations[lang]['first name is required'])
         }
 
-        if(!lastName) { 
-            toast.error(translations[lang]['last name is required'], { duration: 3000, position: 'top-right' })
-            return setLastNameError(translations[lang]['last name is required'])
-        }
-
         if(!countryCode) { 
             toast.error(translations[lang]['country code is required'], { duration: 3000, position: 'top-right' })
             return setCountryCodeError(translations[lang]['country code is required'])
@@ -339,7 +328,6 @@ const PatientFormPage = ({ roles }) => {
 
         const patientData = {
             firstName,
-            lastName,
             countryCode: Number.parseInt(countryCode),
             phone: Number.parseInt(phone),
             gender,
@@ -392,8 +380,9 @@ const PatientFormPage = ({ roles }) => {
 
 
     return <div>
-        <NavigationBar pageName={translations[lang]["Patients"]} />
-        <PageHeader pageName={isUpdate ? translations[lang]['Update Patient'] : translations[lang]['Create Patient']} />
+        <PageHeader 
+        pageName={isUpdate ? translations[lang]['Update Patient'] : translations[lang]['Create Patient']} 
+        />
             <div className="patient-profile-grid-container">
                 <div className="patient-profile-page-navigator-container">
                     <ul>
@@ -402,16 +391,6 @@ const PatientFormPage = ({ roles }) => {
                                 {translations[lang]['Personal Information']}
                             </a>
                         </li>
-                        {
-                            isUpdate ?
-                            null
-                            :
-                            <li>
-                                <a href="#card-section">
-                                    {translations[lang]['Card Information']}
-                                </a>
-                            </li>
-                        }
                         <li>
                             <a href="#bad-habits-section">
                                 {translations[lang]['Bad Habits']}
@@ -508,24 +487,6 @@ const PatientFormPage = ({ roles }) => {
                             setDoctorError={setDoctorError}
                             />
                         </div>
-                        {
-                            isUpdate ?
-                            null
-                            :
-                            <div className="cards-grey-container margin-top-1">
-                                <PatientCardInformationForm 
-                                cardId={cardId}
-                                setCardId={setCardId}
-                                cardIdError={cardIdError}
-                                setCardIdError={setCardIdError}
-                                cvc={cvc}
-                                setCvc={setCvc}
-                                cvcError={cvcError}
-                                setCvcError={setCvcError}
-                                />
-                            </div>
-                        }
-                        
                         <div className="cards-grey-container margin-top-1">
                             <PatientBadHabitsForm
                             isSmokingPast={isSmokingPast}

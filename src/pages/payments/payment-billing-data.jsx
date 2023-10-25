@@ -118,7 +118,6 @@ const PaymentsBillingDataPage = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Billing Data']} />
         { isLoading ? <PaymentLoadingModal /> : null }
         
         <div className="padded-container">

@@ -18,6 +18,7 @@ import Card from '../components/cards/card'
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined'
 import { formatNumber } from '../utils/numbers'
 import translations from '../i18n'
+import FloatingButton from '../components/buttons/floating-button'
 
 
 const EncountersPage = ({ roles }) => {
@@ -65,7 +66,6 @@ const EncountersPage = ({ roles }) => {
 
  
     return <div className="page-container page-white-background">
-        <NavigationBar pageName={translations[lang]["Encounters"]} />
         { 
         isShowDeleteModal ? 
         <EncounterDeleteConfirmationModal 
@@ -77,9 +77,17 @@ const EncountersPage = ({ roles }) => {
         : 
         null 
         }
+        {
+            user.roles.includes('DOCTOR') ?
+            <FloatingButton url={'/encounters/form'} />
+            :   
+            null
+        }
         <div className="padded-container">
             <PageHeader
             pageName={translations[lang]['Encounters']}
+            addBtnText={translations[lang]['Add Encounter']}
+            formURL={'/encounters/form'}
             />
             <div className="cards-list-wrapper margin-bottom-1">
                 <Card 

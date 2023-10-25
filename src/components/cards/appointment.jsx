@@ -24,6 +24,8 @@ const AppointmentCard = ({
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
+    const patientName = `${appointment?.patient?.firstName} ${appointment?.patient?.lastName ? appointment?.patient?.lastName : ''}`
+
     const renderAppointmentStatus = (status) => {
 
         if(status === 'DONE') {

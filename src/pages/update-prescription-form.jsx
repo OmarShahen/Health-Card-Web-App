@@ -101,7 +101,6 @@ const UpdatePrescriptionsFormPage = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]["Prescription"]} />
         {
             showFormModal ?
             <DrugFormModal 

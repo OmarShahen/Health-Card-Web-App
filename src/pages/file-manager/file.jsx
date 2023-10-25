@@ -72,7 +72,6 @@ const FileManagerFilesPage = ({ roles }) => {
     }, [window.location.pathname, reload])
 
     return <div>
-        <NavigationBar pageName={'Files Manager'} />
         { 
         isShowUploadForm ? 
         <UploadFileFormModal 

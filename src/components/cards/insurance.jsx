@@ -68,7 +68,7 @@ const InsuranceCard = ({
                     <span className="grey-text">{''}</span>
                 </div>
             </div>
-            { user.roles.includes('OWNER') ? <CardActions actions={cardActionsList} /> : null }
+            { user.roles.includes('OWNER') || user.roles.includes('STAFF') ? <CardActions actions={cardActionsList} /> : null }
         </div>
         <div className="patient-card-body">
             <ul>

@@ -7,13 +7,13 @@ import translations from '../../i18n'
 import { useSelector } from 'react-redux'
 import { format } from 'date-fns'
 
-const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, setIsUpdate, insurance }) => {
+const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, setIsUpdate, insurance, clinicId }) => {
 
     const lang = useSelector(state => state.lang.lang)
     const user = useSelector(state => state.user.user)
+    const clinics = useSelector(state => state.clinics.clinics)
 
     const [isSubmit, setIsSubmit] = useState(false)
-    const [clinics, setClinics] = useState([])
 
     const [name, setName] = useState(isUpdate ? insurance.name : '')
     const [clinic, setClinic] = useState()
@@ -26,35 +26,18 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
     const [endDateError, setEndDateError] = useState()
 
 
-    useEffect(() => {
-
-        if(isUpdate) {
-            return
-        }
-
-        serverRequest.get(`/v1/clinics-owners/owners/${user._id}`)
-        .then(response => {
-            const clinics = response.data.clinics
-            setClinics(clinics)
-        })
-        .catch(error => {
-            console.error(error)
-            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
-        })
-    }, [])
-
     const handleSubmit = (e) => {
         e.preventDefault()
 
         if(!name) return setNameError(translations[lang]['name is required'])
 
-        if(!clinic) return setClinicError(translations[lang]['clinic is required']) 
+        if(user.roles.includes('OWNER') && !clinic) return setClinicError(translations[lang]['clinic is required']) 
         
         if(!startDate) return setStartDateError(translations[lang]['start date is required'])
 
         if(!endDate) return setEndDateError(translations[lang]['end date is required'])
 
-        const insuranceData = { name, clinicId: clinic, startDate, endDate }
+        const insuranceData = { name, clinicId: clinicId ? clinicId : clinic, startDate, endDate }
 
         setIsSubmit(true)
         serverRequest.post(`/v1/insurances`, insuranceData)
@@ -153,7 +136,7 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
                             <span className="red">{nameError}</span>
                         </div> 
                         {
-                            isUpdate ?
+                            isUpdate || clinicId ?
                             null
                             :
                             <div className="form-input-container">
@@ -172,9 +155,7 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
                         <div className="form-input-container">
                             <label>{translations[lang]['Start Date']}</label>
                             <input 
-                            type="text" 
-                            onFocus={e => e.target.type = 'date'}
-                            onBlur={e => e.target.type = 'text'}
+                            type="date" 
                             className="form-input" 
                             placeholder=""
                             value={startDate}
@@ -186,9 +167,7 @@ const InsuranceFormModal = ({ setShowFormModal, reload, setReload, isUpdate, set
                         <div className="form-input-container">
                             <label>{translations[lang]['End Date']}</label>
                             <input 
-                            type="text"
-                            onFocus={e => e.target.type = 'date'}
-                            onBlur={e => e.target.type = 'text'}
+                            type="date"
                             className="form-input" 
                             placeholder=""
                             value={endDate}

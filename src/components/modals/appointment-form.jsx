@@ -1,97 +1,55 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import './modals.css'
 import { serverRequest } from '../API/request'
 import { toast } from 'react-hot-toast'
 import { TailSpin } from 'react-loader-spinner'
-import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { format, getTime } from 'date-fns'
-import CircularLoading from '../loadings/circular'
 import { formatMoney } from '../../utils/numbers'
 import { setIsShowModal, setIsShowRenewModal } from '../../redux/slices/modalSlice'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined'
 import translations from '../../i18n'
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import { capitalizeFirstLetter, formatPatientName } from '../../utils/formatString'
+import SearchPatientInputField from '../inputs/patients-search'
+import { format } from 'date-fns'
 
-const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
+const AppointmentFormModal = ({ setShowFormModal, reload, setReload, isUpdate, setIsUpdate, targetAppointment }) => {
 
     const pagePath = window.location.pathname
-    const patientId = pagePath.split('/')[2]
     const clinicId = pagePath.split('/')[4]
 
-    const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
+    const servicesList = useSelector(state => state.services.services)
+    const doctors = useSelector(state => state.doctors.doctors)
+
+    const appointmentsStatus = ['WAITING', 'UPCOMING', 'ACTIVE', 'DONE', 'CANCELLED']
 
     const [isSubmit, setIsSubmit] = useState(false)
-    const [isServicesLoading, setIsServicesLoading] = useState(user.roles.includes('STAFF') ? true : false)
-    const [isDoctorsLoading, setIsDoctorsLoading] = useState(user.roles.includes('STAFF') ? true : false)
 
-    const [servicesList, setServicesList] = useState([])
-    const [doctors, setDoctors] = useState([])
-
-    const [status, setStatus] = useState('UPCOMING')
-    const [reservationDate, setReservationDate] = useState()
-    const [reservationTime, setReservationTime] = useState()
+    const [updateStatus, setUpdateStatus] = useState()
+    const [targetPatient, setTargetPatient] = useState()
+    const [status, setStatus] = useState('WAITING')
+    const [reservationDate, setReservationDate] = useState(isUpdate ? format(new Date(targetAppointment.reservationTime), 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'))
+    const [reservationTime, setReservationTime] = useState(isUpdate ? format(new Date(targetAppointment.reservationTime), 'HH:mm') : format(new Date(), 'HH:mm'))
     const [service, setService] = useState()
     const [doctor, setDoctor] = useState()
 
-    const [isSendMail, setIsSendMail] = useState(true)
+    const [isSendMail, setIsSendMail] = useState(false)
 
+    const [targetPatientError, setTargetPatientError] = useState()
     const [statusError, setStatusError] = useState()
     const [reservationDateError, setReservationDateError] = useState()
     const [reservationTimeError, setReservationTimeError] = useState()
     const [serviceError, setServiceError] = useState()
     const [doctorError, setDoctorError] = useState()
-    const [clinicError, setClinicError] = useState()
 
-
-    useEffect(() => {
-
-        if(!user.roles.includes('STAFF')) {
-            return
-        }
-
-        setIsServicesLoading(true)
-        serverRequest.get(`/v1/services/clinics/${user.clinicId}`)
-        .then(response => {
-            setIsServicesLoading(false)
-            const data = response.data
-            setServicesList(data.services)
-        })
-        .catch(error => {
-            setIsServicesLoading(false)
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-    }, [])
-
-
-    useEffect(() => {
-
-        if(!user.roles.includes('STAFF')) {
-            return
-        }
-
-        setIsDoctorsLoading(true)
-        serverRequest.get(`/v1/doctors/clinics/${user.clinicId}`)
-        .then(response => {
-            setIsDoctorsLoading(false)
-            const data = response.data
-            setDoctors(data.doctors)
-        })
-        .catch(error => {
-            setIsDoctorsLoading(false)
-            console.error(error)
-            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
-        })
-
-    }, [])
 
     const handleSubmit = (e) => {
         e.preventDefault()
+
+        if(!targetPatient) return setTargetPatientError(translations[lang]['patient is required'])
         
         if(!reservationDate) return setReservationDateError(translations[lang]['reservation date is required'])
 
@@ -108,7 +66,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
         const bookDate = new Date(year, month - 1, day, hours, minutes, seconds)
 
         const appointment = {
-            patientId,
+            patientId: targetPatient?.patientId,
             clinicId: user.roles.includes('DOCTOR') ? clinicId : user.clinicId,
             doctorId: user.roles.includes('STAFF') ? doctor : user._id,
             reservationTime: bookDate,
@@ -123,7 +81,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
             setIsSubmit(false)
             const data = response.data
             toast.success(data.message, { position: 'top-right', duration: 3000 })
-            //reload ? setReload(reload + 1) : navigate('/appointments')
+            reload ? setReload(reload + 1) : null
             setShowFormModal(false)
         })
         .catch(error => {
@@ -163,22 +121,88 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
 
     }
 
+    const handleUpdate = (e) => {
+        e.preventDefault()
+
+        if(!updateStatus) return setStatusError('status is required')
+
+        setIsSubmit(true)
+        serverRequest.patch(`/v1/appointments/${targetAppointment._id}/status`, { status: updateStatus })
+        .then(response => {
+            setIsSubmit(false)
+            setReload(reload + 1)
+            setShowFormModal(false)
+            setIsUpdate(false)
+            toast.success(response.data.message, { position: 'top-right', duration: 3000 })
+        })
+        .catch(error => {
+            setIsSubmit(false)
+            console.error(error)
+            toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
+        })
+
+    }
+
+    const deleteAppointment = () => {
+        setIsSubmit(true)
+        serverRequest.delete(`/v1/appointments/${targetAppointment._id}`)
+        .then(response => {
+            setIsSubmit(false)
+            setReload(reload + 1)
+            setShowFormModal(false)
+            setIsUpdate(false)
+            toast.success(response.data.message, { duration: 3000, position: 'top-right' })
+        })
+        .catch(e => {
+            setIsSubmit(false)
+            console.error(error)
+            toast.error(error?.response?.data?.message, { duration: 3000, position: 'top-right' })
+        })
+    }
+
 
     return <div className="modal">
         <div className="modal-container body-text">
             <div className="modal-header">
-                <h2>{translations[lang]['Create Appointment']}</h2>
+                <h2>{isUpdate ? translations[lang]['Update Appointment'] : translations[lang]['Create Appointment']}</h2>
+                {
+                    isUpdate ?
+                    <span className="hover" onClick={e => deleteAppointment()}>
+                        <DeleteOutlineOutlinedIcon />
+                    </span>
+                    :
+                    null
+                }
             </div>
-            {
-                isServicesLoading || isDoctorsLoading  ?
-                <CircularLoading />
-                :
-                <div>
+            <div>
                 <div className="modal-body-container">
-                    <form id="appointment-form" className="modal-form-container responsive-form body-text" onSubmit={handleSubmit}>
+                    <form 
+                    id="appointment-form" 
+                    className="modal-form-container responsive-form body-text" 
+                    onSubmit={isUpdate ? handleUpdate : handleSubmit}
+                    >
+                        {
+                            !isUpdate ?
+                            <SearchPatientInputField 
+                            setTargetPatient={setTargetPatient} 
+                            setTargetPatientError={setTargetPatientError}
+                            targetPatientError={targetPatientError}
+                            />
+                            :
+                            <div className="form-input-container">
+                                <label>{translations[lang]['Patient Name']}</label>
+                                <input
+                                disabled
+                                type="text"
+                                value={formatPatientName(targetAppointment)} 
+                                className="form-input"
+                                />
+                            </div>
+                        }
                         <div className="form-input-container">
                             <label>{translations[lang]['Reservation Date']}  {translations[lang]['(month/day/year)']}</label>
                             <input 
+                            disabled={isUpdate}
                             type="date" 
                             className="form-input" 
                             value={reservationDate}
@@ -190,6 +214,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                         <div className="form-input-container">
                             <label>{translations[lang]['Reservation Time']}</label>
                             <input 
+                            disabled={isUpdate}
                             type="time" 
                             className="form-input" 
                             value={reservationTime}
@@ -197,20 +222,26 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                             onClick={e => setReservationTimeError()}
                             />
                             <span className="red">{reservationTimeError}</span>
-                        </div>
+                        </div> 
                         {
                             user.roles.includes('STAFF') ?
                             <div className="form-input-container">
                                 <label>{translations[lang]['Service']}</label>
                                 <select
+                                disabled={isUpdate}
                                 className="form-input"
                                 onChange={e => setService(e.target.value)}
                                 onClick={e => setServiceError()}
                                 >
                                     <option selected disabled>{translations[lang]['Select Service']}</option>
-                                    {servicesList.map(service => <option value={service._id}>
-                                        {service.name} - {formatMoney(service.cost)}
-                                    </option>)}
+                                    {servicesList.map(service => {
+                                        if(isUpdate && targetAppointment.serviceId === service._id) {
+                                            return <option value={service._id} selected>{service.name}</option>
+                                        }   
+                                        return <option value={service._id}>
+                                        {service.name}
+                                    </option>
+                                    })}
                                 </select>
                                 <span className="red">{serviceError}</span>
                             </div>
@@ -222,11 +253,15 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                             <select
                             className="form-input"
                             onClick={e => setStatusError()}
-                            onChange={e => setStatus(e.target.value)}
+                            onChange={e => isUpdate ? setUpdateStatus(e.target.value) : setStatus(e.target.value)}
                             >
-                                <option value={'UPCOMING'}>{translations[lang]['Upcoming']}</option>
-                                <option value={'WAITING'}>{translations[lang]['Waiting']}</option>
-                                <option value={'ACTIVE'}>{translations[lang]['Active']}</option>
+                                {appointmentsStatus.map(status => {
+                                    if(isUpdate && targetAppointment.status === status) {
+                                        return <option selected value={status}>{translations[lang][capitalizeFirstLetter(status)]}</option>
+                                    }
+
+                                    return <option value={status}>{translations[lang][capitalizeFirstLetter(status)]}</option>
+                                })}
                             </select>
                         </div>
                         {
@@ -234,29 +269,28 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                             <div className="form-input-container">
                                 <label>{translations[lang]['Doctor']}</label>
                                 <select
+                                disabled={isUpdate}
                                 className="form-input"
                                 onChange={e => setDoctor(e.target.value)}
                                 onClick={e => setDoctorError()}
                                 >
                                     <option selected disabled>{translations[lang]['Select Doctor']}</option>
-                                    {doctors.map(doctor => <option value={doctor?.doctor?._id}>
+                                    {doctors.map(doctor => {
+                                        if(isUpdate && targetAppointment?.doctorId === doctor.doctorId) {
+                                            return <option value={doctor?.doctor?._id} selected>
+                                            {`${doctor?.doctor?.firstName} ${doctor?.doctor?.lastName}`}
+                                        </option>
+                                        }
+                                        return <option value={doctor?.doctor?._id}>
                                         {`${doctor?.doctor?.firstName} ${doctor?.doctor?.lastName}`}
-                                    </option>)}
+                                    </option>
+                                    })}
                                 </select>
                                 <span className="red">{doctorError}</span>
                             </div>
                             :
                             null
                         }
-                        
-                        <div></div>
-                        <div 
-                        className="modal-send-email-container body-text"
-                        onClick={e => setIsSendMail(!isSendMail)}
-                        >
-                            { isSendMail ? <CheckCircleIcon style={{ color: 'green' }} /> : <CircleOutlinedIcon /> }
-                            <span>{translations[lang]['send E-mail to doctor']}</span>
-                        </div>
                     </form>
                 </div>
                 <div className="modal-form-btn-container">
@@ -272,7 +306,7 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                             <button
                             form="appointment-form"
                             className="normal-button white-text action-color-bg"
-                            >{translations[lang]['Create']}</button>
+                            >{isUpdate ? translations[lang]['Update'] : translations[lang]['Create']}</button>
                         } 
                     </div>
                     <div>
@@ -280,13 +314,13 @@ const AppointmentFormModal = ({ setShowFormModal, reload, setReload }) => {
                         className="normal-button cancel-button"
                         onClick={e => {
                             e.preventDefault()
+                            isUpdate ? setIsUpdate(false) : null
                             setShowFormModal(false)
                         }}
                         >{translations[lang]['Close']}</button>
                     </div>
                 </div>
             </div>
-            }
             
         </div>
     </div>

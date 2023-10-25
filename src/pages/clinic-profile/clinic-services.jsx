@@ -113,6 +113,7 @@ const ClinicServicesPage = ({ roles }) => {
                          reload={reload}
                          setIsShowForm={setIsShowForm}
                          setIsShowDeleteModal={setIsShowDeleteModal}
+                         isHideBtns={true}
                          />)}
                     </div>
                     :

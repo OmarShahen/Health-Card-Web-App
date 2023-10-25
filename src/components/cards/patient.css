@@ -7,12 +7,12 @@
     border: 0.0625rem solid rgba(231, 234, 243, 0.7);
     box-shadow: 0rem 0.375rem 0.75rem #8c98a413;
     background-color: #FFF;
-    transition: .3s;
+    transition: .1s;
 }
 
 .patient-card-container:hover {
     cursor: pointer;
-    transform: scale(.9);
+    opacity: .8;
 }
 
 .patient-card-header {

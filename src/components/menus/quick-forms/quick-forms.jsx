@@ -15,22 +15,18 @@ import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutl
 
 
 const QuickFormMenu = ({ 
-    setShowInsuranceCompanyForm, 
+    setIsShowInsuranceCompanyForm, 
     setShowPatientCardForm, 
     setShowAppointmentForm, 
     setShowInvoiceForm,
     setShowEmergencyContactForm,
-    setShowInsurancePoliciesForm
+    setShowInsurancePoliciesForm,
+    setShowMenu
 }) => {
 
-    const dispatch = useDispatch()
     const navigate = useNavigate()
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
-
-    const pagePath = window.location.pathname
-    const patientId = pagePath.split('/')[2]
-    const clinicId = pagePath.split('/')[4]
 
     return <div className="quick-form-menu-container">
         <div className="quick-form-menu-header-container">
@@ -38,19 +34,25 @@ const QuickFormMenu = ({
         </div>
         <div className="quick-form-list-container">
             <ul>
-                {/*
+                {
                     user.roles.includes('DOCTOR') || user.roles.includes('STAFF') ?
-                    <li onClick={e => setShowPatientCardForm(true)}>
-                        <span>{translations[lang]['Patient Card']}</span>
+                    <li onClick={e => {
+                        navigate('/patients/form')
+                        setShowMenu(false)
+                    }}>
+                        <span>{translations[lang]['Patient']}</span>
                         <MedicalInformationOutlinedIcon />
                     </li>
                     :
                     null
-                */}
+                }
                 
                 {
                     user.roles.includes('DOCTOR') ?
-                    <li onClick={e => navigate(`/patients/${patientId}/clinics/${clinicId}/encounters/form`)}>
+                    <li onClick={e => {
+                        navigate(`/encounters/form`)
+                        setShowMenu(false)
+                    }}>
                         <span>{translations[lang]['Encounter']}</span>
                         <AssignmentOutlinedIcon />
                     </li>
@@ -59,25 +61,23 @@ const QuickFormMenu = ({
                 }
                 {
                     user.roles.includes('DOCTOR') ?
-                    <li onClick={e => navigate(`/patients/${patientId}/clinics/${clinicId}/prescriptions/form`)}>
+                    <li onClick={e => {
+                        navigate(`/prescriptions/form`)
+                        setShowMenu(false)
+                    }}>
                         <span>{translations[lang]['Prescription']}</span>
                         <MedicationOutlinedIcon />
                     </li>
                     :
                     null
                 }
-                {
-                    user.roles.includes('DOCTOR') || user.roles.includes('STAFF') ?
-                    <li onClick={e => setShowEmergencyContactForm(true)}>
-                        <span>{translations[lang]['Emergency Contacts']}</span>
-                        <RingVolumeOutlinedIcon />
-                    </li>
-                    :
-                    null
-                }
+                
                 {
                     user.roles.includes('STAFF') ?
-                    <li onClick={e => setShowAppointmentForm(true)}>
+                    <li onClick={e => {
+                        setShowAppointmentForm(true)
+                        setShowMenu(false)
+                    }}>
                         <span>{translations[lang]['Appointment']}</span>
                         <CalendarMonthOutlinedIcon />
                     </li>
@@ -88,10 +88,8 @@ const QuickFormMenu = ({
                     user.roles.includes('STAFF') ?
                     <li 
                     onClick={e => {
-                        dispatch(closeInvoice())
-                        dispatch(setIsActive({ isActive: true }))
-                        dispatch(setInvoicePatientId(patientId))
-                        navigate('/services')
+                        navigate('/invoices/checkout')
+                        setShowMenu(false)
                     }}
                     >
                         <span>{translations[lang]['Invoices']}</span>
@@ -102,22 +100,28 @@ const QuickFormMenu = ({
                 }
                 {
                     user.roles.includes('STAFF') ?
-                    <li onClick={e => setShowInsurancePoliciesForm(true)}>
+                    <li onClick={e => {
+                        setShowInsurancePoliciesForm(true)
+                        setShowMenu(false)
+                    }}>
                         <span>{translations[lang]['Insurance Policies']}</span>
                         <HealthAndSafetyOutlinedIcon />
                     </li>
                     :
                     null
                 }
-                {/*
-                    user.roles.includes('OWNER') ?
-                    <li onClick={e => setShowInsuranceCompanyForm(true)}>
-                        <span>Insurance Company</span>
+                {
+                    user.roles.includes('OWNER') || user.roles.includes('STAFF') ?
+                    <li onClick={e => { 
+                        setIsShowInsuranceCompanyForm(true) 
+                        setShowMenu(false)
+                    }}>
+                        <span>{translations[lang]['Insurance Company']}</span>
                         <HomeWorkOutlinedIcon />
                     </li>
                     :
                     null
-                */}
+                }
             </ul>
         </div>
     </div>

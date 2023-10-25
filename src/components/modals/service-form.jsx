@@ -42,7 +42,7 @@ const ServiceFormModal = ({
 
     useEffect(() => {
 
-        if(service || clinicId) {
+        if(service || clinicId || user.roles.includes('STAFF')) {
             return
         }
         
@@ -73,16 +73,16 @@ const ServiceFormModal = ({
 
         if(!name) return setNameError(translations[lang]['name is required'])
 
-        if(!clinic) return setClinicError(translations[lang]['clinic is required'])
+        if(user.roles.includes('OWNER') && !clinic) return setClinicError(translations[lang]['clinic is required'])
 
         if(!cost) return setCostError(translations[lang]['cost is required'])
         
-
-        const service = {
-            name,
-            clinicId: clinic,
-            cost: Number.parseFloat(cost)
+        let service = { 
+            name, 
+            clinicId: user.roles.includes('OWNER') ? clinic : user.clinicId,
+            cost: Number.parseFloat(cost) 
         }
+
 
         setIsSubmit(true)
         serverRequest.post(`/v1/services`, service)
@@ -205,7 +205,7 @@ const ServiceFormModal = ({
                             <span className="red">{nameError}</span>
                         </div>
                         {
-                            service || clinicId ?
+                            service || clinicId || user.roles.includes('STAFF') ?
                             null
                             :
                             <div className="form-input-container">

@@ -3,13 +3,20 @@ import CardDate from './components/date'
 import CardActions from './components/actions'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
-import { formatNumber, formatMoney } from '../../utils/numbers'
+import { formatMoney } from '../../utils/numbers'
 import { useSelector, useDispatch } from 'react-redux'
 import { addService, removeService } from '../../redux/slices/invoiceSlice'
 import CardTransition from '../transitions/card-transitions'
 import translations from '../../i18n'
 
-const ServiceCard = ({ service, setTargetService, setIsShowForm, setIsShowDeleteModal }) => {
+const ServiceCard = ({ 
+    service, 
+    setTargetService, 
+    setIsShowForm, 
+    setIsShowDeleteModal, 
+    isHideActions=false,
+    isHideBtns
+ }) => {
 
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
@@ -55,23 +62,31 @@ const ServiceCard = ({ service, setTargetService, setIsShowForm, setIsShowDelete
                     <span className="grey-text">#{service.clinic.clinicId}</span>
                 </div>
             </div>
-            { user.roles.includes('OWNER') ? <CardActions actions={cardActionsList} /> : null }
+            { 
+                !isHideActions ?
+                user.roles.includes('OWNER') || user.roles.includes('STAFF') ? 
+                <CardActions actions={cardActionsList} /> 
+                : 
+                null 
+                :
+                null
+            }
             
         </div>
         <div className="patient-card-body">
             <ul>
                 <li>
                     <strong>{translations[lang]['Service']}</strong>
-                    <span>{service.name}</span>
+                    <span>{service?.name}</span>
                 </li>
                 <li>
                     <strong>{translations[lang]['Cost']}</strong>
-                    <span>{formatMoney(service.cost)}</span>
+                    <span>{formatMoney(service?.cost)}</span>
                 </li>
             </ul>
         </div>
         {
-            invoice.isActive ?
+            invoice.isActive && !isHideBtns ?
             <div className="card-buttons-container">
                 <button 
                 className="normal-button action-color-bg white-text"

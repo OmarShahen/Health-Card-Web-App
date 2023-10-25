@@ -73,7 +73,7 @@
     "Help Center": "مركز المساعدة",
     "Privacy": "الخصوصية",
     "Terms of service": "شروط الخدمة",
-    "Create": "انشاء",
+    "Create": "اضافة",
     "Quick Adds": "اضافة سريعة",
     "Patient Card": "كارت الحالة",
     "Encounter": "الكشف",
@@ -628,5 +628,14 @@
     "Update File": "تعديل الملفات",
     "Creator": "المنشئ",
     "Send through whatsapp": "ارسل عبر الواتس اب",
-    "phone number must be entered": "يجب ادخال رقم هاتف"
+    "phone number must be entered": "يجب ادخال رقم هاتف",
+    "next": "التالي",
+    "previous": "السابق",
+    "today": "اليوم",
+    "agenda": "المواعيد",
+    "Update Appointment": "تعديل الحجز",
+    "Add Patient": "اضافة حالة",
+    "patient is required": "الحالة مطلوبة",
+    "There is no services in the invoice": "لا يوجد خدمة مسجلة في الفاتورة",
+    "Amount paid is more than the total cost": "المبلغ المدفوع اكثر من المطلوب"
 }

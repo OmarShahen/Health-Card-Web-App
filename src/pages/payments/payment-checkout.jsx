@@ -138,7 +138,6 @@ const PaymentCheckoutPage = ({ roles }) => {
     }
 
     return <div className="page-container">
-        <NavigationBar pageName={'Invoice-Checkout'} />
         <div className="padded-container">
             <PageHeader 
             pageName="Upgrade Account" 

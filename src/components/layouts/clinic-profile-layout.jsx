@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import NavigationBar from '../navigation/navigation-bar'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../sections/page-header'
 import { NavLink, Outlet } from 'react-router-dom'
@@ -36,7 +35,6 @@ const ClinicProfileLayout = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Clinic']} />
         <div className="show-mobile">
         </div>
             <div className="padded-container">

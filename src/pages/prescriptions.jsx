@@ -73,7 +73,6 @@ const PrescriptionsPage = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Prescriptions']} />
         { 
         isShowModal ? 
         <PrescriptionDeleteConfirmationModal 
@@ -85,9 +84,17 @@ const PrescriptionsPage = ({ roles }) => {
         : 
         null 
         }
+        {
+            user.roles.includes('DOCTOR') ?
+            <FloatingButton url={'/prescriptions/form'} />
+            :   
+            null
+        }
         <div className="padded-container">
             <PageHeader 
             pageName={translations[lang]['Prescriptions']} 
+            addBtnText={user.roles.includes('DOCTOR') ? translations[lang]['Add Prescription'] : null}
+            formURL={'/prescriptions/form'}
             reload={reload}
             setReload={setReload}
             />

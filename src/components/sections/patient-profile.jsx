@@ -60,15 +60,7 @@ const PatientProfileSection = ({ patient }) => {
                         {translations[lang]['Name']}
                     </div>
                     <div>
-                        {patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : translations[lang]['Not Registered'] }
-                    </div>
-                </li>
-                <li>
-                    <div className="bold-text">
-                        {translations[lang]['Card ID']}
-                    </div>
-                    <div>
-                        {patient.cardId ? `#${patient.cardId}` : translations[lang]['Not Registered']}
+                        {patient.firstName ? `${patient.firstName} ${patient.lastName ? patient.lastName : ''}` : translations[lang]['Not Registered'] }
                     </div>
                 </li>
                 <li>
@@ -443,14 +435,14 @@ const PatientProfileSection = ({ patient }) => {
                     </div>
                 </li>
                 {
-                    patient.healthHistory.hospitalConfinedReason.length !== 0 ?
+                    patient?.healthHistory?.hospitalConfinedReason.length !== 0 ?
                     <li className="nested-list">
                         <div className="bold-text">
                             {translations[lang]['Confine Reason']}
                         </div>
                         <div className="codes-container">
                             {
-                                patient.healthHistory.hospitalConfinedReason.map(reason => <span className="status-btn grey-bg">
+                                patient?.healthHistory?.hospitalConfinedReason.map(reason => <span className="status-btn grey-bg">
                                     {reason}
                                 </span>)
                             }

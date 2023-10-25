@@ -1,21 +1,13 @@
 import { useState, useEffect } from 'react'
-import { NavLink, Outlet, useNavigate } from "react-router-dom"
+import { NavLink, Outlet } from "react-router-dom"
 import { serverRequest } from '../../components/API/request'
-import NavigationBar from '../../components/navigation/navigation-bar'
 import PageHeader from '../sections/page-header'
 import { setPatient } from '../../redux/slices/patientSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import translations from '../../i18n'
-import QuickFormMenu from '../menus/quick-forms/quick-forms'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
-import AppointmentFormModal from '../modals/appointment-form'
-import EmergencyContactFormModal from '../modals/emergency-contacts-form'
-import InsurancePoliciyFormModal from '../modals/insurance-policy-form'
+
 
 const PatientProfileLayout = () => {
-
-    const navigate = useNavigate()
 
     const pagePath = window.location.pathname
     const patientId = pagePath.split('/')[2]
@@ -25,13 +17,8 @@ const PatientProfileLayout = () => {
     const lang = useSelector(state => state.lang.lang)
 
     const dispatch = useDispatch()
-    const [showQuickActionsForm, setShowQuickActionsForm] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [patientProfile, setPatientProfile] = useState({})
-
-    const [isShowAppointmentsForm, setIsShowAppointmentsForm] = useState(false)
-    const [isShowEmergencyContactsForm, setIsShowEmergencyContactsForm] = useState(false)
-    const [isShowInsurancePolicy, setIsShowInsurancePolicy] = useState(false)
 
     useEffect(() => scroll(0,0), [])
     
@@ -52,42 +39,12 @@ const PatientProfileLayout = () => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Medical Profile']} />
-        { isShowAppointmentsForm ? <AppointmentFormModal setShowFormModal={setIsShowAppointmentsForm} /> : null }
-        { isShowEmergencyContactsForm ? <EmergencyContactFormModal mode={'CREATE'} setShowModalForm={setIsShowEmergencyContactsForm} /> : null }
-        { isShowInsurancePolicy ? <InsurancePoliciyFormModal setShowFormModal={setIsShowInsurancePolicy} /> : null }
         <div className="padded-container">
-        <div className="page-header-wrapper">
-                    <div className="back-button-container">
-                        <ArrowBackIcon />
-                        <span onClick={e => navigate(-1)}>{translations[lang]['Back']}</span>
-                    </div>
-                    <div className="page-header-container">
-                        <div>
-                            <h1>
-                                { isLoading ? 'Loading...' : patientProfile?.firstName + ' ' + patientProfile?.lastName }
-                            </h1>
-                        </div>
-                        <div className="btns-container subheader-text quick-form-container">
-                            <button onClick={e => setShowQuickActionsForm(!showQuickActionsForm)}>
-                                <AddOutlinedIcon />
-                                <strong>
-                                    {translations[lang]['Quick Actions']}
-                                </strong>
-                            </button>
-                            { 
-                            showQuickActionsForm ? 
-                            <QuickFormMenu 
-                            setShowAppointmentForm={setIsShowAppointmentsForm}
-                            setShowEmergencyContactForm={setIsShowEmergencyContactsForm}
-                            setShowInsurancePoliciesForm={setIsShowInsurancePolicy}
-                            /> 
-                            : 
-                            null 
-                            }
-                        </div>
-                    </div>
-                </div>
+        <PageHeader 
+        pageName={ isLoading ? 'Loading...' : `${patientProfile.firstName} ${patientProfile.lastName ? patientProfile.lastName : ''}`}
+        addBtnText={translations[lang]['Update Patient']}
+        formURL={`/patients/${patientProfile?._id}/form?mode=UPDATE`}
+        />
             <div className="mini-page-navigator-container">
                 <ul>
                     <li><NavLink to={`/patients/${patientId}/clinics/${clinicId}/medical-profile`}>{translations[lang]['Profile']}</NavLink></li> 

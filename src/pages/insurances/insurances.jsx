@@ -73,7 +73,6 @@ const InsurancesPage = ({ roles }) => {
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Insurance Companies']} />
         { 
         isShowDeleteModal ? 
         <InsuranceDeleteConfirmationModal 
@@ -100,9 +99,9 @@ const InsurancesPage = ({ roles }) => {
         
         
         {
-            user.roles.includes('OWNER') ?
+            user.roles.includes('OWNER') || user.roles.includes('STAFF') ?
             <div className="show-mobile">
-                <FloatingButton setIsShowForm={setIsShowForm} />
+                <FloatingButton setIsShowForm={setShowFormModal} />
             </div>
             :
             null
@@ -117,6 +116,7 @@ const InsurancesPage = ({ roles }) => {
             isUpdate={isUpdate}
             setIsUpdate={setIsUpdate}
             insurance={targetInsurance}
+            clinicId={user.clinicId}
             />
             :
             null
@@ -127,7 +127,7 @@ const InsurancesPage = ({ roles }) => {
             <PageHeader 
             pageName={translations[lang]["Insurance Companies"]} 
             setShowModalForm={setShowFormModal} 
-            addBtnText={user.roles.includes('OWNER') ? translations[lang]['Add Insurance Company'] : null}
+            addBtnText={user.roles.includes('OWNER') || user.roles.includes('STAFF') ? translations[lang]['Add Insurance Company'] : null}
             setReload={setReload}
             reload={reload}
             /> 

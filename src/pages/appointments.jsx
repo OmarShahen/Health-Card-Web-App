@@ -1,63 +1,44 @@
 import { useState, useEffect } from 'react'
 import './prescriptions.css'
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import { serverRequest } from "../components/API/request"
 import { useSelector } from 'react-redux'
 import PageHeader from '../components/sections/page-header'
-import Card from '../components/cards/card';
-import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined'
-import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
-import UpcomingOutlinedIcon from '@mui/icons-material/UpcomingOutlined'
 import AppointmentFormModal from '../components/modals/appointment-form'
-import TimerOffOutlinedIcon from '@mui/icons-material/TimerOffOutlined'
-import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined'
-import NavigationBar from '../components/navigation/navigation-bar';
-import CircularLoading from '../components/loadings/circular';
-import FiltersSection from '../components/sections/filters/filters'
-import FloatingButton from '../components/buttons/floating-button'
-import AppointmentCard from '../components/cards/appointment'
-import EmptySection from '../components/sections/empty/empty'
-import SearchInput from '../components/inputs/search'
-import { searchAppointments } from '../utils/searches/search-appointments'
-import { format } from 'date-fns'
-import { formatNumber } from '../utils/numbers'
+import NavigationBar from '../components/navigation/navigation-bar'
 import AppointmentDeleteConfirmationModal from '../components/modals/confirmation/appointment-delete-confirmation-modal'
 import AppointmentStatusConfirmationModal from '../components/modals/confirmation/appointment-status-confirmation-modal'
 import { isRolesValid } from '../utils/roles'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import translations from '../i18n'
 
+import { Calendar, momentLocalizer } from 'react-big-calendar'
+import moment from 'moment'
+import "react-big-calendar/lib/css/react-big-calendar.css"
+import CircularLoading from '../components/loadings/circular'
+import Calender from '../components/calenders/calender'
+import FloatingButton from '../components/buttons/floating-button'
+
 
 const AppointmentsPage = ({ roles }) => {
 
     const navigate = useNavigate()
 
-    const [searchParams, setSearchParams] = useSearchParams()
-    const periodType = searchParams.get('period')
+    const localizer = momentLocalizer(moment)
 
     const [targetAppointment, setTargetAppointment] = useState({})
     const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
     const [isShowUpdateModal, setIsShowUpdateModal] = useState(false)
     const [status, setStatus] = useState()
 
-
+    const [isUpdate, setIsUpdate] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [reload, setReload] = useState(1)
     const [showModalForm, setShowModalForm] = useState(false)
     const [appointments, setAppointments] = useState([])
-    const [searchedAppointments, setSearchedAppointments] = useState([])
-    const [viewStatus, setViewStatus] = useState('ALL')
 
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
-    const activeElementColor = { border: '2px solid #4c83ee', color: '#4c83ee' }
-
-    let todayDate = new Date()
-    periodType === '1' ? todayDate.setDate(todayDate.getDate() + 1) : null
-
-    const [statsQuery, setStatsQuery] = useState({ specific: format(todayDate, 'yyyy-MM-dd') })
 
     useEffect(() => { 
         scroll(0,0) 
@@ -70,53 +51,88 @@ const AppointmentsPage = ({ roles }) => {
         `/v1/appointments/clinics/${user.clinicId}`
         :
         `/v1/appointments/doctors/${user._id}`
-        serverRequest.get(endpointURL, { params: statsQuery })
+        serverRequest.get(endpointURL)
         .then(response => {
             setIsLoading(false)
-            setAppointments(response.data.appointments)
-            setSearchedAppointments(response.data.appointments)
+            const appointments = response.data.appointments
+            setAppointments(appointments)
         })
         .catch(error => {
             setIsLoading(false)
             console.error(error)
         })
-    }, [reload, statsQuery])
+    }, [reload])
 
 
     return <div className="page-container">
-        <NavigationBar pageName={translations[lang]['Appointments']} />
+        {
+            user.roles.includes('STAFF') ?
+            <div className="show-mobile">
+                <FloatingButton setIsShowForm={setShowModalForm} />
+            </div>
+            :
+            null
+        }
+        {
+            showModalForm ?
+            <AppointmentFormModal 
+            reload={reload}
+            setReload={setReload} 
+            setShowFormModal={setShowModalForm}
+            isUpdate={isUpdate}
+            setIsUpdate={setIsUpdate}
+            targetAppointment={targetAppointment}
+            />
+            :
+            null
+        }
+        
          { 
-        isShowDeleteModal ? 
-        <AppointmentDeleteConfirmationModal 
-        appointment={targetAppointment}
-        reload={reload}
-        setReload={setReload} 
-        setIsShowModal={setIsShowDeleteModal}
-        setViewStatus={setViewStatus}
-        /> 
-        : 
-        null 
+            isShowDeleteModal ? 
+            <AppointmentDeleteConfirmationModal 
+            appointment={targetAppointment}
+            reload={reload}
+            setReload={setReload} 
+            setIsShowModal={setIsShowDeleteModal}
+            /> 
+            : 
+            null 
         }
         { 
-        isShowUpdateModal ? 
-        <AppointmentStatusConfirmationModal 
-        appointment={targetAppointment}
-        reload={reload}
-        setReload={setReload} 
-        setIsShowModal={setIsShowUpdateModal}
-        status={status}
-        setViewStatus={setViewStatus}
-        /> 
-        : 
-        null 
+            isShowUpdateModal ? 
+            <AppointmentStatusConfirmationModal 
+            appointment={targetAppointment}
+            reload={reload}
+            setReload={setReload} 
+            setIsShowModal={setIsShowUpdateModal}
+            status={status}
+            setViewStatus={setViewStatus}
+            /> 
+            : 
+            null 
         }
         <div className="padded-container">
             <PageHeader 
             pageName={translations[lang]["Appointments"]} 
             setReload={setReload}
             reload={reload}
+            addBtnText={user.roles.includes('STAFF') ? translations[lang]['Add Appointment'] : null}
+            setShowModalForm={setShowModalForm}
             /> 
-            <div className="cards-list-wrapper">
+            <div className="margin-top-1"></div>
+            {
+                isLoading ?
+                <CircularLoading />
+                :
+                <Calender
+                appointments={appointments}
+                setTargetAppointment={setTargetAppointment}
+                setIsUpdate={setIsUpdate}
+                setShowModalForm={setShowModalForm}
+                />
+            }
+                
+           {/*} <div className="cards-list-wrapper">
                 <Card 
                 icon={<CalendarMonthOutlinedIcon />}
                 cardHeader={translations[lang]['All']}
@@ -246,7 +262,9 @@ const AppointmentsPage = ({ roles }) => {
                 :
                 <EmptySection setIsShowForm={setShowModalForm} />
             }
+        */}
         </div>
+        
         
     </div>
 }
