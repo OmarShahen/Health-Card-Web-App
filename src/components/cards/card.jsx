@@ -1,6 +1,10 @@
 import NorthOutlinedIcon from '@mui/icons-material/NorthOutlined'
+import CountUp from 'react-countup'
 
-const Card = ({ cardHeader, icon, iconColor, number }) => {
+
+const Card = ({ cardHeader, icon, isMoney=false, number, isShowStats }) => {
+
+    <CountUp end={100} />
 
     return <div className="card-container body-text disable-hover cards-white-bg">
         <div className="card-header-container">
@@ -12,14 +16,27 @@ const Card = ({ cardHeader, icon, iconColor, number }) => {
             </span>
         </div>
         <div className="card-number-container">
-            {number}
+            {
+                isMoney ?
+                number
+                :
+                <CountUp 
+                end={number}
+                duration={1.5}
+                />
+            }
         </div>
-        {/*<div className="card-footer">
-            <div>
-            <   span className="status-btn done"><NorthOutlinedIcon /> 12%</span>
+        {/*
+            isShowStats ? 
+            <div className="card-footer">
+                <div>
+                <   span className="status-btn done"><NorthOutlinedIcon /> 12%</span>
+                </div>
+                <span className="grey-text">since last week</span>
             </div>
-            <span className="grey-text">since last week</span>
-        </div>*/}
+            :
+            null
+        */}
     </div>
 }
 

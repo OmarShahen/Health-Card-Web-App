@@ -79,7 +79,9 @@ const EncountersPage = ({ roles }) => {
         }
         {
             user.roles.includes('DOCTOR') ?
-            <FloatingButton url={'/encounters/form'} />
+            <div className="show-mobile">
+                <FloatingButton url={'/encounters/form'} />
+            </div>
             :   
             null
         }

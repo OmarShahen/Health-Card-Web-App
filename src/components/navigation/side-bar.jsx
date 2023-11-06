@@ -43,6 +43,9 @@ import SignalCellularAltOutlinedIcon from '@mui/icons-material/SignalCellularAlt
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined'
 import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined'
+import SensorOccupiedOutlinedIcon from '@mui/icons-material/SensorOccupiedOutlined'
+import VaccinesOutlinedIcon from '@mui/icons-material/VaccinesOutlined'
+import VolunteerActivismOutlinedIcon from '@mui/icons-material/VolunteerActivismOutlined';
 
 
 const SideBar = ({ width, isHideText, setHideSideBar }) => {
@@ -54,12 +57,13 @@ const SideBar = ({ width, isHideText, setHideSideBar }) => {
 
     const [numberOfAppointments, setNumberOfAppointments] = useState(0)
 
-    const [isShowTreatment, setIsShowTreatment] = useState(true)
-    const [isShowAppointments, setIsShowAppointments] = useState(true)
+    const [isShowFollowupService, setIsShowFollowupService] = useState(true)
+    const [isShowTreatment, setIsShowTreatment] = useState(false)
+    const [isShowAppointments, setIsShowAppointments] = useState(false)
     const [isShowInsurances, setIsShowInsurances] = useState(user.roles.includes('STAFF') ? true : false)
     const [isShowInvoices, setIsShowInvoices] = useState(false)
     const [isShowUsers, setIsShowUsers] = useState(user.roles.includes('STAFF') ? true : false)
-    const [isShowClinics, setIsShowClinics] = useState(true)
+    const [isShowClinics, setIsShowClinics] = useState(false)
     const [isShowInvitations, setIsShowInvitations] = useState(false)
 
     useEffect(() => {
@@ -232,267 +236,331 @@ const SideBar = ({ width, isHideText, setHideSideBar }) => {
             }
         </ul>
         {
-                user?.roles?.includes('STAFF') ?
-                null
-                :
-                <li>
-                    <div 
-                    className="header-list-container"
-                    onClick={e => setIsShowClinics(!isShowClinics)}
+            user?.roles?.includes('STAFF') ?
+            null
+            :
+            <li>
+                <div 
+                className="header-list-container"
+                onClick={e => setIsShowClinics(!isShowClinics)}
+                >
+                    { translations[lang]['Clinics'] }
+                    <span>
+                        { isShowClinics ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
+                    </span>
+                </div>
+                {
+                    isShowClinics ?
+                    <motion.ul
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="nested-links"
                     >
-                        { translations[lang]['Clinics'] }
-                        <span>
-                            { isShowClinics ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
-                        </span>
-                    </div>
-                    {
-                        isShowClinics ?
-                        <motion.ul
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="nested-links"
-                        >
-                            <ul className="nav-nested-list-container">
-                                <li>
-                                    <div>
-                                        <NavLink to="/clinics/owned">
-                                            <StoreMallDirectoryOutlinedIcon />
-                                            {translations[lang]['Owned']}
-                                        </NavLink>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div>
-                                        <NavLink to="/clinics/registered">
-                                            <HowToRegOutlinedIcon />
-                                            {translations[lang]['Registered']}
-                                        </NavLink>
-                                    </div>
-                                </li>
-                            </ul>
-                        </motion.ul>
-                        :
-                        null
-                    }
-                    
-                </li>
-            }
-            {
-                user.roles.includes('DOCTOR') ? 
-                <li>
-                    <div 
-                    className="header-list-container" 
-                    onClick={e => setIsShowTreatment(!isShowTreatment)}
-                    >
-                        { translations[lang]['Treatment'] }
-                        <span>
-                            { isShowTreatment ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
-                        </span>
-                    </div>
-                    {
-                        isShowTreatment ?
-                        <motion.ul
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="nested-links"
-                        >
                         <ul className="nav-nested-list-container">
                             <li>
                                 <div>
-                                    <NavLink to="/encounters">
-                                        <AssignmentOutlinedIcon />
-                                        {translations[lang]['Encounters']}
+                                    <NavLink to="/clinics/owned">
+                                        <StoreMallDirectoryOutlinedIcon />
+                                        {translations[lang]['Owned']}
                                     </NavLink>
                                 </div>
                             </li>
                             <li>
                                 <div>
-                                    <NavLink to="/prescriptions">
-                                        <MedicationOutlinedIcon />
-                                        {translations[lang]['Prescriptions']}
+                                    <NavLink to="/clinics/registered">
+                                        <HowToRegOutlinedIcon />
+                                        {translations[lang]['Registered']}
                                     </NavLink>
                                 </div>
                             </li>
                         </ul>
-                        </motion.ul>
-                        :
-                        null
-                    }
-                </li>
-                :
-                null
-            }         
-            
-            {
-                user.roles.includes('OWNER') || user.roles.includes('STAFF') ?
-                <li>
-                    <div 
-                    className="header-list-container"
-                    onClick={e => setIsShowUsers(!isShowUsers)}
+                    </motion.ul>
+                    :
+                    null
+                }
+                
+            </li>
+        }
+        {
+            user?.roles?.includes('OWNER') ?
+            <li>
+                <div 
+                className="header-list-container"
+                onClick={e => setIsShowFollowupService(!isShowFollowupService)}
+                >
+                    {translations[lang]['Follow-up Service']}
+                    <span>
+                        { isShowFollowupService ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
+                    </span>
+                </div>
+                {
+                    isShowFollowupService ?
+                    <motion.ul
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="nested-links"
                     >
-                        { translations[lang]['Users'] }
-                        <span>
-                        { isShowUsers ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
-                        </span>
-                    </div>
-                    {
-                        isShowUsers ?
-                        <motion.ul
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="nested-links"
-                        >
                         <ul className="nav-nested-list-container">
                             <li>
                                 <div>
-                                    <NavLink to="/doctors">
-                                            <MedicalInformationOutlinedIcon />
-                                            { translations[lang]['Doctors'] }
-                                    </NavLink>
-                                </div>
-                            </li>
-                            {
-                                user.roles.includes('OWNER') ?
-                                <li>
-                                    <div>
-                                        <NavLink to="/staffs">
-                                                <AssignmentIndOutlinedIcon />
-                                                { translations[lang]['Staffs'] }
-                                        </NavLink>
-                                    </div>
-                                </li>
-                                :
-                                null
-                            }
-                        </ul>
-                        </motion.ul>
-                        :
-                        null
-                    }
-                    
-                </li>
-                :
-                null
-            }
-            {
-                user.roles.includes('OWNER') || user.roles.includes('STAFF') ?
-                <li>
-                    <div 
-                    className="header-list-container"
-                    onClick={e => setIsShowInsurances(!isShowInsurances)}
-                    >
-                        { translations[lang]['Insurances'] }
-                        <span>
-                        { isShowInsurances ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
-                        </span>
-                    </div>
-                    {
-                        isShowInsurances ?
-                        <motion.ul
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="nested-links"
-                        >
-                        <ul className="nav-nested-list-container">
-                            <li>
-                                <div>
-                                    <NavLink to="/insurance-companies">
-                                        <HomeWorkOutlinedIcon />
-                                        {translations[lang]['Companies']}
+                                    <NavLink to="/analytics/overview">
+                                        <SignalCellularAltOutlinedIcon />
+                                        {translations[lang]['Overview']}
                                     </NavLink>
                                 </div>
                             </li>
                             <li>
                                 <div>
-                                    <NavLink to="/insurance-policies">
-                                        <HealthAndSafetyOutlinedIcon />
-                                        {translations[lang]['Policies']}
+                                    <NavLink to="/analytics/impressions-report">
+                                        <VolunteerActivismOutlinedIcon />
+                                        {translations[lang]['Impressions']}
+                                    </NavLink>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <NavLink to="/analytics/treatments-report">
+                                        <VaccinesOutlinedIcon />
+                                        {translations[lang]['Treatments']}
+                                    </NavLink>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <NavLink to="/analytics/marketing-report">
+                                        <SensorOccupiedOutlinedIcon />
+                                        {translations[lang]['Marketing']}
                                     </NavLink>
                                 </div>
                             </li>
                         </ul>
-                        </motion.ul>
-                        :
-                        null
-                    }
-                    
-                </li>
-                :
-                null
-            }
-            {
-                user?.roles?.includes('OWNER') ?
-                <li>
-                    <div 
-                    className="header-list-container"
-                    onClick={e => setIsShowInvitations(!isShowInvitations)}
+                    </motion.ul>
+                    :
+                    null
+                }
+                
+            </li>
+            :
+            null
+        }
+        {
+            user.roles.includes('DOCTOR') ? 
+            <li>
+                <div 
+                className="header-list-container" 
+                onClick={e => setIsShowTreatment(!isShowTreatment)}
+                >
+                    { translations[lang]['Treatment'] }
+                    <span>
+                        { isShowTreatment ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
+                    </span>
+                </div>
+                {
+                    isShowTreatment ?
+                    <motion.ul
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="nested-links"
                     >
-                        { translations[lang]['Invitations & Requests'] }
-                        <span>
-                        { isShowInvitations ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
-                        </span>
-                    </div>
-                    {
-                        isShowInvitations ?
-                        <motion.ul
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="nested-links"
-                        >
-                        <ul className="nav-nested-list-container">
+                    <ul className="nav-nested-list-container">
+                        <li>
+                            <div>
+                                <NavLink to="/encounters">
+                                    <AssignmentOutlinedIcon />
+                                    {translations[lang]['Encounters']}
+                                </NavLink>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <NavLink to="/prescriptions">
+                                    <MedicationOutlinedIcon />
+                                    {translations[lang]['Prescriptions']}
+                                </NavLink>
+                            </div>
+                        </li>
+                    </ul>
+                    </motion.ul>
+                    :
+                    null
+                }
+            </li>
+            :
+            null
+        }         
+        
+        {
+            user.roles.includes('OWNER') || user.roles.includes('STAFF') ?
+            <li>
+                <div 
+                className="header-list-container"
+                onClick={e => setIsShowUsers(!isShowUsers)}
+                >
+                    { translations[lang]['Users'] }
+                    <span>
+                    { isShowUsers ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
+                    </span>
+                </div>
+                {
+                    isShowUsers ?
+                    <motion.ul
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="nested-links"
+                    >
+                    <ul className="nav-nested-list-container">
+                        <li>
+                            <div>
+                                <NavLink to="/doctors">
+                                        <MedicalInformationOutlinedIcon />
+                                        { translations[lang]['Doctors'] }
+                                </NavLink>
+                            </div>
+                        </li>
+                        {
+                            user.roles.includes('OWNER') ?
                             <li>
                                 <div>
-                                    <NavLink to="/clinics/invitations">
-                                            <EmailOutlinedIcon />
-                                            { translations[lang]['My Invitations'] }
-                                    </NavLink>
-                                </div>
-                                <span className="side-bar-number-container span-text">{formatNumber(numberOfInvitations)}</span>
-                            </li>
-                            <li>
-                                <div>
-                                    <NavLink to="/clinics/owners/requests">
-                                            <ContactEmergencyOutlinedIcon />
-                                            { translations[lang]['Owners'] }
-                                    </NavLink>
-                                </div>
-                            </li>
-                            <li>
-                                <div>
-                                    <NavLink to="/clinics/doctors/requests">
-                                            <MedicalInformationOutlinedIcon />
-                                            { translations[lang]['Doctors'] }
-                                    </NavLink>
-                                </div>
-                            </li>
-                            <li>
-                                <div>
-                                    <NavLink to="/clinics/staffs/requests">
+                                    <NavLink to="/staffs">
                                             <AssignmentIndOutlinedIcon />
                                             { translations[lang]['Staffs'] }
                                     </NavLink>
                                 </div>
-                            </li>    
-                        </ul>
-                        </motion.ul>
-                        :
-                        null
-                    }
-                    
-                </li>
-                :
-                null
-            }
+                            </li>
+                            :
+                            null
+                        }
+                    </ul>
+                    </motion.ul>
+                    :
+                    null
+                }
+                
+            </li>
+            :
+            null
+        }
+        {
+            user.roles.includes('OWNER') || user.roles.includes('STAFF') ?
+            <li>
+                <div 
+                className="header-list-container"
+                onClick={e => setIsShowInsurances(!isShowInsurances)}
+                >
+                    { translations[lang]['Insurances'] }
+                    <span>
+                    { isShowInsurances ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
+                    </span>
+                </div>
+                {
+                    isShowInsurances ?
+                    <motion.ul
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="nested-links"
+                    >
+                    <ul className="nav-nested-list-container">
+                        <li>
+                            <div>
+                                <NavLink to="/insurance-companies">
+                                    <HomeWorkOutlinedIcon />
+                                    {translations[lang]['Companies']}
+                                </NavLink>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <NavLink to="/insurance-policies">
+                                    <HealthAndSafetyOutlinedIcon />
+                                    {translations[lang]['Policies']}
+                                </NavLink>
+                            </div>
+                        </li>
+                    </ul>
+                    </motion.ul>
+                    :
+                    null
+                }
+                
+            </li>
+            :
+            null
+        }
+        {
+            user?.roles?.includes('OWNER') ?
+            <li>
+                <div 
+                className="header-list-container"
+                onClick={e => setIsShowInvitations(!isShowInvitations)}
+                >
+                    { translations[lang]['Invitations & Requests'] }
+                    <span>
+                    { isShowInvitations ? <KeyboardArrowUpIcon /> : <ExpandMoreOutlinedIcon /> }
+                    </span>
+                </div>
+                {
+                    isShowInvitations ?
+                    <motion.ul
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="nested-links"
+                    >
+                    <ul className="nav-nested-list-container">
+                        <li>
+                            <div>
+                                <NavLink to="/clinics/invitations">
+                                        <EmailOutlinedIcon />
+                                        { translations[lang]['My Invitations'] }
+                                </NavLink>
+                            </div>
+                            <span className="side-bar-number-container span-text">{formatNumber(numberOfInvitations)}</span>
+                        </li>
+                        <li>
+                            <div>
+                                <NavLink to="/clinics/owners/requests">
+                                        <ContactEmergencyOutlinedIcon />
+                                        { translations[lang]['Owners'] }
+                                </NavLink>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <NavLink to="/clinics/doctors/requests">
+                                        <MedicalInformationOutlinedIcon />
+                                        { translations[lang]['Doctors'] }
+                                </NavLink>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <NavLink to="/clinics/staffs/requests">
+                                        <AssignmentIndOutlinedIcon />
+                                        { translations[lang]['Staffs'] }
+                                </NavLink>
+                            </div>
+                        </li>    
+                    </ul>
+                    </motion.ul>
+                    :
+                    null
+                }
+                
+            </li>
+            :
+            null
+        }
             {/*<li>
                 <NavLink to="/login" onClick={e => {
                     sessionStorage.setItem('user', null)

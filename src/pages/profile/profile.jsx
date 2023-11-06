@@ -36,7 +36,16 @@ const ProfilePage = ({ roles }) => {
 
 
     return <div>
-        { account ? <ProfileForm profile={account} reload={reload} setReload={setReload} /> : <CircularLoading /> }
+        { 
+            account ? 
+            <ProfileForm 
+            profile={account} 
+            reload={reload} 
+            setReload={setReload} 
+            /> 
+            : 
+            <CircularLoading /> 
+        }
     </div>
 }
 

@@ -120,17 +120,14 @@ const AppointmentsPage = ({ roles }) => {
             setShowModalForm={setShowModalForm}
             /> 
             <div className="margin-top-1"></div>
-            {
-                isLoading ?
-                <CircularLoading />
-                :
-                <Calender
-                appointments={appointments}
-                setTargetAppointment={setTargetAppointment}
-                setIsUpdate={setIsUpdate}
-                setShowModalForm={setShowModalForm}
-                />
-            }
+            
+            <Calender
+            appointments={appointments}
+            setTargetAppointment={setTargetAppointment}
+            setIsUpdate={setIsUpdate}
+            setShowModalForm={setShowModalForm}
+            />
+            
                 
            {/*} <div className="cards-list-wrapper">
                 <Card 

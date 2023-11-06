@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import './profile.css'
 import { serverRequest } from "../../API/request"
 import { toast } from "react-hot-toast"
@@ -80,6 +80,19 @@ const ProfileForm = ({ profile, reload, setReload }) => {
                 toast.error(error.response.data.message, { position: 'top-right', duration: 3000 })
 
             } catch(error) {}
+        })
+    }
+
+    const updateUserLanguage = (value) => {
+        dispatch(setLang(value))
+
+        serverRequest.patch(`/v1/users/${profile._id}/language`, { lang: value })
+        .then(response => {
+            toast.success(response.data.message, { duration: 3000, position: 'top-right' })
+        })
+        .catch(error => {
+            console.error(error.response.data.message)
+            toast.error(error.response.data.message, { duration: 3000, position: 'top-right' })
         })
     }
 
@@ -170,7 +183,7 @@ const ProfileForm = ({ profile, reload, setReload }) => {
                         <div className="form-input-button-container">
                             <select 
                             className="form-input"
-                            onChange={e => dispatch(setLang(e.target.value))}
+                            onChange={e => updateUserLanguage(e.target.value)}
                             >
                                { lang === 'en' ? <option value="en" selected>English</option> : <option value="en">English</option> }
                                { lang === 'ar' ? <option value="ar" selected>عربي</option> : <option value="ar">عربي</option> }

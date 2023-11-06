@@ -1,12 +1,16 @@
 import React from 'react'
 import Chart from 'chart.js/auto'
 import { Line } from 'react-chartjs-2'
-import '../cards/cards.css'
+import '../../cards/cards.css'
+import '../chart.css'
 
 
-const LineChart = ({ title, labels, data, color, hideCard }) => {
+const LineChart = ({ title, labels, data  }) => {
 
-    return <div className="card-container cards-white-bg">
+    return <div className="card-container cards-white-bg disable-hover">
+        <div className="chart-header-container">
+            <span>{title}</span>
+        </div>
         <Line
             data={{
                 labels,

@@ -12,3 +12,7 @@ export const toIndiaDigits = (number) => {
      return id[+w]
     })
 }
+
+export const formatToPercentage = (value, total) => {
+    return ((value / total) * 100).toFixed(2)
+}

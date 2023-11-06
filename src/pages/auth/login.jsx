@@ -48,6 +48,7 @@ const LoginPage = () => {
             const isLogged = user.roles.includes('STAFF') && !user.clinicId ? false : true
             sessionStorage.setItem('user', JSON.stringify({ ...data.user, isLogged }))
             dispatch(setUser({ ...data.user, isLogged }))
+            dispatch(setLang(user.lang ? user.lang : 'ar'))
 
             if(user.roles.includes('STAFF') && !user.clinicId) {
                 return navigate('/users/pending')

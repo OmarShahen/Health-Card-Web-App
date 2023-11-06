@@ -208,18 +208,21 @@ const InvoicesPage = ({ roles }) => {
                 cardHeader={translations[lang]['Total Expected']}
                 number={formatMoney(getTotalInvoicesCost(invoices.filter(invoice => invoice.status !== 'REFUNDED')))}
                 iconColor={'#5C60F5'}
+                isMoney={true}
                 />
                 <Card 
                 icon={<PaidOutlinedIcon />}
                 cardHeader={translations[lang]['Total Paid']}
                 number={formatMoney(getTotalPaid(invoices.filter(invoice => ['PAID', 'PARTIALLY_PAID'].includes(invoice.status))))}
                 iconColor={'#FF8C00'}
+                isMoney={true}
                 />
                 <Card 
                 icon={<PaidOutlinedIcon />}
                 cardHeader={translations[lang]['Total Remaining']}
                 number={formatMoney(getTotalRemaining(invoices.filter(invoice => invoice.status === 'PARTIALLY_PAID')))}
                 iconColor={'#5C60F5'}
+                isMoney={true}
                 />
                 {/*<Card 
                 icon={<PaidOutlinedIcon />}

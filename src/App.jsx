@@ -88,6 +88,9 @@ import FileManagerFilesPage from './pages/file-manager/file'
 import PDFViewerPage from './pages/viewer/pdf-viewer'
 
 import AnalyticsOverviewPage from './pages/analytics/overview'
+import MarketingReportPage from './pages/analytics/marketing-report'
+import ImpressionsSurveysReportPage from './pages/analytics/impression-surveys-report'
+import TreatmentSurveysReportPage from './pages/analytics/treatment-surveys-report'
 
 import { useSelector } from 'react-redux'
 import { BrowserRouter as Router, Routes, Route, Navigate  } from 'react-router-dom'
@@ -112,6 +115,9 @@ function App() {
           <Route element={user.isLogged ? <MainLayout /> : <LoginPage />}>
 
             <Route path="/analytics/overview" element={<AnalyticsOverviewPage roles={['OWNER']} />} />
+            <Route path="/analytics/marketing-report" element={<MarketingReportPage roles={['OWNER']} />} />
+            <Route path="/analytics/impressions-report" element={<ImpressionsSurveysReportPage roles={['OWNER']} />} />
+            <Route path="/analytics/treatments-report" element={<TreatmentSurveysReportPage roles={['OWNER']} />} />
 
             <Route path="/doctors" element={<DoctorsPage roles={['OWNER', 'STAFF']} />} />
             <Route path="/staffs" element={<StaffsPage roles={['OWNER']} />} />
