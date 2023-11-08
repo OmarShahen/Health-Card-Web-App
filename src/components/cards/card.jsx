@@ -4,8 +4,6 @@ import CountUp from 'react-countup'
 
 const Card = ({ cardHeader, icon, isMoney=false, number, isShowStats }) => {
 
-    <CountUp end={100} />
-
     return <div className="card-container body-text disable-hover cards-white-bg">
         <div className="card-header-container">
             <span>

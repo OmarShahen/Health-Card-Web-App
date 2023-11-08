@@ -18,7 +18,8 @@ const PageHeader = ({
     setReload, 
     reload, 
     isHideRefresh,
-    isHideBackButton
+    isHideBackButton,
+    addBtnFunction
 }) => {
 
     const navigate = useNavigate()
@@ -44,7 +45,13 @@ const PageHeader = ({
                 addBtnText ? 
                 <div 
                 className="btns-container subheader-text" 
-                onClick={e => formURL ? navigate(formURL) : setShowModalForm(true)}
+                onClick={e => {
+                    if(addBtnFunction) {
+                        addBtnFunction()
+                        return
+                    }
+                    formURL ? navigate(formURL) : setShowModalForm(true)
+                }}
                 >
                     {
                         addBtnText2 ?

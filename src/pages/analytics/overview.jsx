@@ -13,24 +13,24 @@ import LineChart from '../../components/charts/line-chart/line-chart'
 import RateChart from '../../components/charts/rate-chart/rate-chart'
 import { getExperienceNameByNumber, getHealthImprovementNameByNumber } from '../../utils/experience-translator'
 import FiltersSection from '../../components/sections/filters/filters'
+import { usePDF, Margin } from 'react-to-pdf'
+import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined'
+
 
 const AnalyticsOverviewPage = ({ roles }) => {
 
     const navigate = useNavigate()
 
+    const { toPDF, targetRef } = usePDF({filename: `Ra'aya Overview Report.pdf`, page: { margin: Margin.SMALL }});
+
     const [stats, setStats] = useState({})
     const [reload, setReload] = useState(1)
+    const [isHideBackBtn, setIsHideBackBtn] = useState(false)
 
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
-    const todayDate = new Date()
-    const monthDate = new Date()
-
-    todayDate.setDate(todayDate.getDate() + 1)
-    monthDate.setDate(monthDate.getDate() - 30)
-
-    const [statsQuery, setStatsQuery] = useState({ from: monthDate, to: todayDate })
+    const [statsQuery, setStatsQuery] = useState()
 
     useEffect(() => { 
         isRolesValid(user.roles, roles) ? null : navigate('/login')
@@ -49,19 +49,23 @@ const AnalyticsOverviewPage = ({ roles }) => {
     }, [reload, statsQuery])
 
 
-    return <div className="page-container">
+    return <div className="page-container" ref={targetRef}>
         <div className="padded-container">
             <PageHeader 
             pageName={translations[lang]['Overview']} 
             setReload={setReload}
             reload={reload}
+            addBtnText={translations[lang]['Export Data']}
+            addBtnTextIcon={<CloudDownloadOutlinedIcon />}
+            addBtnFunction={toPDF}
+            isHideBackButton={isHideBackBtn}
             /> 
             <div>
                 <FiltersSection 
                 statsQuery={statsQuery} 
                 setStatsQuery={setStatsQuery} 
                 isShowUpcomingDates={false}
-                defaultValue={'-30'}
+                defaultValue={'LIFETIME'}
                 />
             </div>
             <div className="cards-3-list-wrapper margin-top-1">

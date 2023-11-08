@@ -15,11 +15,15 @@ import DoughnutChart from '../../components/charts/pie-chart/pie-chart'
 import { getHealthImprovementNameByNumber } from '../../utils/experience-translator'
 import { formatBooleanValue } from '../../utils/formatString'
 import { formatToPercentage } from '../../utils/numbers'
+import { usePDF, Margin } from 'react-to-pdf'
+import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined'
 
 
 const TreatmentSurveysReportPage = ({ roles }) => {
 
     const navigate = useNavigate()
+
+    const { toPDF, targetRef } = usePDF({filename: `Ra'aya Treatment Report.pdf`, page: { margin: Margin.SMALL }});
 
     const [stats, setStats] = useState({})
     const [reload, setReload] = useState(1)
@@ -27,13 +31,7 @@ const TreatmentSurveysReportPage = ({ roles }) => {
     const user = useSelector(state => state.user.user)
     const lang = useSelector(state => state.lang.lang)
 
-    const todayDate = new Date()
-    const monthDate = new Date()
-
-    todayDate.setDate(todayDate.getDate() + 1)
-    monthDate.setDate(monthDate.getDate() - 30)
-
-    const [statsQuery, setStatsQuery] = useState({ from: monthDate, to: todayDate })
+    const [statsQuery, setStatsQuery] = useState()
 
     useEffect(() => { 
         isRolesValid(user.roles, roles) ? null : navigate('/login')
@@ -52,18 +50,21 @@ const TreatmentSurveysReportPage = ({ roles }) => {
     }, [reload, statsQuery])
 
 
-    return <div className="page-container">
+    return <div className="page-container" ref={targetRef}>
             <PageHeader 
             pageName={translations[lang]['Treatments Report']} 
             setReload={setReload}
             reload={reload}
+            addBtnText={translations[lang]['Export Data']}
+            addBtnTextIcon={<CloudDownloadOutlinedIcon />}
+            addBtnFunction={toPDF}
             /> 
             <div>
                 <FiltersSection
                 statsQuery={statsQuery} 
                 setStatsQuery={setStatsQuery} 
                 isShowUpcomingDates={false}
-                defaultValue={'-30'}
+                defaultValue={'LIFETIME'}
                 />
             </div>
             <div className="cards-3-list-wrapper margin-top-1">
